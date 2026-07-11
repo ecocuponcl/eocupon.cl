@@ -1,4 +1,6 @@
 /** @type {import('next').NextConfig} */
+const SUPABASE_URL = "https://vwjdfyljacoxwabtfoco.supabase.co"
+
 const nextConfig = {
   images: {
     formats: ["image/avif", "image/webp"],
@@ -29,7 +31,7 @@ const nextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "script-src 'self' 'unsafe-inline' https://va.vercel-analytics.com",
               "font-src 'self' data:",
-              "connect-src 'self' https://va.vercel-analytics.com https://vitals.vercel-analytics.com",
+              `connect-src 'self' ${SUPABASE_URL} ${SUPABASE_URL.replace("https://", "wss://")} https://va.vercel-analytics.com https://vitals.vercel-analytics.com`,
               "frame-ancestors 'self'",
               "base-uri 'self'",
               "form-action 'self'",
