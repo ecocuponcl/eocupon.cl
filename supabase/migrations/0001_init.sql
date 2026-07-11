@@ -21,6 +21,7 @@ create table if not exists public.coupons (
   discount_percentage integer not null check (discount_percentage > 0 and discount_percentage <= 100),
   coupon_code text not null,
   description text,
+  title text,
   image_url text,
   generated_image_url text,
   cta_text text default 'Usa este código',

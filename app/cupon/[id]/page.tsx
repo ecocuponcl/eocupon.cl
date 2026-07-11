@@ -14,10 +14,10 @@ export default async function CouponPage({ params }: PageProps) {
   const { id } = await params
   const supabase = await createClient()
 
-  // Fetch coupon
+  // Fetch coupon (RLS: solo públicos para anon, o los propios para el dueño)
   const { data: coupon, error } = await supabase
     .from("coupons")
-    .select("*")
+    .select("id, title, description, business_name, discount_percentage, coupon_code, image_url, is_public")
     .eq("id", id)
     .single()
 
@@ -25,11 +25,8 @@ export default async function CouponPage({ params }: PageProps) {
     notFound()
   }
 
-  // Increment views
-  await supabase
-    .from("coupons")
-    .update({ views: (coupon.views || 0) + 1 })
-    .eq("id", id)
+  // Incrementa vistas vía RPC SECURITY DEFINER (evita abrir UPDATE a anon)
+  await supabase.rpc("increment_views", { coupon_id: id })
 
   return (
     <div className="min-h-screen bg-background">

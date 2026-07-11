@@ -3,7 +3,7 @@ import Image from "next/image"
 import { createClient } from "@/lib/supabase/server"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Empty } from "@/components/ui/empty"
+import { Empty, EmptyHeader, EmptyTitle, EmptyDescription, EmptyMedia, EmptyContent } from "@/components/ui/empty"
 import { Leaf, Ticket, Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 
@@ -13,7 +13,7 @@ export default async function CuponeraPage() {
   // Fetch public coupons
   const { data: coupons } = await supabase
     .from("coupons")
-    .select("*")
+    .select("id, title, business_name, coupon_code, discount_percentage, image_url, is_public, views, shares_count, created_at")
     .eq("is_public", true)
     .order("created_at", { ascending: false })
     .limit(50)
@@ -107,16 +107,22 @@ export default async function CuponeraPage() {
             ))}
           </div>
         ) : (
-          <Empty
-            icon={<Ticket className="h-10 w-10" />}
-            title="No hay cupones disponibles"
-            description="Sé el primero en publicar un cupón de descuento"
-            action={
+          <Empty>
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <Ticket className="h-10 w-10" />
+              </EmptyMedia>
+              <EmptyTitle>No hay cupones disponibles</EmptyTitle>
+              <EmptyDescription>
+                Sé el primero en publicar un cupón de descuento
+              </EmptyDescription>
+            </EmptyHeader>
+            <EmptyContent>
               <Link href="/auth/registro">
                 <Button>Crear mi cupón</Button>
               </Link>
-            }
-          />
+            </EmptyContent>
+          </Empty>
         )}
       </main>
 

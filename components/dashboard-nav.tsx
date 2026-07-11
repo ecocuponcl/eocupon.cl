@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Leaf, Plus, LayoutGrid, Settings, LogOut, User } from "lucide-react"
+import { Leaf, Plus, LayoutGrid, LogOut } from "lucide-react"
 import type { User as SupabaseUser } from "@supabase/supabase-js"
 
 interface DashboardNavProps {
@@ -70,19 +70,6 @@ export function DashboardNav({ user }: DashboardNavProps) {
               <p className="text-sm font-medium">{businessName}</p>
               <p className="text-xs text-muted-foreground">{user.email}</p>
             </div>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link href="/dashboard/perfil" className="flex items-center gap-2">
-                <User className="h-4 w-4" />
-                Mi perfil
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href="/dashboard/configuracion" className="flex items-center gap-2">
-                <Settings className="h-4 w-4" />
-                Configuración
-              </Link>
-            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout} className="text-destructive">
               <LogOut className="mr-2 h-4 w-4" />

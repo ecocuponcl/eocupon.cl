@@ -11,13 +11,12 @@ import Link from "next/link"
 interface Coupon {
   id: string
   title: string
-  description: string | null
   discount_percentage: number
   coupon_code: string
   business_name: string
   image_url: string | null
   is_public: boolean
-  expires_at: string | null
+  views: number
   shares_count: number
   created_at: string
 }
@@ -35,7 +34,7 @@ export default function MisCuponesPage() {
 
       const { data, error } = await supabase
         .from("coupons")
-        .select("*")
+        .select("id, title, business_name, coupon_code, discount_percentage, image_url, is_public, views, shares_count, created_at")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false })
 

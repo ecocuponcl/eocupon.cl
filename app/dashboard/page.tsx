@@ -2,7 +2,7 @@ import Link from "next/link"
 import { createClient } from "@/lib/supabase/server"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Empty } from "@/components/ui/empty"
+import { Empty, EmptyHeader, EmptyTitle, EmptyDescription, EmptyMedia, EmptyContent } from "@/components/ui/empty"
 import { Plus, Ticket, Eye, Share2 } from "lucide-react"
 import { CouponCard } from "@/components/coupon-card"
 
@@ -12,14 +12,14 @@ export default async function DashboardPage() {
   
   const { data: coupons } = await supabase
     .from("coupons")
-    .select("*")
+    .select("id, title, business_name, coupon_code, discount_percentage, image_url, is_public, views, shares_count, created_at")
     .eq("user_id", user?.id)
     .order("created_at", { ascending: false })
 
   const stats = {
     total: coupons?.length || 0,
     views: coupons?.reduce((acc, c) => acc + (c.views || 0), 0) || 0,
-    shares: coupons?.reduce((acc, c) => acc + (c.shares || 0), 0) || 0,
+    shares: coupons?.reduce((acc, c) => acc + (c.shares_count || 0), 0) || 0,
   }
 
   return (
@@ -82,19 +82,25 @@ export default async function DashboardPage() {
           ))}
         </div>
       ) : (
-        <Empty
-          icon={<Ticket className="h-10 w-10" />}
-          title="Sin cupones todavía"
-          description="Crea tu primer cupón de descuento con IA y comienza a promocionar tu negocio"
-          action={
+        <Empty>
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <Ticket className="h-10 w-10" />
+            </EmptyMedia>
+            <EmptyTitle>Sin cupones todavía</EmptyTitle>
+            <EmptyDescription>
+              Crea tu primer cupón de descuento con IA y comienza a promocionar tu negocio
+            </EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent>
             <Link href="/dashboard/crear">
               <Button className="gap-2">
                 <Plus className="h-4 w-4" />
                 Crear mi primer cupón
               </Button>
             </Link>
-          }
-        />
+          </EmptyContent>
+        </Empty>
       )}
     </div>
   )

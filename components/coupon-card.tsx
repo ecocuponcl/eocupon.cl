@@ -5,7 +5,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Download, Share2, MessageCircle, Copy, Check, Eye } from "lucide-react"
+import { Download, Share2, MessageCircle, Copy, Check, Eye, Trash2, Globe } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,22 +16,24 @@ import {
 interface Coupon {
   id: string
   title: string
-  description: string | null
   discount_percentage: number
   coupon_code: string
   business_name: string
   image_url: string | null
   is_public: boolean
   views: number
-  shares: number
+  shares_count: number
   created_at: string
 }
 
 interface CouponCardProps {
   coupon: Coupon
+  showActions?: boolean
+  onDelete?: () => void
+  onTogglePublic?: () => void
 }
 
-export function CouponCard({ coupon }: CouponCardProps) {
+export function CouponCard({ coupon, showActions, onDelete, onTogglePublic }: CouponCardProps) {
   const [copied, setCopied] = useState(false)
 
   const handleCopyLink = () => {
@@ -104,7 +106,7 @@ export function CouponCard({ coupon }: CouponCardProps) {
           </span>
           <span className="flex items-center gap-1">
             <Share2 className="h-3 w-3" />
-            {coupon.shares} compartidos
+            {coupon.shares_count} compartidos
           </span>
         </div>
         <div className="flex gap-2">
@@ -145,6 +147,30 @@ export function CouponCard({ coupon }: CouponCardProps) {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          {showActions && (
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-1 text-destructive hover:text-destructive"
+                onClick={onTogglePublic}
+              >
+                <Globe className="h-4 w-4" />
+                <span className="hidden sm:inline">
+                  {coupon.is_public ? "Ocultar" : "Publicar"}
+                </span>
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-1 text-destructive hover:text-destructive"
+                onClick={onDelete}
+              >
+                <Trash2 className="h-4 w-4" />
+                <span className="hidden sm:inline">Borrar</span>
+              </Button>
+            </>
+          )}
         </div>
       </CardContent>
     </Card>

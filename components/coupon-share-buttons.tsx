@@ -76,7 +76,7 @@ export function CouponShareButtons({ couponId, title, code, discount }: CouponSh
             </>
           )}
         </Button>
-        {typeof navigator !== "undefined" && navigator.share && (
+        {typeof navigator !== "undefined" && "share" in navigator && (
           <Button variant="secondary" onClick={handleShare} className="gap-2">
             <Share2 className="h-4 w-4" />
             Compartir

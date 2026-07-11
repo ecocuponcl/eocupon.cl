@@ -112,6 +112,14 @@ begin
   ) then
     alter table public.coupons add column views integer not null default 0;
   end if;
+
+  -- title (la app lo selecciona/inserta; se crea si no existe)
+  if not exists (
+    select 1 from information_schema.columns
+    where table_schema = 'public' and table_name = 'coupons' and column_name = 'title'
+  ) then
+    alter table public.coupons add column title text;
+  end if;
 end $$;
 
 -- ---------------------------------------------------------------------------
