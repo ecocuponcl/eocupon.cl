@@ -1,8 +1,24 @@
 import { ImageResponse } from "next/og"
+import QRCode from "qrcode"
 
 // Genera la imagen del cupón de forma determinista y gratuita (sin IA externa).
 // El nuevo Fluid Compute de Vercel corre en Node.js; next/og funciona en este runtime.
 export const dynamic = "force-dynamic"
+
+// Descarga una imagen remota y la embebe como data URL para que Satori la
+// renderice sin depender del fetch de imágenes remotas (evita problemas de CORS).
+async function toDataUrl(url: string | null): Promise<string | null> {
+  if (!url) return null
+  try {
+    const res = await fetch(url, { cache: "no-store" })
+    if (!res.ok) return null
+    const buf = Buffer.from(await res.arrayBuffer())
+    const ct = res.headers.get("content-type") || "image/png"
+    return `data:${ct};base64,${buf.toString("base64")}`
+  } catch {
+    return null
+  }
+}
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
@@ -14,6 +30,23 @@ export async function GET(request: Request) {
     0,
     Math.min(100, parseInt(searchParams.get("discount") || "0", 10) || 0),
   )
+  const logoParam = searchParams.get("logo")
+  const qrUrl = searchParams.get("url")
+
+  // Logo y QR se resuelven antes de renderizar (data URLs).
+  const logoDataUrl = await toDataUrl(logoParam)
+  let qrDataUrl: string | null = null
+  if (qrUrl) {
+    try {
+      qrDataUrl = await QRCode.toDataURL(qrUrl, {
+        margin: 1,
+        width: 240,
+        color: { dark: "#15803d", light: "#ffffff" },
+      })
+    } catch {
+      qrDataUrl = null
+    }
+  }
 
   return new ImageResponse(
     (
@@ -28,17 +61,34 @@ export async function GET(request: Request) {
           padding: "48px",
         }}
       >
-        {/* Fila superior: negocio + descuento */}
+        {/* Fila superior: logo + negocio + descuento */}
         <div
           style={{
             display: "flex",
             flexDirection: "row",
             justifyContent: "space-between",
-            alignItems: "flex-start",
+            alignItems: "center",
           }}
         >
-          <div style={{ display: "flex", fontSize: 30, fontWeight: 700 }}>
-            {business || "EcoCupon"}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 16,
+            }}
+          >
+            {logoDataUrl ? (
+              <img
+                src={logoDataUrl}
+                width={72}
+                height={72}
+                style={{ borderRadius: 36, objectFit: "cover" }}
+              />
+            ) : null}
+            <div style={{ display: "flex", fontSize: 30, fontWeight: 700 }}>
+              {business || "EcoCupon"}
+            </div>
           </div>
           <div
             style={{
@@ -86,20 +136,41 @@ export async function GET(request: Request) {
           </div>
         </div>
 
-        {/* Pie: CTA + marca */}
+        {/* Pie: QR (si aplica) + CTA + marca */}
         <div
           style={{
             display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "flex-end",
           }}
         >
-          <div style={{ display: "flex", fontSize: 22 }}>
-            Usa este código en tu compra
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start",
+            }}
+          >
+            <div style={{ display: "flex", fontSize: 22 }}>
+              Usa este código en tu compra
+            </div>
+            <div style={{ display: "flex", marginTop: 8, fontSize: 16, opacity: 0.85 }}>
+              Creado con EcoCupon.cl
+            </div>
           </div>
-          <div style={{ display: "flex", marginTop: 8, fontSize: 16, opacity: 0.85 }}>
-            Creado con EcoCupon.cl
-          </div>
+          {qrDataUrl ? (
+            <div
+              style={{
+                display: "flex",
+                backgroundColor: "white",
+                padding: 10,
+                borderRadius: 14,
+              }}
+            >
+              <img src={qrDataUrl} width={120} height={120} />
+            </div>
+          ) : null}
         </div>
       </div>
     ),

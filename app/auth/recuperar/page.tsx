@@ -14,14 +14,38 @@ export default function RecoverPage() {
   const [email, setEmail] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+  const [notRegistered, setNotRegistered] = useState(false)
   const [loading, setLoading] = useState(false)
 
   const handleRecover = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
+    setNotRegistered(false)
     setLoading(true)
 
     const supabase = createClient()
+
+    // Verificar primero si el correo está registrado.
+    // resetPasswordForEmail no lo revela (anti-enumeración), así que usamos
+    // la RPC user_exists: si no existe, mandamos al registro en vez de fingir
+    // que enviamos un correo.
+    const { data: exists, error: existsError } = await supabase.rpc(
+      "user_exists",
+      { p_email: email },
+    )
+
+    if (existsError) {
+      setError("Ocurrió un error. Inténtalo nuevamente.")
+      setLoading(false)
+      return
+    }
+
+    if (!exists) {
+      setNotRegistered(true)
+      setLoading(false)
+      return
+    }
+
     const redirectTo =
       process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL ??
       `${window.location.origin}/auth/callback?next=/auth/nueva-contraseña`
@@ -58,6 +82,37 @@ export default function RecoverPage() {
                 Volver al inicio de sesión
               </Button>
             </Link>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  if (notRegistered) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background p-4">
+        <Card className="w-full max-w-md border-border">
+          <CardContent className="p-8 text-center">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+              <AlertCircle className="h-8 w-8 text-primary" />
+            </div>
+            <h2 className="mb-2 text-xl font-semibold text-foreground">
+              Este correo no está registrado
+            </h2>
+            <p className="mb-6 text-muted-foreground">
+              No encontramos una cuenta asociada a <strong>{email}</strong>.
+              Crea una cuenta para empezar a usar EcoCupon.
+            </p>
+            <Link href="/auth/registro">
+              <Button className="w-full">Crear una cuenta</Button>
+            </Link>
+            <button
+              type="button"
+              onClick={() => setNotRegistered(false)}
+              className="mt-4 text-sm text-muted-foreground hover:text-foreground"
+            >
+              Volver
+            </button>
           </CardContent>
         </Card>
       </div>

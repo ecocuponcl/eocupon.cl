@@ -10,12 +10,21 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { FieldGroup, Field, FieldLabel } from "@/components/ui/field"
 import { Sparkles, Globe, Download, MessageCircle, Copy, Check, AlertCircle } from "lucide-react"
 
-function buildImageUrl(title: string, business: string, code: string, discount: string) {
+function buildImageUrl(
+  title: string,
+  business: string,
+  code: string,
+  discount: string,
+  logo = "",
+  url = "",
+) {
   const params = new URLSearchParams()
   params.set("title", title)
   params.set("business", business)
   params.set("code", code)
   params.set("discount", String(parseInt(discount, 10) || 0))
+  if (logo) params.set("logo", logo)
+  if (url) params.set("url", url)
   return `/api/coupon-image?${params.toString()}`
 }
 
@@ -25,13 +34,41 @@ export default function CreateCouponPage() {
   const [discountPercentage, setDiscountPercentage] = useState("20")
   const [couponCode, setCouponCode] = useState("")
   const [businessName, setBusinessName] = useState("")
+  const [logoUrl, setLogoUrl] = useState<string | null>(null)
+  const [uploading, setUploading] = useState(false)
 
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
   const [savedCouponId, setSavedCouponId] = useState<string | null>(null)
+  const [finalImageUrl, setFinalImageUrl] = useState<string | null>(null)
 
-  const previewUrl = buildImageUrl(title, businessName, couponCode, discountPercentage)
+  // Preview sin QR (todavía no existe el id del cupón).
+  const previewUrl = buildImageUrl(title, businessName, couponCode, discountPercentage, logoUrl || "", "")
+
+  const handleLogoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploading(true)
+    setError(null)
+    try {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) throw new Error("No autenticado")
+      const ext = file.name.split(".").pop() || "png"
+      const path = `${user.id}/${Date.now()}.${ext}`
+      const { error: upErr } = await supabase.storage
+        .from("logos")
+        .upload(path, file, { upsert: true, contentType: file.type })
+      if (upErr) throw upErr
+      const { data } = supabase.storage.from("logos").getPublicUrl(path)
+      setLogoUrl(data.publicUrl)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Error al subir el logo")
+    } finally {
+      setUploading(false)
+    }
+  }
 
   const generateCode = () => {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
@@ -52,6 +89,16 @@ export default function CreateCouponPage() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error("No autenticado")
 
+      // Imagen base (sin QR) para guardar de inmediato.
+      const baseImageUrl = buildImageUrl(
+        title,
+        businessName,
+        couponCode,
+        discountPercentage,
+        logoUrl || "",
+        "",
+      )
+
       const { data, error } = await supabase
         .from("coupons")
         .insert({
@@ -61,14 +108,28 @@ export default function CreateCouponPage() {
           discount_percentage: parseInt(discountPercentage, 10) || 0,
           coupon_code: couponCode,
           business_name: businessName,
-          image_url: previewUrl,
+          image_url: baseImageUrl,
+          logo_url: logoUrl,
           is_public: isPublic,
         })
         .select()
         .single()
 
       if (error) throw error
+
+      // Ahora que existe el id, regeneramos la imagen con el QR apuntando al cupón.
+      const finalUrl = buildImageUrl(
+        title,
+        businessName,
+        couponCode,
+        discountPercentage,
+        logoUrl || "",
+        `${window.location.origin}/cupon/${data.id}`,
+      )
+      await supabase.from("coupons").update({ image_url: finalUrl }).eq("id", data.id)
+
       setSavedCouponId(data.id)
+      setFinalImageUrl(finalUrl)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al guardar")
     } finally {
@@ -91,7 +152,7 @@ export default function CreateCouponPage() {
 
   const handleDownload = async () => {
     try {
-      const response = await fetch(previewUrl)
+      const response = await fetch(finalImageUrl || previewUrl)
       const blob = await response.blob()
       const url = URL.createObjectURL(blob)
       const a = document.createElement("a")
@@ -205,6 +266,28 @@ export default function CreateCouponPage() {
                 </div>
               )}
               <FieldGroup>
+                <Field>
+                  <FieldLabel>Logo del negocio</FieldLabel>
+                  <div className="flex items-center gap-3">
+                    {logoUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={logoUrl}
+                        alt="Logo"
+                        className="h-12 w-12 rounded-full border border-border object-cover"
+                      />
+                    ) : null}
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleLogoChange}
+                      disabled={uploading}
+                    />
+                  </div>
+                  {uploading && (
+                    <p className="mt-1 text-xs text-muted-foreground">Subiendo logo…</p>
+                  )}
+                </Field>
                 <Field>
                   <FieldLabel>Título del cupón</FieldLabel>
                   <Input
