@@ -5,15 +5,40 @@ import QRCode from "qrcode"
 // El nuevo Fluid Compute de Vercel corre en Node.js; next/og funciona en este runtime.
 export const dynamic = "force-dynamic"
 
+// Allowlist de hosts para el logo. El logo siempre vive en Supabase Storage
+// (bucket `logos`, público). Restringir el fetch a esos hosts evita SSRF
+// (p. ej. http://169.254.169.254/ metadata de cloud, o IPs internas).
+function isAllowedLogoHost(raw: string): boolean {
+  try {
+    const u = new URL(raw)
+    if (u.protocol !== "https:") return false
+    const supabaseHost = process.env.NEXT_PUBLIC_SUPABASE_URL
+      ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).hostname
+      : ""
+    const allowed = ["supabase.co", supabaseHost].filter(Boolean)
+    return allowed.some((h) => u.hostname === h || u.hostname.endsWith(`.${h}`))
+  } catch {
+    return false
+  }
+}
+
+const MAX_LOGO_BYTES = 5 * 1024 * 1024
+
 // Descarga una imagen remota y la embebe como data URL para que Satori la
 // renderice sin depender del fetch de imágenes remotas (evita problemas de CORS).
+// Solo acepta hosts de Supabase Storage y rechaza respuestas no imagen o
+// demasiado grandes.
 async function toDataUrl(url: string | null): Promise<string | null> {
-  if (!url) return null
+  if (!url || !isAllowedLogoHost(url)) return null
   try {
     const res = await fetch(url, { cache: "no-store" })
     if (!res.ok) return null
+    const len = Number(res.headers.get("content-length") || 0)
+    if (len > MAX_LOGO_BYTES) return null
     const buf = Buffer.from(await res.arrayBuffer())
+    if (buf.byteLength > MAX_LOGO_BYTES) return null
     const ct = res.headers.get("content-type") || "image/png"
+    if (!ct.startsWith("image/")) return null
     return `data:${ct};base64,${buf.toString("base64")}`
   } catch {
     return null

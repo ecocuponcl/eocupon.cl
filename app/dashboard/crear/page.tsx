@@ -43,8 +43,12 @@ export default function CreateCouponPage() {
   const [savedCouponId, setSavedCouponId] = useState<string | null>(null)
   const [finalImageUrl, setFinalImageUrl] = useState<string | null>(null)
 
-  // Preview sin QR (todavía no existe el id del cupón).
-  const previewUrl = buildImageUrl(title, businessName, couponCode, discountPercentage, logoUrl || "", "")
+  // Preview sin QR hasta que existe el id del cupón; tras guardar usamos la
+  // imagen final (con QR) para que lo que se vea sea exactamente lo que se comparte.
+  const previewUrl =
+    savedCouponId && finalImageUrl
+      ? finalImageUrl
+      : buildImageUrl(title, businessName, couponCode, discountPercentage, logoUrl || "", "")
 
   const handleLogoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]

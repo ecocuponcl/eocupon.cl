@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import Image from "next/image"
 import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -71,11 +70,11 @@ export function CouponCard({ coupon, showActions, onDelete, onTogglePublic }: Co
     <Card className="group overflow-hidden border-border transition-shadow hover:shadow-lg">
       <div className="relative aspect-[4/3] overflow-hidden bg-muted">
         {coupon.image_url ? (
-          <Image
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
             src={coupon.image_url}
             alt={coupon.title}
-            fill
-            className="object-cover transition-transform group-hover:scale-105"
+            className="absolute inset-0 h-full w-full object-cover transition-transform group-hover:scale-105"
           />
         ) : (
           <div className="flex h-full items-center justify-center bg-gradient-to-br from-primary/20 to-secondary/30">

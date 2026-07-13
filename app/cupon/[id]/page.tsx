@@ -6,6 +6,10 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Leaf, Copy, MessageCircle, ArrowLeft } from "lucide-react"
 import { CouponShareButtons } from "@/components/coupon-share-buttons"
 
+// Siempre dinámico: increment_views debe ejecutarse en cada visita (no cachear)
+// y el cupón debe leerse fresco de la BD.
+export const dynamic = "force-dynamic"
+
 interface PageProps {
   params: Promise<{ id: string }>
 }
@@ -14,7 +18,8 @@ export default async function CouponPage({ params }: PageProps) {
   const { id } = await params
   const supabase = await createClient()
 
-  // Fetch coupon (RLS: solo públicos para anon, o los propios para el dueño)
+  // Fetch coupon (RLS: ANYONE puede hacer SELECT por link; la cuponera filtra
+  // is_public = true, pero el link directo de un cupón "privado" igual funciona).
   const { data: coupon, error } = await supabase
     .from("coupons")
     .select("id, title, description, business_name, discount_percentage, coupon_code, image_url, is_public")
