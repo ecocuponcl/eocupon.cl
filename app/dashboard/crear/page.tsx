@@ -30,6 +30,7 @@ function buildImageUrl(
 
 export default function CreateCouponPage() {
   const router = useRouter()
+
   const [title, setTitle] = useState("")
   const [discountPercentage, setDiscountPercentage] = useState("20")
   const [couponCode, setCouponCode] = useState("")
@@ -56,17 +57,12 @@ export default function CreateCouponPage() {
     setUploading(true)
     setError(null)
     try {
-      const supabase = createClient()
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error("No autenticado")
-      const ext = file.name.split(".").pop() || "png"
-      const path = `${user.id}/${Date.now()}.${ext}`
-      const { error: upErr } = await supabase.storage
-        .from("logos")
-        .upload(path, file, { upsert: true, contentType: file.type })
-      if (upErr) throw upErr
-      const { data } = supabase.storage.from("logos").getPublicUrl(path)
-      setLogoUrl(data.publicUrl)
+      const form = new FormData()
+      form.append("file", file)
+      const res = await fetch("/api/upload-logo", { method: "POST", body: form })
+      const json = await res.json()
+      if (!res.ok) throw new Error(json.error || "Error al subir el logo")
+      setLogoUrl(json.url)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al subir el logo")
     } finally {
