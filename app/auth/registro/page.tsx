@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { FieldGroup, Field, FieldLabel } from "@/components/ui/field"
 import { Spinner } from "@/components/ui/spinner"
+import { GoogleButton } from "@/components/google-button"
 import { Leaf, AlertCircle, CheckCircle } from "lucide-react"
 
 export default function RegisterPage() {
@@ -127,6 +128,14 @@ export default function RegisterPage() {
               </Button>
             </FieldGroup>
           </form>
+
+          <div className="my-6 flex items-center gap-3">
+            <div className="h-px flex-1 bg-border" />
+            <span className="text-xs text-muted-foreground">o</span>
+            <div className="h-px flex-1 bg-border" />
+          </div>
+          <GoogleButton onError={setError} />
+
           <p className="mt-6 text-center text-sm text-muted-foreground">
             ¿Ya tienes una cuenta?{" "}
             <Link href="/auth/login" className="font-medium text-primary hover:underline">
