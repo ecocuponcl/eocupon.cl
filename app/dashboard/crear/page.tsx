@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
+import { SITE_URL } from "@/lib/site-url"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -124,7 +125,7 @@ export default function CreateCouponPage() {
         couponCode,
         discountPercentage,
         logoUrl || "",
-        `${window.location.origin}/cupon/${data.id}`,
+        `${SITE_URL}/cupon/${data.id}`,
       )
       await supabase.from("coupons").update({ image_url: finalUrl }).eq("id", data.id)
 
@@ -138,13 +139,13 @@ export default function CreateCouponPage() {
   }
 
   const handleWhatsApp = () => {
-    const text = `${title} - ${discountPercentage}% OFF con el código ${couponCode}. ${savedCouponId ? `Ver cupón: ${window.location.origin}/cupon/${savedCouponId}` : ""}`
+    const text = `${title} - ${discountPercentage}% OFF con el código ${couponCode}. ${savedCouponId ? `Ver cupón: ${SITE_URL}/cupon/${savedCouponId}` : ""}`
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank")
   }
 
   const handleCopyLink = () => {
     if (savedCouponId) {
-      navigator.clipboard.writeText(`${window.location.origin}/cupon/${savedCouponId}`)
+      navigator.clipboard.writeText(`${SITE_URL}/cupon/${savedCouponId}`)
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     }
