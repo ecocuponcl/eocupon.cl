@@ -12,7 +12,7 @@ export default async function CuponeraPage() {
   // Fetch public coupons
   const { data: coupons } = await supabase
     .from("coupons")
-    .select("id, title, business_name, coupon_code, discount_percentage, image_url, is_public, views, shares_count, created_at")
+    .select("id, title, business_name, coupon_code, discount_percentage, generated_image_url, is_public, views, shares_count, created_at")
     .eq("is_public", true)
     .order("created_at", { ascending: false })
     .limit(50)
@@ -70,10 +70,10 @@ export default async function CuponeraPage() {
               <Link key={coupon.id} href={`/cupon/${coupon.id}`}>
                 <Card className="group h-full overflow-hidden border-border transition-all hover:shadow-lg hover:border-primary/30">
                   <div className="relative aspect-[4/3] overflow-hidden bg-muted">
-                    {coupon.image_url ? (
+                    {coupon.generated_image_url ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
-                        src={coupon.image_url}
+                        src={coupon.generated_image_url}
                         alt={coupon.title}
                         className="absolute inset-0 h-full w-full object-cover transition-transform group-hover:scale-105"
                       />

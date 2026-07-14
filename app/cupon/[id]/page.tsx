@@ -22,7 +22,7 @@ export default async function CouponPage({ params }: PageProps) {
   // is_public = true, pero el link directo de un cupón "privado" igual funciona).
   const { data: coupon, error } = await supabase
     .from("coupons")
-    .select("id, title, description, business_name, discount_percentage, coupon_code, image_url, is_public")
+    .select("id, title, description, business_name, discount_percentage, coupon_code, generated_image_url, is_public")
     .eq("id", id)
     .single()
 
@@ -62,9 +62,9 @@ export default async function CouponPage({ params }: PageProps) {
           <Card className="overflow-hidden border-border">
             {/* Coupon Image */}
             <div className="relative aspect-[4/3] bg-gradient-to-br from-primary/20 to-secondary/30">
-              {coupon.image_url ? (
+              {coupon.generated_image_url ? (
                 <img
-                  src={coupon.image_url}
+                  src={coupon.generated_image_url}
                   alt={coupon.title}
                   className="h-full w-full object-cover"
                 />

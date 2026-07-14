@@ -12,7 +12,7 @@ export default async function DashboardPage() {
   
   const { data: coupons } = await supabase
     .from("coupons")
-    .select("id, title, business_name, coupon_code, discount_percentage, image_url, is_public, views, shares_count, created_at")
+    .select("id, title, business_name, coupon_code, discount_percentage, generated_image_url, is_public, views, shares_count, created_at")
     .eq("user_id", user?.id)
     .order("created_at", { ascending: false })
 

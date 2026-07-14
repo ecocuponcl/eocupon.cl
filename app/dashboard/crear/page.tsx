@@ -109,7 +109,7 @@ export default function CreateCouponPage() {
           discount_percentage: parseInt(discountPercentage, 10) || 0,
           coupon_code: couponCode,
           business_name: businessName,
-          image_url: baseImageUrl,
+          generated_image_url: baseImageUrl,
           logo_url: logoUrl,
           is_public: isPublic,
         })
@@ -127,7 +127,7 @@ export default function CreateCouponPage() {
         logoUrl || "",
         `${SITE_URL}/cupon/${data.id}`,
       )
-      await supabase.from("coupons").update({ image_url: finalUrl }).eq("id", data.id)
+      await supabase.from("coupons").update({ generated_image_url: finalUrl }).eq("id", data.id)
 
       setSavedCouponId(data.id)
       setFinalImageUrl(finalUrl)

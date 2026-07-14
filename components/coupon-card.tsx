@@ -18,7 +18,7 @@ interface Coupon {
   discount_percentage: number
   coupon_code: string
   business_name: string
-  image_url: string | null
+  generated_image_url: string | null
   is_public: boolean
   views: number
   shares_count: number
@@ -48,10 +48,10 @@ export function CouponCard({ coupon, showActions, onDelete, onTogglePublic }: Co
   }
 
   const handleDownload = async () => {
-    if (!coupon.image_url) return
+    if (!coupon.generated_image_url) return
     
     try {
-      const response = await fetch(coupon.image_url)
+      const response = await fetch(coupon.generated_image_url)
       const blob = await response.blob()
       const url = URL.createObjectURL(blob)
       const a = document.createElement("a")
@@ -69,10 +69,10 @@ export function CouponCard({ coupon, showActions, onDelete, onTogglePublic }: Co
   return (
     <Card className="group overflow-hidden border-border transition-shadow hover:shadow-lg">
       <div className="relative aspect-[4/3] overflow-hidden bg-muted">
-        {coupon.image_url ? (
+        {coupon.generated_image_url ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={coupon.image_url}
+            src={coupon.generated_image_url}
             alt={coupon.title}
             className="absolute inset-0 h-full w-full object-cover transition-transform group-hover:scale-105"
           />
