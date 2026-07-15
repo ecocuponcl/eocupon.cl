@@ -4,7 +4,8 @@ import { Leaf } from "lucide-react"
 
 export const metadata: Metadata = {
   title: "Condiciones del Servicio - EcoCupon",
-  description: "Términos y condiciones de uso de EcoCupon.",
+  description:
+    "Términos y condiciones de uso de EcoCupon.cl, conforme a la legislación chilena.",
 }
 
 export default function CondicionesPage() {
@@ -31,32 +32,34 @@ export default function CondicionesPage() {
           <section className="space-y-3">
             <h2 className="text-xl font-semibold text-foreground">1. Aceptación</h2>
             <p>
-              Al registrarte y usar EcoCupon (la &quot;App&quot;) aceptas estas Condiciones del
-              Servicio. Si no estás de acuerdo con alguna, por favor no utilices el servicio.
+              Al registrarte y usar EcoCupon.cl (en adelante, la &quot;App&quot;) aceptas estas
+              Condiciones del Servicio. Si no estás de acuerdo con alguna de ellas, por favor no
+              utilices el servicio.
             </p>
           </section>
 
           <section className="space-y-3">
             <h2 className="text-xl font-semibold text-foreground">2. Descripción del servicio</h2>
             <p>
-              EcoCupon permite generar cupones de descuento personalizados con inteligencia
+              EcoCupon.cl permite generar cupones de descuento personalizados con inteligencia
               artificial, subir un logo para identificar tu negocio, compartirlos por WhatsApp y
               publicarlos en la cuponera pública. El servicio se proporciona &quot;tal cual&quot; y
-              podemos modificarlo o suspenderlo.
+              podemos modificarlo, suspenderlo o interrumpirlo.
             </p>
           </section>
 
           <section className="space-y-3">
-            <h2 className="text-xl font-semibold text-foreground">3. Cuentas</h2>
+            <h2 className="text-xl font-semibold text-foreground">3. Cuentas y autenticación</h2>
             <ul className="list-disc space-y-2 pl-5">
               <li>Eres responsable de mantener la confidencialidad de tu contraseña.</li>
               <li>
-                Si inicias sesión con Google, aceptas que el acceso se gestione según las
-                condiciones de ese proveedor.
+                Si inicias sesión con Google u otro proveedor, aceptas que el acceso se gestione
+                según las condiciones de ese proveedor y la{" "}
+                <strong>Ley N° 19.628</strong> sobre Protección de la Vida Privada.
               </li>
               <li>
-                Nos reservamos el derecho de suspender cuentas que infrinjan estas condiciones o
-                la ley.
+                Podemos suspender cuentas que infrinjan estas condiciones, la ley chilena o derechos
+                de terceros.
               </li>
             </ul>
           </section>
@@ -65,31 +68,56 @@ export default function CondicionesPage() {
             <h2 className="text-xl font-semibold text-foreground">4. Contenido del usuario</h2>
             <p>
               Eres responsable del contenido de tus cupones y de los logos que subes. No publiques
-              contenido ilegal, infractor de derechos de terceros o fraudulento. Podemos retirar
-              contenido que vulnere lo anterior.
+              contenido ilícito, infractor de derechos de propiedad intelectual, discriminatorio o
+              fraudulento. Podemos retirar contenido que vulnere lo anterior.
             </p>
           </section>
 
           <section className="space-y-3">
             <h2 className="text-xl font-semibold text-foreground">5. Planes y pagos</h2>
             <p>
-              Las funciones de pago se regirán por el plan contratado. Los precios y la facturación
-              se informan en la sección de precios. Salvo que se indique lo contrario, las tarifas
-              no son reembolsables.
+              Las funciones de pago se regirán por el plan contratado en la sección de precios. Los
+              precios y la facturación se informan al momento de la contratación. Salvo que se
+              indique lo contrario, las tarifas no son reembolsables.
             </p>
           </section>
 
           <section className="space-y-3">
-            <h2 className="text-xl font-semibold text-foreground">6. Limitación de responsabilidad</h2>
+            <h2 className="text-xl font-semibold text-foreground">
+              6. Protección de datos personales
+            </h2>
+            <p>
+              El tratamiento de tus datos personales se rige por nuestra{" "}
+              <Link href="/privacidad" className="font-medium text-primary hover:underline">
+                Política de Privacidad
+              </Link>{" "}
+              y por la <strong>Ley N° 19.628</strong>. Al usar la App, consientes el tratamiento
+              descrito en dicha política.
+            </p>
+          </section>
+
+          <section className="space-y-3">
+            <h2 className="text-xl font-semibold text-foreground">
+              7. Limitación de responsabilidad
+            </h2>
             <p>
               La App se ofrece sin garantías de disponibilidad ininterrumpida. En la medida
-              permitida por la ley, EcoCupon no será responsable por daños indirectos derivados del
-              uso del servicio.
+              permitida por la ley chilena, EcoCupon.cl no será responsable por daños indirectos,
+              lucro cesante o pérdidas derivadas del uso del servicio.
             </p>
           </section>
 
           <section className="space-y-3">
-            <h2 className="text-xl font-semibold text-foreground">7. Contacto</h2>
+            <h2 className="text-xl font-semibold text-foreground">8. Legislación aplicable</h2>
+            <p>
+              Estas condiciones se interpretan y rigen conforme a las leyes de la República de
+              Chile. Para cualquier controversia, las partes se someten a los tribunales competentes
+              de acuerdo a la ley chilena.
+            </p>
+          </section>
+
+          <section className="space-y-3">
+            <h2 className="text-xl font-semibold text-foreground">9. Contacto</h2>
             <p>
               Para dudas sobre estas condiciones escríbenos a{" "}
               <a
@@ -104,10 +132,7 @@ export default function CondicionesPage() {
         </div>
 
         <div className="mt-12">
-          <Link
-            href="/"
-            className="text-sm font-medium text-primary hover:underline"
-          >
+          <Link href="/" className="text-sm font-medium text-primary hover:underline">
             ← Volver al inicio
           </Link>
         </div>
