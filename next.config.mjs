@@ -34,7 +34,7 @@ const nextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              "img-src 'self' data: blob:",
+              `img-src 'self' data: blob: ${SUPABASE_URL}`,
               "style-src 'self' 'unsafe-inline'",
               `script-src 'self' 'unsafe-inline' https://va.vercel-analytics.com${CSP_SCRIPT_DEV}`,
               "font-src 'self' data:",

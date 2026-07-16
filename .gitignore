@@ -16,3 +16,13 @@ node_modules
 .DS_Store
 .vercel
 .env*
+
+# Build artifacts
+next-env.d.ts
+tsconfig.tsbuildinfo
+
+# Local tooling / agent config (not part of the product)
+.claude/
+.agents/
+graphify-out/
+check-logo-upload.mjs
