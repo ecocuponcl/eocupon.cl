@@ -51,7 +51,7 @@ const plans = [
       "Logo y branding custom",
     ],
     cta: "Contactar Ventas",
-    href: "https://wa.me/56912345678?text=Hola,%20me%20interesa%20el%20plan%20Business%20de%20EcoCupon",
+    href: "https://wa.me/56979540471?text=Hola,%20me%20interesa%20el%20plan%20Business%20de%20EcoCupon",
     popular: false,
   },
 ]

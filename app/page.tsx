@@ -296,9 +296,9 @@ export default function LandingPage() {
               <span className="font-semibold text-foreground">EcoCupon</span>
             </div>
             <div className="flex gap-6 text-sm text-muted-foreground">
-              <Link href="https://www.ecocupon.cl/pagos" className="hover:text-foreground">Pagos</Link>
-              <Link href="#" className="hover:text-foreground">Términos</Link>
-              <Link href="#" className="hover:text-foreground">Privacidad</Link>
+              <Link href="/precios" className="hover:text-foreground">Precios</Link>
+              <Link href="/condiciones" className="hover:text-foreground">Términos</Link>
+              <Link href="/privacidad" className="hover:text-foreground">Privacidad</Link>
               <Link href="#" className="hover:text-foreground">Contacto</Link>
             </div>
             <p className="text-sm text-muted-foreground">

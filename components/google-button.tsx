@@ -3,8 +3,7 @@
 import { useState } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.ecocupon.cl"
+import { SITE_URL } from "@/lib/site-url"
 
 function GoogleIcon() {
   return (

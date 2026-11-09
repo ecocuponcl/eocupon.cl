@@ -27,9 +27,23 @@ const nextConfig = {
             key: "Permissions-Policy",
             value: "camera=(), microphone=(), geolocation=()",
           },
+          {
+            key: "Strict-Transport-Security",
+            // Sin `includeSubDomains`: si algún subdominio no sirve HTTPS,
+            // quedaría inaccesible para los navegadores que ya vieron la cabecera.
+            value: "max-age=63072000",
+          },
           // CSP conservadora: bloquea scripts de terceros no autorizados.
-          // 'unsafe-inline' en scripts se mantiene para no romper el bootstrap
-          // de Next en producción; restringirlo vía nonces es la mejora siguiente.
+          //
+          // 'unsafe-inline' en scripts se mantiene a propósito. La alternativa
+          // (nonce + 'strict-dynamic') se implementó y se DESCARTÓ con
+          // evidencia: `/`, `/precios`, `/auth/*`, `/condiciones` y
+          // `/privacidad` se prerenderizan como estáticas, así que su HTML se
+          // genera en el build sin nonce; el proxy sí mandaría un nonce en la
+          // cabecera y, como 'strict-dynamic' hace que el navegador ignore la
+          // lista de hosts, esos scripts quedarían bloqueados. Para usar nonce
+          // habría que forzar esas rutas a dinámicas (perdiendo el prerender) o
+          // usar hashes. Ver docs/designs/2026-11-09-egm-analisis-estructural.md.
           {
             key: "Content-Security-Policy",
             value: [
@@ -42,6 +56,7 @@ const nextConfig = {
               "frame-ancestors 'self'",
               "base-uri 'self'",
               "form-action 'self'",
+              "object-src 'none'",
             ].join("; "),
           },
         ],

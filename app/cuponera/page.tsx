@@ -3,22 +3,34 @@ import { createClient } from "@/lib/supabase/server"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Empty, EmptyHeader, EmptyTitle, EmptyDescription, EmptyMedia, EmptyContent } from "@/components/ui/empty"
-import { Leaf, Ticket, Search } from "lucide-react"
+import { AlertCircle, Leaf, Ticket, Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 
 export default async function CuponeraPage() {
   const supabase = await createClient()
 
   // Fetch public coupons
-  const { data: coupons } = await supabase
+  const { data: coupons, error: couponsError } = await supabase
     .from("coupons")
     .select("id, title, business_name, coupon_code, discount_percentage, generated_image_url, is_public, views, shares_count, created_at")
     .eq("is_public", true)
     .order("created_at", { ascending: false })
     .limit(50)
 
+  if (couponsError) {
+    console.error("Error al cargar la cuponera:", couponsError.message)
+  }
+
   return (
     <div className="min-h-screen bg-background">
+      {couponsError && (
+        <div className="container mx-auto px-4 pt-6">
+          <div className="flex items-center gap-2 rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
+            <AlertCircle className="h-4 w-4" />
+            No pudimos cargar la cuponera. Intenta nuevamente en unos segundos.
+          </div>
+        </div>
+      )}
       {/* Header */}
       <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">

@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/server"
+import { createAdminClient, warnIfNoServiceRole } from "@/lib/supabase/admin"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Leaf, Copy, MessageCircle, ArrowLeft } from "lucide-react"
@@ -14,24 +15,50 @@ interface PageProps {
   params: Promise<{ id: string }>
 }
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
 export default async function CouponPage({ params }: PageProps) {
   const { id } = await params
   const supabase = await createClient()
 
-  // Fetch coupon (RLS: ANYONE puede hacer SELECT por link; la cuponera filtra
-  // is_public = true, pero el link directo de un cupón "privado" igual funciona).
-  const { data: coupon, error } = await supabase
-    .from("coupons")
-    .select("id, title, description, business_name, discount_percentage, coupon_code, generated_image_url, is_public")
-    .eq("id", id)
-    .single()
-
-  if (error || !coupon) {
+  if (!UUID_RE.test(id)) {
     notFound()
   }
 
-  // Incrementa vistas vía RPC SECURITY DEFINER (evita abrir UPDATE a anon)
-  await supabase.rpc("increment_views", { coupon_id: id })
+  // El enlace directo debe funcionar también para cupones privados (es el
+  // producto: compartes el link con quien quieras). Antes eso obligaba a dejar
+  // la policy de SELECT en `using (true)`, que además permitía LISTAR todos los
+  // cupones. La migración 0010 la acota, así que la lectura por UUID se hace
+  // aquí con service role: el UUID actúa como capacidad y no hay enumeración.
+  // Si no hay service key configurada, se cae al cliente normal (RLS).
+  const reader = createAdminClient()
+
+  if (!reader) {
+    warnIfNoServiceRole("cupon/[id]")
+  }
+
+  const { data: coupon, error } = await (reader ?? supabase)
+    .from("coupons")
+    .select("id, title, description, business_name, discount_percentage, coupon_code, generated_image_url, is_public")
+    .eq("id", id)
+    .maybeSingle()
+
+  if (error) {
+    // PGRST116 = sin filas; cualquier otro código sí es un fallo real.
+    console.error("No se pudo leer el cupón:", error.message)
+  }
+
+  if (!coupon) {
+    notFound()
+  }
+
+  // Incrementa vistas vía RPC SECURITY DEFINER (evita abrir UPDATE a anon).
+  // Un fallo aquí no debe impedir ver el cupón.
+  const { error: viewError } = await supabase.rpc("increment_views", { coupon_id: id })
+
+  if (viewError) {
+    console.error("No se pudo incrementar las vistas:", viewError.message)
+  }
 
   return (
     <div className="min-h-screen bg-background">

@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { FieldGroup, Field, FieldLabel } from "@/components/ui/field"
 import { Spinner } from "@/components/ui/spinner"
 import { Leaf, AlertCircle, Mail } from "lucide-react"
+import { traducirErrorAuth } from "@/lib/auth-errors"
 
 export default function RecoverPage() {
   const [email, setEmail] = useState("")
@@ -55,7 +56,7 @@ export default function RecoverPage() {
     })
 
     if (error) {
-      setError(error.message)
+      setError(traducirErrorAuth(error.message))
       setLoading(false)
       return
     }

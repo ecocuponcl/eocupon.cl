@@ -127,7 +127,16 @@ export default function CreateCouponPage() {
         logoUrl || "",
         `${SITE_URL}/cupon/${data.id}`,
       )
-      await supabase.from("coupons").update({ generated_image_url: finalUrl }).eq("id", data.id)
+      // El cupón ya existe; si este update falla solo se pierde la URL de la
+      // imagen generada, así que no abortamos el guardado.
+      const { error: imageError } = await supabase
+        .from("coupons")
+        .update({ generated_image_url: finalUrl })
+        .eq("id", data.id)
+
+      if (imageError) {
+        console.error("No se pudo persistir la imagen del cupón:", imageError.message)
+      }
 
       setSavedCouponId(data.id)
       setFinalImageUrl(finalUrl)
@@ -280,7 +289,7 @@ export default function CreateCouponPage() {
                     ) : null}
                     <Input
                       type="file"
-                      accept="image/*"
+                      accept="image/png,image/jpeg,image/webp,image/gif,image/avif"
                       onChange={handleLogoChange}
                       disabled={uploading}
                     />
