@@ -25,7 +25,7 @@ proyectos ni del análisis anterior.
 | Tests / CI | NO EXISTEN | NO EXISTEN | sigue sin haber suite |
 | Rutas y render | FUNCIONA | FUNCIONA | 8 rutas probadas, `/dashboard` redirige |
 | Login email/contraseña | FUNCIONA | FUNCIONA | error real de Supabase, 400 verificado |
-| Google OAuth | **FALLA** | **FALLA** | `redirect_uri_mismatch` (requiere Google Cloud) |
+| Google OAuth | **FALLA** | **RESUELTO 23:24** | `redirect_uri_mismatch` → luego `invalid_client`; faltaba el URI en el cliente y el Client Secret correcto. Verificado en logs y en `auth.identities` |
 | RLS `coupons` | FALLA (ALTA) | FALLA (ALTA) | policy `using (true)`; migración lista, sin aplicar |
 | `profiles` RLS | no reproducible | no reproducible | migración lista, sin aplicar |
 | Drift migraciones | FALLA | FALLA | 0003/0004/0007/0008/0009 sin registrar |
