@@ -1,0 +1,7 @@
+# pnpm 11 bloquea los scripts de build por defecto. `sharp` los necesita para
+# compilar su binario nativo (lo usa next/image); sin esto, `pnpm install`,
+# `pnpm dev` y `pnpm lint` abortan con ERR_PNPM_IGNORED_BUILDS.
+# Este archivo también fija la raíz del workspace, silenciando el aviso de
+# Turbopack por lockfiles múltiples en el directorio padre.
+allowBuilds:
+  sharp: true
