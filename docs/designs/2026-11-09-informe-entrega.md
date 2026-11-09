@@ -53,7 +53,7 @@ helpers y README), `lib/auth-errors.ts`, `lib/supabase/admin.ts`,
 | Suite E2E | `pnpm test:e2e` | **9 pasan, 12 saltan, 0 fallan** (1.1 min) |
 | Build de producción servido | `next start -p 3100` | CSP y HSTS correctas; JS ejecuta en páginas estáticas; 0 violaciones de CSP |
 | Login inválido (prod) | Playwright | mensaje en español + `400` real de Supabase |
-| Login Google | Playwright | **falla**: `redirect_uri_mismatch` |
+| Login Google | Playwright + logs | **RESUELTO 23:24** — el flujo llega a Google y completa el canje (`action: login`, `provider: google`, 302) |
 | Supabase | MCP + SQL de solo lectura | esquema, policies, conteos y advisors |
 
 Las 12 pruebas saltadas requieren cuenta autorizada o escribir datos; están en
@@ -84,7 +84,11 @@ No hay tests unitarios ni CI: no existían y no se inventaron.
 - `profiles` con RLS solo en la base, no reproducible desde el repo.
 - `user_exists(text)`: enumeración de correos abierta a `anon`.
 - `increment_views` / `increment_shares` sin límite: métricas inflables.
-- Login con Google roto por configuración externa (Google Cloud).
+- ~~Login con Google roto por configuración externa (Google Cloud).~~ **Resuelto
+  2026-11-09 23:24**: faltaba el `redirect_uri` en el cliente OAuth y después el
+  Client Secret correcto. Verificado por log de auth (`provider: google`, 302) y
+  por `auth.identities` (1 identidad `google`). Queda pendiente **rotar** el
+  secreto, que se compartió por chat.
 - 42 dependencias atrasadas: 32 radix (trivial) y 8 majors que exigen migración.
 - 39 de 55 primitivas `components/ui` sin usar, con 10 dependencias asociadas.
 - `/auth/verificar` huérfana; copy "con IA" sin IA; CSP con `'unsafe-inline'`
