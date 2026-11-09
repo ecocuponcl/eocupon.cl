@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { CouponCard } from "@/components/coupon-card"
 import { Button } from "@/components/ui/button"
-import { Plus, Search, Filter } from "lucide-react"
+import { AlertCircle, Plus, Search, Filter } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import Link from "next/link"
 
@@ -25,12 +25,18 @@ export default function MisCuponesPage() {
   const [coupons, setCoupons] = useState<Coupon[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
-  const supabase = createClient()
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    const supabase = createClient()
+
     async function fetchCoupons() {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
+      if (!user) {
+        // Sin sesión no hay nada que cargar; sin esto el spinner no se apaga.
+        setLoading(false)
+        return
+      }
 
       const { data, error } = await supabase
         .from("coupons")
@@ -38,14 +44,16 @@ export default function MisCuponesPage() {
         .eq("user_id", user.id)
         .order("created_at", { ascending: false })
 
-      if (!error && data) {
+      if (error) {
+        setError("No pudimos cargar tus cupones. Intenta recargar la página.")
+      } else if (data) {
         setCoupons(data)
       }
       setLoading(false)
     }
 
     fetchCoupons()
-  }, [supabase])
+  }, [])
 
   const filteredCoupons = coupons.filter(coupon =>
     coupon.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -54,27 +62,35 @@ export default function MisCuponesPage() {
   )
 
   const handleDelete = async (id: string) => {
+    setError(null)
+    const supabase = createClient()
     const { error } = await supabase
       .from("coupons")
       .delete()
       .eq("id", id)
 
-    if (!error) {
-      setCoupons(coupons.filter(c => c.id !== id))
+    if (error) {
+      setError("No se pudo eliminar el cupón.")
+      return
     }
+    setCoupons(coupons.filter(c => c.id !== id))
   }
 
   const handleTogglePublic = async (id: string, isPublic: boolean) => {
+    setError(null)
+    const supabase = createClient()
     const { error } = await supabase
       .from("coupons")
       .update({ is_public: !isPublic })
       .eq("id", id)
 
-    if (!error) {
-      setCoupons(coupons.map(c => 
-        c.id === id ? { ...c, is_public: !isPublic } : c
-      ))
+    if (error) {
+      setError("No se pudo cambiar la visibilidad del cupón.")
+      return
     }
+    setCoupons(coupons.map(c =>
+      c.id === id ? { ...c, is_public: !isPublic } : c
+    ))
   }
 
   if (loading) {
@@ -87,6 +103,12 @@ export default function MisCuponesPage() {
 
   return (
     <div className="space-y-6">
+      {error && (
+        <div className="flex items-center gap-2 rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
+          <AlertCircle className="h-4 w-4" />
+          {error}
+        </div>
+      )}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Mis Cupones</h1>

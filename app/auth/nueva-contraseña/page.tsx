@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { FieldGroup, Field, FieldLabel } from "@/components/ui/field"
+import { traducirErrorAuth } from "@/lib/auth-errors"
 import { Spinner } from "@/components/ui/spinner"
 import { Leaf, AlertCircle, CheckCircle } from "lucide-react"
 
@@ -22,9 +23,11 @@ export default function NewPasswordPage() {
 
   useEffect(() => {
     const supabase = createClient()
-    supabase.auth.getUser().then(({ data }) => {
-      if (!data.user) setNoSession(true)
-    })
+    supabase.auth.getUser()
+      .then(({ data, error }) => {
+        if (error || !data.user) setNoSession(true)
+      })
+      .catch(() => setNoSession(true))
   }, [])
 
   const handleUpdate = async (e: React.FormEvent) => {
@@ -45,7 +48,7 @@ export default function NewPasswordPage() {
     const { error } = await supabase.auth.updateUser({ password })
 
     if (error) {
-      setError(error.message)
+      setError(traducirErrorAuth(error.message))
       setLoading(false)
       return
     }

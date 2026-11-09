@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { FieldGroup, Field, FieldLabel } from "@/components/ui/field"
 import { Spinner } from "@/components/ui/spinner"
 import { GoogleButton } from "@/components/google-button"
+import { traducirErrorAuth } from "@/lib/auth-errors"
 import { Leaf, AlertCircle, CheckCircle } from "lucide-react"
 
 export default function RegisterPage() {
@@ -40,7 +41,7 @@ export default function RegisterPage() {
     })
 
     if (error) {
-      setError(error.message)
+      setError(traducirErrorAuth(error.message))
       setLoading(false)
       return
     }
@@ -134,7 +135,7 @@ export default function RegisterPage() {
             <span className="text-xs text-muted-foreground">o</span>
             <div className="h-px flex-1 bg-border" />
           </div>
-          <GoogleButton onError={setError} />
+          <GoogleButton onError={(msg) => setError(traducirErrorAuth(msg))} />
 
           <p className="mt-6 text-center text-sm text-muted-foreground">
             ¿Ya tienes una cuenta?{" "}

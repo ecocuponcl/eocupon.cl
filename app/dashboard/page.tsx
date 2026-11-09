@@ -1,20 +1,31 @@
 import Link from "next/link"
+import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Empty, EmptyHeader, EmptyTitle, EmptyDescription, EmptyMedia, EmptyContent } from "@/components/ui/empty"
-import { Plus, Ticket, Eye, Share2 } from "lucide-react"
+import { AlertCircle, Plus, Ticket, Eye, Share2 } from "lucide-react"
 import { CouponCard } from "@/components/coupon-card"
 
 export default async function DashboardPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  
-  const { data: coupons } = await supabase
+
+  // El layout ya redirige, pero esta página se ejecuta igual y sin esto la
+  // consulta viaja con user_id = undefined (error de sintaxis UUID en Postgres).
+  if (!user) {
+    redirect("/auth/login")
+  }
+
+  const { data: coupons, error: couponsError } = await supabase
     .from("coupons")
     .select("id, title, business_name, coupon_code, discount_percentage, generated_image_url, is_public, views, shares_count, created_at")
-    .eq("user_id", user?.id)
+    .eq("user_id", user.id)
     .order("created_at", { ascending: false })
+
+  if (couponsError) {
+    console.error("Error al cargar cupones:", couponsError.message)
+  }
 
   const stats = {
     total: coupons?.length || 0,
@@ -24,6 +35,12 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-8">
+      {couponsError && (
+        <div className="flex items-center gap-2 rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
+          <AlertCircle className="h-4 w-4" />
+          No pudimos cargar tus cupones. Recarga la página para intentarlo de nuevo.
+        </div>
+      )}
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Mis Cupones</h1>

@@ -23,7 +23,12 @@ export function CouponShareButtons({ couponId, title, code, discount }: CouponSh
 
   const incrementShares = async () => {
     const supabase = createClient()
-    await supabase.rpc("increment_shares", { coupon_id: couponId })
+    const { error } = await supabase.rpc("increment_shares", { coupon_id: couponId })
+
+    // El contador es métrica secundaria: si falla, el usuario ya compartió igual.
+    if (error) {
+      console.error("No se pudo registrar el compartido:", error.message)
+    }
   }
 
   const handleWhatsApp = () => {

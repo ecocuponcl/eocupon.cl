@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { FieldGroup, Field, FieldLabel } from "@/components/ui/field"
 import { Spinner } from "@/components/ui/spinner"
 import { GoogleButton } from "@/components/google-button"
+import { traducirErrorAuth } from "@/lib/auth-errors"
 import { Leaf, AlertCircle } from "lucide-react"
 
 export default function LoginPage() {
@@ -31,7 +32,7 @@ export default function LoginPage() {
     })
 
     if (error) {
-      setError(error.message)
+      setError(traducirErrorAuth(error.message))
       setLoading(false)
       return
     }
@@ -90,7 +91,7 @@ export default function LoginPage() {
             <span className="text-xs text-muted-foreground">o</span>
             <div className="h-px flex-1 bg-border" />
           </div>
-          <GoogleButton onError={setError} />
+          <GoogleButton onError={(msg) => setError(traducirErrorAuth(msg))} />
 
           <div className="mt-4 text-center">
             <Link
