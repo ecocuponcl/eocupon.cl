@@ -136,8 +136,11 @@ export default function RecoverPage() {
           <form onSubmit={handleRecover}>
             <FieldGroup>
               <Field>
-                <FieldLabel>Correo electrónico</FieldLabel>
+                <FieldLabel htmlFor="email">Correo electrónico</FieldLabel>
                 <Input
+                  id="email"
+                  name="email"
+                  autoComplete="email"
                   type="email"
                   placeholder="tu@email.com"
                   value={email}

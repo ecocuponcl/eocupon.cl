@@ -48,6 +48,9 @@ export default function LoginPage() {
           <Link href="/" className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary">
             <Leaf className="h-7 w-7 text-primary-foreground" />
           </Link>
+          {/* Encabezado real para lectores de pantalla y para el documento:
+              el título visual es un div, así que la página no tenía ningún h1. */}
+          <h1 className="sr-only">Iniciar sesión en EcoCupon</h1>
           <CardTitle className="text-2xl">Bienvenido de vuelta</CardTitle>
           <CardDescription>Ingresa tus credenciales para acceder a tu cuenta</CardDescription>
         </CardHeader>
@@ -55,9 +58,12 @@ export default function LoginPage() {
           <form onSubmit={handleLogin}>
             <FieldGroup>
               <Field>
-                <FieldLabel>Correo electrónico</FieldLabel>
+                <FieldLabel htmlFor="email">Correo electrónico</FieldLabel>
                 <Input
+                  id="email"
+                  name="email"
                   type="email"
+                  autoComplete="email"
                   placeholder="tu@email.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -65,9 +71,12 @@ export default function LoginPage() {
                 />
               </Field>
               <Field>
-                <FieldLabel>Contraseña</FieldLabel>
+                <FieldLabel htmlFor="password">Contraseña</FieldLabel>
                 <Input
+                  id="password"
+                  name="password"
                   type="password"
+                  autoComplete="current-password"
                   placeholder="********"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}

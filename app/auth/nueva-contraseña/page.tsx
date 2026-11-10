@@ -114,8 +114,11 @@ export default function NewPasswordPage() {
           <form onSubmit={handleUpdate}>
             <FieldGroup>
               <Field>
-                <FieldLabel>Nueva contraseña</FieldLabel>
+                <FieldLabel htmlFor="new-password">Nueva contraseña</FieldLabel>
                 <Input
+                  id="new-password"
+                  name="new-password"
+                  autoComplete="new-password"
                   type="password"
                   placeholder="Mínimo 6 caracteres"
                   value={password}
@@ -125,8 +128,11 @@ export default function NewPasswordPage() {
                 />
               </Field>
               <Field>
-                <FieldLabel>Confirmar contraseña</FieldLabel>
+                <FieldLabel htmlFor="confirm-password">Confirmar contraseña</FieldLabel>
                 <Input
+                  id="confirm-password"
+                  name="confirm-password"
+                  autoComplete="new-password"
                   type="password"
                   placeholder="Repite la contraseña"
                   value={confirm}
