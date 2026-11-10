@@ -88,8 +88,11 @@ export default function RegisterPage() {
           <form onSubmit={handleRegister}>
             <FieldGroup>
               <Field>
-                <FieldLabel>Nombre de tu negocio</FieldLabel>
+                <FieldLabel htmlFor="business-name">Nombre de tu negocio</FieldLabel>
                 <Input
+                  id="business-name"
+                  name="organization"
+                  autoComplete="organization"
                   type="text"
                   placeholder="Mi Tienda"
                   value={businessName}
@@ -98,8 +101,11 @@ export default function RegisterPage() {
                 />
               </Field>
               <Field>
-                <FieldLabel>Correo electrónico</FieldLabel>
+                <FieldLabel htmlFor="email">Correo electrónico</FieldLabel>
                 <Input
+                  id="email"
+                  name="email"
+                  autoComplete="email"
                   type="email"
                   placeholder="tu@email.com"
                   value={email}
@@ -108,8 +114,11 @@ export default function RegisterPage() {
                 />
               </Field>
               <Field>
-                <FieldLabel>Contraseña</FieldLabel>
+                <FieldLabel htmlFor="password">Contraseña</FieldLabel>
                 <Input
+                  id="password"
+                  name="password"
+                  autoComplete="new-password"
                   type="password"
                   placeholder="Mínimo 6 caracteres"
                   value={password}

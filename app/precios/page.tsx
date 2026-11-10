@@ -69,15 +69,15 @@ export default function PreciosPage() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="container mx-auto flex items-center justify-between gap-2 px-3 py-4 sm:px-4">
           <Link href="/" className="flex items-center gap-2">
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
               <Leaf className="h-5 w-5 text-primary-foreground" />
             </div>
-            <span className="font-bold text-xl text-foreground">EcoCupon</span>
+            <span className="hidden font-bold text-xl text-foreground sm:inline">EcoCupon</span>
           </Link>
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" asChild>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" asChild className="hidden sm:inline-flex">
               <Link href="/cuponera">Cuponera</Link>
             </Button>
             <Button variant="outline" asChild>

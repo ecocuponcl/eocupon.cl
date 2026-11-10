@@ -16,12 +16,14 @@ export default function LandingPage() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto flex h-16 items-center justify-between px-4">
+        <div className="container mx-auto flex h-16 items-center justify-between gap-2 px-3 sm:px-4">
           <Link href="/" className="flex items-center gap-2">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary">
               <Leaf className="h-6 w-6 text-primary-foreground" />
             </div>
-            <span className="text-xl font-bold text-foreground">EcoCupon</span>
+            {/* La marca se oculta en pantallas muy estrechas: con el texto, el
+                logo y los dos botones no caben en 375 px y la página desbordaba. */}
+            <span className="hidden text-xl font-bold text-foreground sm:inline">EcoCupon</span>
           </Link>
           <nav className="hidden items-center gap-6 md:flex">
             <Link href="#como-funciona" className="text-sm font-medium text-muted-foreground hover:text-foreground">
@@ -34,7 +36,7 @@ export default function LandingPage() {
               Precios
             </Link>
           </nav>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <Link href="/auth/login">
               <Button variant="ghost" size="sm">Iniciar sesión</Button>
             </Link>
