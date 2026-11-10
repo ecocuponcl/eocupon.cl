@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/server"
 import { Button } from "@/components/ui/button"
@@ -5,6 +6,13 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Empty, EmptyHeader, EmptyTitle, EmptyDescription, EmptyMedia, EmptyContent } from "@/components/ui/empty"
 import { AlertCircle, Leaf, Ticket, Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
+
+export const metadata: Metadata = {
+  title: "Cuponera",
+  description:
+    "Cupones de descuento publicados por comercios chilenos. Filtra por negocio y aprovecha las ofertas vigentes.",
+  alternates: { canonical: "/cuponera" },
+}
 
 export default async function CuponeraPage() {
   const supabase = await createClient()

@@ -3,7 +3,8 @@ import type { Metadata } from "next"
 import { Leaf } from "lucide-react"
 
 export const metadata: Metadata = {
-  title: "Política de Privacidad - EcoCupon",
+  // Sin la marca en el título: la plantilla del layout ya añade "· EcoCupon".
+  title: "Política de Privacidad",
   description:
     "Cómo EcoCupon.cl recopila, usa y protege tus datos personales según la Ley N° 19.628 de Protección de la Vida Privada de Chile.",
 }

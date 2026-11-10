@@ -3,7 +3,7 @@ import type { Metadata } from "next"
 import { Leaf } from "lucide-react"
 
 export const metadata: Metadata = {
-  title: "Condiciones del Servicio - EcoCupon",
+  title: "Condiciones del Servicio",
   description:
     "Términos y condiciones de uso de EcoCupon.cl, conforme a la legislación chilena.",
 }

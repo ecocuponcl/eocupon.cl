@@ -1,7 +1,15 @@
+import type { Metadata } from "next"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Leaf, Sparkles, Share2, Download, Zap, Shield, Users } from "lucide-react"
+
+export const metadata: Metadata = {
+  title: "Cupones de descuento para tu negocio",
+  description:
+    "Crea cupones de descuento para tu comercio, compártelos por WhatsApp y publícalos en la cuponera de EcoCupon. Gratis para empezar.",
+  alternates: { canonical: "/" },
+}
 
 export default function LandingPage() {
   return (
