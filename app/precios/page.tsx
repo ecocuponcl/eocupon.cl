@@ -1,7 +1,15 @@
+import type { Metadata } from "next"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Check, Leaf, Sparkles, Crown } from "lucide-react"
+
+export const metadata: Metadata = {
+  title: "Planes y precios",
+  description:
+    "Planes de EcoCupon para comercios: empieza gratis y sube a Pro o Business cuando lo necesites.",
+  alternates: { canonical: "/precios" },
+}
 
 const plans = [
   {

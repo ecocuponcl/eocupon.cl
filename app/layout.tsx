@@ -1,15 +1,27 @@
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
+import { SITE_URL } from '@/lib/site-url'
 import './globals.css'
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist-sans" });
 const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono" });
 
 export const metadata: Metadata = {
-  title: 'EcoCupon - Genera cupones de descuento con IA',
+  // Necesario para que `alternates.canonical` relativo se resuelva a una URL absoluta.
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: 'EcoCupon - Genera cupones de descuento con IA',
+    template: '%s · EcoCupon',
+  },
   description: 'Crea cupones de descuento personalizados con inteligencia artificial. Comparte por WhatsApp y publica en la cuponera.',
   generator: 'ecocupon.cl',
+  openGraph: {
+    type: 'website',
+    locale: 'es_CL',
+    siteName: 'EcoCupon',
+    url: SITE_URL,
+  },
   icons: {
     icon: [
       {
