@@ -25,10 +25,10 @@ posterior, ya en `main` y ya publicado.
 | §7.2 desbordamiento móvil | **Resuelto** en `main` y desplegado; ya no se reproduce |
 | §7.4 buscador inerte de la cuponera | **Resuelto**: filtra en vivo |
 | §5.7 error de hidratación #418 | **Resuelto**: causa localizada y corregida |
-| §3.1 de `…revision-base-datos.md`, cupones privados legibles por `anon` | **Cerrado**: se aplicó `0010` y se verificó ejecutando como `anon` (de 3 privados expuestos a 0) |
+| §3.1 de `…revision-base-datos.md`, cupones privados legibles por `anon` en `2026-11-11-ecocupon-revision-base-datos.md` | **Cerrado**: se aplicó `0010` y se verificó ejecutando como `anon` (de 3 privados expuestos a 0) |
 
 **Lo que sigue vigente sin cambios:** la ausencia de demanda medida (§1), la
-pregunta sin responder sobre si alguna vez se intentó vender (§1 y §11.1), las
+pregunta sin responder sobre si alguna vez se intentó vender (§1 y §11.4), las
 promesas que quedan en `/precios` sobre Business, y todo lo que depende de datos
 que no tengo (login, dashboard, subida de logo).
 
@@ -51,8 +51,16 @@ recomendada queda como hipótesis hasta que exista un comprador.
 
 ## 1. Resumen ejecutivo
 
+> **Aviso de vigencia.** Este resumen describe el estado **medido el 2026-11-11
+> por la mañana, contra producción**. Varios de sus puntos se corrigieron y se
+> publicaron ese mismo día. Los ítems afectados van marcados **[RESUELTO]** en el
+> lugar, y §10 de la adenda lista el resto. Al leer §5, §7 y §9, comprobar la
+> marca antes de tratarlos como pendientes: **§9 llegó a ordenar trabajo ya
+> desplegado.**
+
 **El problema de EcoCupon no es el modelo de cobro. Es que nadie ha comprado nunca
-nada, y que el sitio promete cosas que el producto no hace.** `[HV]` + `[OR]`
+nada, y que el sitio promete cosas que el producto no hace.** `[HP]` + `[OR]` —
+«cero ventas» es testimonio del propietario, no una medición.
 
 La evidencia, medida hoy:
 
@@ -137,7 +145,7 @@ Diseño recomendado. Los precios **no** se fijan aquí: `[DP]`
 - **A quién:** comercio que quiere ver si el resultado le sirve.
 - **Qué incluye:** cupones con código, imagen con QR, enlace público, compartir.
 - **Límite:** N cupones por mes, contados por el servidor. **Hoy no existe ningún
-  límite en el código** y el sitio publica dos cifras distintas (§8.3). `[HV]`
+  límite en el código** y el sitio publica dos cifras distintas (§8, fila 3). `[HV]`
 - **Marca de agua:** sí, explícita y honesta.
 - **Motivo de upgrade:** pasar el cupo mensual.
 
@@ -170,7 +178,7 @@ Diseño recomendado. Los precios **no** se fijan aquí: `[DP]`
 | Cancelación | autoservicio, sin llamada |
 | Impago | 3 reintentos + 7 días de gracia antes de degradar |
 | Renovación | aviso previo por correo |
-| Reembolso | política única; hoy `/precios` y `/condiciones` se contradicen (§8.6) |
+| Reembolso | política única; hoy `/precios` y `/condiciones` se contradicen (§8, fila 6) |
 | Recuperación | correo de recuperación a los 7 y 21 días |
 
 **Fijar primero el período de gracia, después el precio.** Sin dunning definido, un
@@ -248,8 +256,10 @@ El CTA de Pro abre
 decide si confía, el sitio cambia de dominio y de identidad visual. `[HV]`
 
 El plan Business ni siquiera tiene pasarela: abre un `wa.me`
-(`app/precios/page.tsx:61-62`). Ese canal existe y **nunca ha convertido**; es una
-venta asistida disponible, no un canal probado. `[HV]`
+(`app/precios/page.tsx:61-62`). **Resultado nulo, no hallazgo:** con cero ventas en
+todo el sitio, ningún canal ha convertido —tampoco la pasarela de Pro—, así que de
+este dato no se sigue que WhatsApp haya fracasado. Es un canal **no probado**, no
+un canal fallido. `[HV]` corregido a `[OR]` tras la etapa 7.
 
 ### 5.6 Contraste y objetivos táctiles
 
@@ -379,9 +389,9 @@ en cinco minutos. `[HV]`
 |---|---|---|
 | 1 | «Generación con IA» en portada, precios, metadatos y términos | No existe ninguna integración de IA |
 | 2 | «Sin marca de agua» en Pro (`app/page.tsx:257`) | La marca se estampa siempre, ignore el plan |
-| 3 | «3 cupones por mes» gratis (`precios:21`) | La portada dice «5 cupones por mes» y ningún código limita |
+| 3 | «3 cupones por mes» gratis (`precios:21`) | ~~La portada dice «5 cupones por mes»~~ **[RESUELTO]** unificado en 3. Sigue sin aplicarse en código |
 | 4 | «Únete a cientos de negocios» | 5 cuentas en total |
-| 5 | «50 cupones por mes» en Pro (`precios:36`) | La portada dice «Cupones ilimitados» |
+| 5 | «50 cupones por mes» en Pro (`precios:36`) | ~~La portada dice «Cupones ilimitados»~~ **[RESUELTO]** unificado en 50. «Ilimitados» quedó solo en Business |
 | 6 | «Garantía de devolución de 30 días» | «Las tarifas no son reembolsables» en los términos |
 | 7 | «Los cambios se aplican inmediatamente» | Nada lee `plan_type`: pagar no cambia nada |
 | 8 | Business con API, multiusuario, 24/7 y branding custom | Ninguna de las cuatro existe |
@@ -397,8 +407,27 @@ de la primera venta. `[OR]`
 
 ## 9. Oportunidades priorizadas
 
-Ordenadas por relación entre valor y esfuerzo. Ninguna requiere permiso técnico
-más allá de editar texto, salvo donde se indica.
+> **Aviso de vigencia — leer antes de usar esta lista.** Se escribió contra
+> producción antes de las correcciones del 2026-11-11. **Los ítems P0 1-5, P1 6-10
+> ya están hechos y desplegados**, y P2 11-14 también en su mayor parte. Seguir
+> esta lista al pie de la letra significa rehacer trabajo terminado. Lo que sigue
+> realmente pendiente: 15, 16 y 17, más el ítem de seguridad añadido al final.
+>
+> La lista **no está ordenada por valor y esfuerzo**: no hay estimación de ninguno
+> de los dos, así que el criterio de orden del encabezado no es verificable.
+
+### P0 de seguridad, añadido tras la etapa 7 de `egm-review`
+
+- **Cerrar el oráculo de enumeración de correos.** `user_exists(text)` sigue
+  invocable por `anon`: cualquiera puede preguntar si una dirección está
+  registrada. Exige mover la comprobación a una ruta de servidor y luego revocar
+  `EXECUTE`.
+- **Decidir sobre los contadores.** `increment_views` e `increment_shares` son
+  invocables por `anon` sin límite, así que las cifras se pueden inflar. Mientras
+  siga así, **no se pueden prometer «vistas y compartidos» como beneficio del plan
+  de pago**: se estaría vendiendo una métrica que el propio repositorio declara
+  falsificable.
+- **Activar** la protección de contraseñas filtradas en el panel de Supabase.
 
 ### P0 — Cerrar la exposición (texto, horas)
 
