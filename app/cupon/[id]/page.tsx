@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/server"
@@ -16,6 +17,40 @@ interface PageProps {
 }
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+// Sin esto, todas las páginas de cupón compartían el título del layout y el
+// enlace se veía igual sin importar el negocio. Es el texto que se ve al
+// pegar el cupón en WhatsApp.
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { id } = await params
+
+  if (!UUID_RE.test(id)) {
+    return { title: "Cupón no encontrado" }
+  }
+
+  const reader = createAdminClient()
+  const supabase = await createClient()
+
+  const { data } = await (reader ?? supabase)
+    .from("coupons")
+    .select("title, business_name, discount_percentage")
+    .eq("id", id)
+    .maybeSingle()
+
+  if (!data) {
+    return { title: "Cupón no encontrado" }
+  }
+
+  const title = `${data.discount_percentage}% de descuento en ${data.business_name}`
+  const description = `${data.title} — cupón de ${data.business_name}, canjeable con código.`
+
+  return {
+    title,
+    description,
+    alternates: { canonical: `/cupon/${id}` },
+    openGraph: { title, description, type: "website" },
+  }
+}
 
 export default async function CouponPage({ params }: PageProps) {
   const { id } = await params
@@ -92,7 +127,7 @@ export default async function CouponPage({ params }: PageProps) {
               {coupon.generated_image_url ? (
                 <img
                   src={coupon.generated_image_url}
-                  alt={coupon.title}
+                  alt={`Cupón de ${coupon.business_name}: ${coupon.title}`}
                   className="h-full w-full object-cover"
                 />
               ) : (
@@ -135,11 +170,12 @@ export default async function CouponPage({ params }: PageProps) {
               </div>
 
               {/* Share Buttons */}
-              <CouponShareButtons 
+              <CouponShareButtons
                 couponId={coupon.id}
                 title={coupon.title}
                 code={coupon.coupon_code}
                 discount={coupon.discount_percentage}
+                imageUrl={coupon.generated_image_url}
               />
             </CardContent>
           </Card>

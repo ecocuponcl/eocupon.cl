@@ -41,8 +41,8 @@ export default function CondicionesPage() {
           <section className="space-y-3">
             <h2 className="text-xl font-semibold text-foreground">2. Descripción del servicio</h2>
             <p>
-              EcoCupon.cl permite generar cupones de descuento personalizados con inteligencia
-              artificial, subir un logo para identificar tu negocio, compartirlos por WhatsApp y
+              EcoCupon.cl permite generar cupones de descuento con su código y su imagen QR,
+              subir un logo para identificar tu negocio, compartirlos por WhatsApp y
               publicarlos en la cuponera pública. El servicio se proporciona &quot;tal cual&quot; y
               podemos modificarlo, suspenderlo o interrumpirlo.
             </p>
