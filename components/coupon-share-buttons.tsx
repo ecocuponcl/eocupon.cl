@@ -35,6 +35,11 @@ export function CouponShareButtons({
 
   const shareText = `${title} - ${discount}% OFF con el código ${code}`
 
+  // El enlace viaja siempre. En móvil se adjunta la imagen Y el texto lleva la
+  // URL, para que quien la reciba pueda abrir el cupón sin pedir nada; antes la
+  // ruta con imagen iba sin enlace y la ruta con enlace iba sin imagen.
+  const shareTextWithLink = couponUrl ? `${shareText}. Ver cupón: ${couponUrl}` : shareText
+
   const incrementShares = async () => {
     const supabase = createClient()
     const { error } = await supabase.rpc("increment_shares", { coupon_id: couponId })
@@ -70,7 +75,7 @@ export function CouponShareButtons({
     }
 
     try {
-      await navigator.share({ files: [file], title, text: shareText })
+      await navigator.share({ files: [file], title, text: shareTextWithLink })
       incrementShares()
       return true
     } catch {
@@ -100,7 +105,7 @@ export function CouponShareButtons({
 
     incrementShares()
     window.open(
-      `https://wa.me/?text=${encodeURIComponent(`${shareText}. Ver cupón: ${couponUrl}`)}`,
+      `https://wa.me/?text=${encodeURIComponent(shareTextWithLink)}`,
       "_blank",
     )
   }
@@ -117,7 +122,7 @@ export function CouponShareButtons({
 
     if (typeof navigator !== "undefined" && navigator.share) {
       try {
-        await navigator.share({ title, text: shareText, url: couponUrl })
+        await navigator.share({ title, text: shareTextWithLink, url: couponUrl })
         incrementShares()
       } catch {
         // El usuario canceló: no hay nada que registrar.
