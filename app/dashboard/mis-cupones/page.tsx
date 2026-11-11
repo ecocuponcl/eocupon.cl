@@ -152,7 +152,7 @@ export default function MisCuponesPage() {
           <p className="text-muted-foreground mb-4">
             {searchTerm 
               ? "Intenta con otros terminos de busqueda"
-              : "Crea tu primer cupon con IA y compartelo con el mundo"
+              : "Crea tu primer cupón y compártelo con tus clientes"
             }
           </p>
           {!searchTerm && (

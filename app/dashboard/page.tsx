@@ -106,7 +106,7 @@ export default async function DashboardPage() {
             </EmptyMedia>
             <EmptyTitle>Sin cupones todavía</EmptyTitle>
             <EmptyDescription>
-              Crea tu primer cupón de descuento con IA y comienza a promocionar tu negocio
+              Crea tu primer cupón de descuento y comienza a promocionar tu negocio
             </EmptyDescription>
           </EmptyHeader>
           <EmptyContent>

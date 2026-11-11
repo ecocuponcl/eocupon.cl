@@ -3,7 +3,9 @@
 - **Autor:** eocupon
 - **Fecha:** 2026-11-11
 - **Alcance:** producto y experiencia. Sin precios, planes, cobros ni pasarelas.
-- **Estado:** cambios aplicados y verificados en local. **No desplegados.**
+- **Estado:** cambios aplicados, verificados y **publicados** el 2026-11-11 en
+  `main` (commits `5b4e315`, `1ba5688`, `259ea18`), que despliega solo a
+  producción. Verificado contra `www.ecocupon.cl`.
 
 ---
 

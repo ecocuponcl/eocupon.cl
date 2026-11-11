@@ -1,7 +1,12 @@
 -- 0010_harden_rls_and_timestamps.sql
 --
--- Cierra hallazgos de la auditoría del 2026-11-09. NO aplicada todavía:
--- requiere autorización porque cambia qué datos puede leer el rol anónimo.
+-- Cierra hallazgos de la auditoría del 2026-11-09.
+--
+-- APLICADA el 2026-11-11 con autorización del propietario. La precondición de la
+-- línea 15 se verificó antes: `POST /api/upload-logo` sin sesión respondió 401
+-- (no 500), lo que prueba que SUPABASE_SERVICE_ROLE_KEY está configurada.
+-- Efecto comprobado ejecutando como el rol `anon`: los cupones privados pasaron
+-- de 3 expuestos a 0, y el enlace privado siguió respondiendo 200.
 --
 -- 1) `coupons` tenía una policy de SELECT con `using (true)`: cualquiera con la
 --    clave publicable podía listar TODOS los cupones, incluidos los privados.

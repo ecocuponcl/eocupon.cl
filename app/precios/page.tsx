@@ -173,7 +173,10 @@ export default function PreciosPage() {
       {/* Footer */}
       <footer className="py-8 border-t border-border">
         <div className="container mx-auto px-4 text-center text-muted-foreground">
-          <p>&copy; 2024 EcoCupon. Todos los derechos reservados.</p>
+          <p>
+            &copy; {new Date().getFullYear()} EcoCupon. Todos los derechos
+            reservados.
+          </p>
         </div>
       </footer>
     </div>
