@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -84,24 +85,52 @@ export default function LandingPage() {
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-4xl">
             <div className="relative mx-auto max-w-sm overflow-hidden rounded-2xl border border-border bg-card shadow-2xl">
-              <div className="relative bg-gradient-to-br from-primary to-primary/75 px-6 py-9 text-center text-primary-foreground">
-                <span className="absolute right-4 top-4 rounded-full bg-background px-3 py-1 text-sm font-bold text-primary">
-                  -20%
-                </span>
-                <p className="text-sm opacity-90">Panadería Los Aromos</p>
-                <p className="mt-1 text-3xl font-bold leading-tight">
-                  20% de descuento
-                </p>
-                <p className="mt-1 text-sm opacity-90">en toda la pastelería</p>
+              <div className="flex items-center gap-3 bg-gradient-to-br from-primary to-primary/75 px-6 py-5">
+                <div className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-xl bg-background p-1.5">
+                  <Image
+                    src="/marca/4time-logo.png"
+                    alt="4Time Repuestos"
+                    width={56}
+                    height={56}
+                    className="h-full w-full object-contain"
+                  />
+                </div>
+                <div className="text-primary-foreground">
+                  <p className="font-semibold leading-tight">4Time Repuestos</p>
+                  <p className="text-xs opacity-90">Repuestos para tu vehículo</p>
+                </div>
               </div>
 
-              <div className="space-y-4 p-6">
+              <div className="relative aspect-[4/3] bg-muted">
+                <Image
+                  src="/marca/4time-producto.jpg"
+                  alt="Producto en promoción de 4Time Repuestos"
+                  width={768}
+                  height={576}
+                  sizes="(max-width: 768px) 90vw, 384px"
+                  className="h-full w-full object-cover"
+                />
+                <span className="absolute right-3 top-3 rounded-full bg-primary px-3 py-1 text-sm font-bold text-primary-foreground">
+                  -10%
+                </span>
+              </div>
+
+              <div className="space-y-4 p-5">
+                <div className="text-center">
+                  <p className="text-2xl font-bold leading-tight text-foreground">
+                    10% de descuento
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    en tu primera compra
+                  </p>
+                </div>
+
                 <div className="rounded-xl bg-secondary p-4 text-center">
                   <p className="text-xs font-medium text-secondary-foreground/70">
                     Código de descuento
                   </p>
                   <p className="font-mono text-2xl font-bold tracking-widest text-secondary-foreground">
-                    AROMOS20
+                    HOLA4TIME
                   </p>
                 </div>
 
@@ -110,7 +139,7 @@ export default function LandingPage() {
                     <QrCode className="h-8 w-8 text-foreground/60" />
                   </div>
                   <p className="text-sm leading-snug text-muted-foreground">
-                    Escanea el QR o abre el enlace. Válido hasta agotar stock.
+                    Escanea el QR o comparte el enlace. Válido en la primera compra.
                   </p>
                 </div>
 
