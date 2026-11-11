@@ -11,10 +11,10 @@ export const metadata: Metadata = {
   // Necesario para que `alternates.canonical` relativo se resuelva a una URL absoluta.
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'EcoCupon - Genera cupones de descuento con IA',
+    default: 'EcoCupon - Cupones de descuento para tu negocio',
     template: '%s · EcoCupon',
   },
-  description: 'Crea cupones de descuento personalizados con inteligencia artificial. Comparte por WhatsApp y publica en la cuponera.',
+  description: 'Crea cupones con descuento, código y QR, compártelos por WhatsApp y mide cuánta gente los vio.',
   generator: 'ecocupon.cl',
   openGraph: {
     type: 'website',

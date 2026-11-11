@@ -2,11 +2,10 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card"
 import { FieldGroup, Field, FieldLabel } from "@/components/ui/field"
 import { Spinner } from "@/components/ui/spinner"
 import { GoogleButton } from "@/components/google-button"
@@ -20,7 +19,6 @@ export default function RegisterPage() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
-  const router = useRouter()
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -81,8 +79,10 @@ export default function RegisterPage() {
           <Link href="/" className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary">
             <Leaf className="h-7 w-7 text-primary-foreground" />
           </Link>
-          <CardTitle className="text-2xl">Crea tu cuenta</CardTitle>
-          <CardDescription>Comienza a crear cupones con IA en minutos</CardDescription>
+          <h1 className="text-2xl font-semibold leading-none tracking-tight">
+            Crea tu cuenta
+          </h1>
+          <CardDescription>Comienza a crear cupones en minutos</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleRegister}>
@@ -133,9 +133,30 @@ export default function RegisterPage() {
                   {error}
                 </div>
               )}
-              <Button type="submit" className="w-full" disabled={loading}>
+              <Button
+                type="submit"
+                className="h-11 w-full"
+                disabled={loading}
+              >
                 {loading ? <Spinner className="h-4 w-4" /> : "Crear cuenta"}
               </Button>
+              <p className="text-center text-xs leading-relaxed text-muted-foreground">
+                Al crear una cuenta aceptas nuestros{" "}
+                <Link
+                  href="/condiciones"
+                  className="underline underline-offset-2 hover:text-foreground"
+                >
+                  términos y condiciones
+                </Link>{" "}
+                y nuestra{" "}
+                <Link
+                  href="/privacidad"
+                  className="underline underline-offset-2 hover:text-foreground"
+                >
+                  política de privacidad
+                </Link>
+                .
+              </p>
             </FieldGroup>
           </form>
 

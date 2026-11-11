@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Leaf, Sparkles, Share2, Download, Zap, Shield, Users } from "lucide-react"
+import { Leaf, Sparkles, Share2, Download, Zap, Shield, Users, Ticket, QrCode, MessageCircle } from "lucide-react"
 
 export const metadata: Metadata = {
   title: "Cupones de descuento para tu negocio",
@@ -53,14 +53,14 @@ export default function LandingPage() {
         <div className="container relative mx-auto px-4">
           <div className="mx-auto max-w-3xl text-center">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
-              <Sparkles className="h-4 w-4" />
-              Potenciado por Inteligencia Artificial
+              <Ticket className="h-4 w-4" />
+              Imagen, enlace y código QR en un solo paso
             </div>
             <h1 className="mb-6 text-balance text-4xl font-bold tracking-tight text-foreground md:text-6xl">
-              Crea cupones de descuento <span className="text-primary">irresistibles</span>
+              Tu oferta lista para <span className="text-primary">compartir</span>
             </h1>
             <p className="mb-10 text-pretty text-lg text-muted-foreground md:text-xl">
-              Genera cupones profesionales con IA, personaliza el diseño y compártelos al instante por WhatsApp o publícalos en nuestra cuponera.
+              Crea un cupón con el descuento, el código y el QR de tu negocio, y mándalo por WhatsApp en dos minutos.
             </p>
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link href="/auth/registro">
@@ -83,35 +83,45 @@ export default function LandingPage() {
       <section className="border-y border-border bg-muted/30 py-16">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-4xl">
-            <div className="relative overflow-hidden rounded-2xl border border-border bg-card shadow-2xl">
-              <div className="flex items-center gap-2 border-b border-border bg-muted/50 px-4 py-3">
-                <div className="h-3 w-3 rounded-full bg-destructive/60" />
-                <div className="h-3 w-3 rounded-full bg-secondary" />
-                <div className="h-3 w-3 rounded-full bg-primary/60" />
+            <div className="relative mx-auto max-w-sm overflow-hidden rounded-2xl border border-border bg-card shadow-2xl">
+              <div className="relative bg-gradient-to-br from-primary to-primary/75 px-6 py-9 text-center text-primary-foreground">
+                <span className="absolute right-4 top-4 rounded-full bg-background px-3 py-1 text-sm font-bold text-primary">
+                  -20%
+                </span>
+                <p className="text-sm opacity-90">Panadería Los Aromos</p>
+                <p className="mt-1 text-3xl font-bold leading-tight">
+                  20% de descuento
+                </p>
+                <p className="mt-1 text-sm opacity-90">en toda la pastelería</p>
               </div>
-              <div className="p-6 md:p-8">
-                <div className="grid gap-6 md:grid-cols-2">
-                  <div className="space-y-4">
-                    <div className="h-10 w-full rounded-lg bg-input" />
-                    <div className="h-32 w-full rounded-lg bg-input" />
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="h-10 rounded-lg bg-input" />
-                      <div className="h-10 rounded-lg bg-input" />
-                    </div>
-                    <div className="h-12 w-full rounded-lg bg-primary" />
+
+              <div className="space-y-4 p-6">
+                <div className="rounded-xl bg-secondary p-4 text-center">
+                  <p className="text-xs font-medium text-secondary-foreground/70">
+                    Código de descuento
+                  </p>
+                  <p className="font-mono text-2xl font-bold tracking-widest text-secondary-foreground">
+                    AROMOS20
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-3 rounded-xl border border-dashed border-border p-3">
+                  <div className="grid h-14 w-14 shrink-0 place-items-center rounded-lg bg-foreground/5">
+                    <QrCode className="h-8 w-8 text-foreground/60" />
                   </div>
-                  <div className="relative overflow-hidden rounded-xl border-2 border-dashed border-primary/30 bg-gradient-to-br from-primary/5 to-secondary/10 p-6">
-                    <div className="absolute right-4 top-4 rounded-full bg-primary px-3 py-1 text-sm font-bold text-primary-foreground">
-                      -50%
-                    </div>
-                    <div className="mt-8 space-y-2">
-                      <div className="h-6 w-3/4 rounded bg-foreground/10" />
-                      <div className="h-4 w-1/2 rounded bg-foreground/10" />
-                    </div>
-                    <div className="mt-6 rounded-lg bg-secondary p-3 text-center">
-                      <span className="font-mono text-lg font-bold text-secondary-foreground">VERANO50</span>
-                    </div>
-                    <p className="mt-4 text-center text-sm text-muted-foreground">Usa este código en tu compra</p>
+                  <p className="text-sm leading-snug text-muted-foreground">
+                    Escanea el QR o abre el enlace. Válido hasta agotar stock.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="flex h-10 items-center justify-center gap-2 rounded-lg bg-primary text-sm font-medium text-primary-foreground">
+                    <MessageCircle className="h-4 w-4" />
+                    WhatsApp
+                  </div>
+                  <div className="flex h-10 items-center justify-center gap-2 rounded-lg border border-border text-sm font-medium text-foreground">
+                    <Download className="h-4 w-4" />
+                    Imagen
                   </div>
                 </div>
               </div>
@@ -128,7 +138,7 @@ export default function LandingPage() {
               Crea tu cupón en 3 pasos
             </h2>
             <p className="text-lg text-muted-foreground">
-              Sin complicaciones, sin diseñadores. Solo describe lo que quieres y la IA hace el resto.
+              Sin complicaciones y sin diseñador: tú defines la oferta, el cupón se arma solo.
             </p>
           </div>
           <div className="mx-auto grid max-w-5xl gap-8 md:grid-cols-3">
@@ -136,7 +146,7 @@ export default function LandingPage() {
               {
                 step: "1",
                 title: "Describe o sube",
-                description: "Escribe una descripción o sube una imagen de tu producto. Nuestra IA generará un diseño único.",
+                description: "Elige el descuento, el nombre del negocio y el código que quieras usar. Sin plantillas que rellenar.",
                 icon: Sparkles,
               },
               {
@@ -179,7 +189,7 @@ export default function LandingPage() {
           </div>
           <div className="mx-auto grid max-w-4xl gap-6 md:grid-cols-2">
             {[
-              { icon: Sparkles, title: "Generación con IA", description: "Imágenes únicas creadas con inteligencia artificial" },
+              { icon: Sparkles, title: "Imagen lista para usar", description: "Tu cupón en PNG con el código y el QR, sin diseñar nada" },
               { icon: Download, title: "Descarga instantánea", description: "Obtén tu cupón en formato imagen listo para usar" },
               { icon: Share2, title: "Comparte fácil", description: "Envía por WhatsApp o copia el link con un clic" },
               { icon: Users, title: "Cuponera pública", description: "Publica en nuestra red y alcanza más clientes" },
@@ -220,7 +230,7 @@ export default function LandingPage() {
                 <ul className="mb-8 space-y-3 text-sm">
                   <li className="flex items-center gap-2 text-muted-foreground">
                     <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                    5 cupones por mes
+                    3 cupones por mes
                   </li>
                   <li className="flex items-center gap-2 text-muted-foreground">
                     <div className="h-1.5 w-1.5 rounded-full bg-primary" />
@@ -250,11 +260,11 @@ export default function LandingPage() {
                 <ul className="mb-8 space-y-3 text-sm">
                   <li className="flex items-center gap-2 text-muted-foreground">
                     <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                    Cupones ilimitados
+                    50 cupones por mes
                   </li>
                   <li className="flex items-center gap-2 text-muted-foreground">
                     <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                    Sin marca de agua
+                    Logo de tu negocio
                   </li>
                   <li className="flex items-center gap-2 text-muted-foreground">
                     <div className="h-1.5 w-1.5 rounded-full bg-primary" />
@@ -262,7 +272,7 @@ export default function LandingPage() {
                   </li>
                   <li className="flex items-center gap-2 text-muted-foreground">
                     <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                    Analíticas de uso
+                    Vistas y compartidos
                   </li>
                 </ul>
                 <a
@@ -285,7 +295,7 @@ export default function LandingPage() {
             Comienza a crear cupones hoy
           </h2>
           <p className="mx-auto mb-8 max-w-xl text-primary-foreground/80">
-            Únete a cientos de negocios que ya usan EcoCupon para aumentar sus ventas con promociones inteligentes.
+            Crea tu cupón, compártelo por WhatsApp y mide cuánta gente lo vio y lo reenvió.
           </p>
           <Link href="/auth/registro">
             <Button size="lg" variant="secondary" className="px-8">
@@ -309,10 +319,10 @@ export default function LandingPage() {
               <Link href="/precios" className="hover:text-foreground">Precios</Link>
               <Link href="/condiciones" className="hover:text-foreground">Términos</Link>
               <Link href="/privacidad" className="hover:text-foreground">Privacidad</Link>
-              <Link href="#" className="hover:text-foreground">Contacto</Link>
+              <Link href="/cuponera" className="hover:text-foreground">Cuponera</Link>
             </div>
             <p className="text-sm text-muted-foreground">
-              2024 EcoCupon. Todos los derechos reservados.
+              &copy; {new Date().getFullYear()} EcoCupon. Todos los derechos reservados.
             </p>
           </div>
         </div>

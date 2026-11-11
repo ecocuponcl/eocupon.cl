@@ -19,9 +19,9 @@ const plans = [
     icon: Leaf,
     features: [
       "3 cupones por mes",
-      "Generacion basica con IA",
+      "Imagen con QR y código",
       "Compartir por WhatsApp",
-      "Enlace publico",
+      "Enlace público",
     ],
     cta: "Comenzar Gratis",
     href: "/auth/registro",
@@ -34,10 +34,10 @@ const plans = [
     icon: Sparkles,
     features: [
       "50 cupones por mes",
-      "Generacion avanzada con IA",
-      "Subir imagenes propias",
+      "Imagen con QR y tu logo",
+      "Subir imágenes propias",
       "Publicar en cuponera",
-      "Estadisticas basicas",
+      "Vistas y compartidos",
       "Soporte prioritario",
     ],
     cta: "Suscribirse",
@@ -51,12 +51,11 @@ const plans = [
     icon: Crown,
     features: [
       "Cupones ilimitados",
-      "IA premium y personalizada",
-      "API de integracion",
-      "Dashboard multiusuario",
-      "Estadisticas avanzadas",
-      "Soporte dedicado 24/7",
-      "Logo y branding custom",
+      "Cupones con tu logo",
+      "Atención por WhatsApp",
+      "Acompañamiento personalizado",
+      "Vistas y compartidos",
+      "Soporte dedicado",
     ],
     cta: "Contactar Ventas",
     href: "https://wa.me/56979540471?text=Hola,%20me%20interesa%20el%20plan%20Business%20de%20EcoCupon",
@@ -95,7 +94,7 @@ export default function PreciosPage() {
               Planes y Precios
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Elige el plan perfecto para tu negocio. Todos incluyen generacion de cupones con IA.
+              Elige el plan para tu negocio. Todos incluyen cupones con imagen, código y QR.
             </p>
           </div>
 
