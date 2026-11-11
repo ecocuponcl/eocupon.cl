@@ -8,6 +8,36 @@
   producción con Playwright (escritorio y móvil) + lectura del repositorio.
 - **Estado de las herramientas:** ver §10. El workflow EGM no se ejecutó.
 
+## Adenda — línea base: `main` frente a producción
+
+Añadida tras la etapa 5 de `egm-review`
+(`docs/designs/egm-review/2026-11-11-ecocupon-evaluacion-integral/zoom_out_report.md`),
+que señaló con razón que **este documento mide producción y no distingue «sin
+construir» de «sin desplegar»**. Varias secciones quedaron superadas por trabajo
+posterior, ya en `main` y ya publicado.
+
+| Sección | Estado |
+|---|---|
+| §5.4 registro sin etiquetas ni legales | **Resuelto**: tenía `id`, `name`, `autocomplete`, etiquetas y enlaces legales en `main`; se le añadieron `<h1>` y consentimiento. Publicado |
+| §5.1, §5.2 hero con maqueta y sello de IA | **Resuelto**: el hero muestra un cupón real de 4Time Repuestos |
+| §7.3 metadatos idénticos | **Resuelto y desplegado**: cada página tiene los suyos |
+| §8 filas 1, 2, 4 (IA, marca de agua, «cientos») | **Retiradas** del sitio |
+| §7.2 desbordamiento móvil | **Resuelto** en `main` y desplegado; ya no se reproduce |
+| §7.4 buscador inerte de la cuponera | **Resuelto**: filtra en vivo |
+| §5.7 error de hidratación #418 | **Resuelto**: causa localizada y corregida |
+| §3.1 de `…revision-base-datos.md`, cupones privados legibles por `anon` | **Cerrado**: se aplicó `0010` y se verificó ejecutando como `anon` (de 3 privados expuestos a 0) |
+
+**Lo que sigue vigente sin cambios:** la ausencia de demanda medida (§1), la
+pregunta sin responder sobre si alguna vez se intentó vender (§1 y §11.1), las
+promesas que quedan en `/precios` sobre Business, y todo lo que depende de datos
+que no tengo (login, dashboard, subida de logo).
+
+**Lo que este informe sobreestima, según el revisor:** §2, §3 y §4 diseñan
+facturación recurrente completa para un producto con cero ventas, y §2.2 elige la
+unidad de cobro por costo de consulta y no por valor entregado. Ambas objeciones
+se aceptan: ese material debería vivir en un documento aparte, y la unidad
+recomendada queda como hipótesis hasta que exista un comprador.
+
 ## Cómo leer este informe
 
 | Etiqueta | Significado |

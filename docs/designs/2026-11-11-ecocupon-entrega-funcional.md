@@ -176,3 +176,46 @@ No se hizo commit ni push. No se instalaron dependencias.
 - `app/condiciones/page.tsx` — descripción del servicio sin IA.
 - `components/coupon-share-buttons.tsx` — detección de capacidad con
   `useSyncExternalStore`.
+
+---
+
+## Ronda 3 — marca real, enlace en las dos rutas, y seguridad de la base
+
+### 3.1 El cupón de ejemplo es de un comercio real
+
+La portada mostraba un cupón inventado («Panadería Los Aromos», `AROMOS20`). Ahora
+muestra uno real de **4Time Repuestos**: su logo, una foto de producto, **10% de
+descuento en tu primera compra**, código **HOLA4TIME**, bloque QR y las dos
+acciones de uso.
+
+Los dos assets se bajaron de la tienda del propio propietario y se optimizaron
+antes de publicarlos: el logo pasó de **2,4 MB a 132 KB** (384×384 manteniendo el
+canal alfa) y la foto de producto a 50 KB (800×800). Viven en `public/marca/`.
+
+### 3.2 El enlace viaja en las dos rutas de compartir
+
+Defecto encontrado en lo ya publicado: **la ruta con imagen no llevaba el enlace**
+y la ruta con enlace no llevaba imagen. Resultado: en móvil el receptor veía el
+cupón y tenía que pedir la dirección.
+
+Ahora `shareTextWithLink` se usa en las tres salidas: Web Share con archivos, el
+`wa.me/?text=` de escritorio y el compartir nativo. El receptor recibe la imagen
+**y** el enlace.
+
+### 3.3 Seguridad de la base
+
+Ver §3 y §5 de `2026-11-11-ecocupon-revision-base-datos.md`. En resumen: la
+lectura de cupones privados por `anon` pasó de **3 cupones expuestos a 0**, con el
+enlace privado verificado en 200 y sin romper la cuponera.
+
+### Pruebas de esta ronda
+
+| Prueba | Resultado |
+|---|---|
+| `pnpm lint` / `pnpm build` | 0 errores / 21 rutas |
+| Portada con la marca real | `HOLA4TIME` y `4Time Repuestos` presentes en producción |
+| Assets servidos | `/marca/4time-logo.png` → HTTP 200 |
+| Lectura como `anon` | 1 cupón visible, 0 privados |
+| Enlace privado tras la migración | HTTP 200, renderiza, muestra el código |
+| UUID inexistente | HTTP 404 |
+| Cuponera | HTTP 200 |
