@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
-import { useParams, useRouter } from "next/navigation"
+import { useParams } from "next/navigation"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
@@ -65,7 +65,6 @@ function computeCurrentPeriod(redemptionPeriod: string | null): string {
 
 export default function ValidarPage() {
   const params = useParams()
-  const router = useRouter()
   const couponId = params.id as string
 
   const [instanceCode, setInstanceCode] = useState("")

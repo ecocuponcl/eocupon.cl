@@ -1,9 +1,11 @@
 import type { Metadata } from "next"
-import Link from "next/link"
 import { createClient } from "@/lib/supabase/server"
 import { Button } from "@/components/ui/button"
 import { CuponeraGrid } from "@/components/cuponera-grid"
-import { AlertCircle, Leaf } from "lucide-react"
+import { AlertCircle } from "lucide-react"
+import Link from "next/link"
+import { SiteHeader } from "@/components/site-header"
+import { SiteFooter } from "@/components/site-footer"
 
 export const metadata: Metadata = {
   title: "Cuponera",
@@ -37,15 +39,9 @@ export default async function CuponeraPage() {
           </div>
         </div>
       )}
-      {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto flex h-16 items-center justify-between gap-2 px-3 sm:px-4">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary">
-              <Leaf className="h-6 w-6 text-primary-foreground" />
-            </div>
-            <span className="hidden text-xl font-bold text-foreground sm:inline">EcoCupon</span>
-          </Link>
+
+      <SiteHeader
+        action={
           <div className="flex items-center gap-2">
             <Link href="/auth/login">
               <Button variant="ghost" size="sm">Iniciar sesión</Button>
@@ -54,8 +50,8 @@ export default async function CuponeraPage() {
               <Button size="sm">Crear cupones</Button>
             </Link>
           </div>
-        </div>
-      </header>
+        }
+      />
 
       {/* Hero */}
       <section className="border-b border-border bg-gradient-to-br from-primary/5 via-transparent to-secondary/10 py-12 md:py-16">
@@ -64,10 +60,10 @@ export default async function CuponeraPage() {
             Cuponera de Descuentos
           </h1>
           <p className="mx-auto mb-8 max-w-xl text-muted-foreground">
-            Encuentra los mejores cupones de descuento de negocios locales. 
+            Encuentra los mejores cupones de descuento de negocios locales.
             Ahorra en tus compras favoritas.
           </p>
-          </div>
+        </div>
       </section>
 
       {/* Buscador + cupones */}
@@ -92,14 +88,7 @@ export default async function CuponeraPage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-border py-8">
-        <div className="container mx-auto px-4 text-center">
-          <p className="text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} EcoCupon. Todos los derechos reservados.
-          </p>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   )
 }
