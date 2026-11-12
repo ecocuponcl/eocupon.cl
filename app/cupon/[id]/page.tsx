@@ -5,8 +5,10 @@ import { createClient } from "@/lib/supabase/server"
 import { createAdminClient, warnIfNoServiceRole } from "@/lib/supabase/admin"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Leaf, Copy, MessageCircle, ArrowLeft, Ticket } from "lucide-react"
+import { ArrowLeft, Ticket, CalendarClock } from "lucide-react"
 import { CouponShareButtons } from "@/components/coupon-share-buttons"
+import { SiteHeader } from "@/components/site-header"
+import { SiteFooter } from "@/components/site-footer"
 
 // Siempre dinámico: increment_views debe ejecutarse en cada visita (no cachear)
 // y el cupón debe leerse fresco de la BD.
@@ -74,7 +76,7 @@ export default async function CouponPage({ params }: PageProps) {
 
   const { data: coupon, error } = await (reader ?? supabase)
     .from("coupons")
-    .select("id, title, description, business_name, discount_percentage, coupon_code, generated_image_url, is_public")
+    .select("id, title, description, business_name, discount_percentage, coupon_code, generated_image_url, is_public, conditions, expires_campaign_at, redemption_period")
     .eq("id", id)
     .maybeSingle()
 
@@ -95,24 +97,26 @@ export default async function CouponPage({ params }: PageProps) {
     console.error("No se pudo incrementar las vistas:", viewError.message)
   }
 
+  const isExpired =
+    coupon.expires_campaign_at ? new Date() > new Date(coupon.expires_campaign_at) : false
+
+  const periodLabel: Record<string, string> = {
+    once: "canje único por persona",
+    daily: "1 canje por día",
+    weekly: "1 canje por semana",
+    monthly: "1 canje por mes",
+    unlimited: "canjes ilimitados",
+  }
+
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border bg-background">
-        <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary">
-              <Leaf className="h-6 w-6 text-primary-foreground" />
-            </div>
-            <span className="text-xl font-bold text-foreground">EcoCupon</span>
-          </Link>
+      <SiteHeader
+        action={
           <Link href="/cuponera">
-            <Button variant="outline" size="sm">
-              Ver más cupones
-            </Button>
+            <Button variant="outline" size="sm">Ver más cupones</Button>
           </Link>
-        </div>
-      </header>
+        }
+      />
 
       <main className="container mx-auto px-4 py-8 md:py-12">
         <Link href="/cuponera" className="mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
@@ -122,7 +126,7 @@ export default async function CouponPage({ params }: PageProps) {
 
         <div className="mx-auto max-w-2xl">
           <Card className="overflow-hidden border-border">
-            {/* Coupon Image */}
+            {/* Imagen del cupón */}
             <div className="relative aspect-[4/3] bg-gradient-to-br from-primary/20 to-secondary/30">
               {coupon.generated_image_url ? (
                 <img
@@ -140,10 +144,17 @@ export default async function CouponPage({ params }: PageProps) {
               <div className="absolute right-4 top-4 rounded-full bg-primary px-4 py-2 text-lg font-bold text-primary-foreground">
                 -{coupon.discount_percentage}% OFF
               </div>
+              {isExpired && (
+                <div className="absolute inset-0 flex items-center justify-center bg-background/70">
+                  <span className="rounded-full bg-destructive px-5 py-2 text-sm font-bold text-destructive-foreground">
+                    Cupón vencido
+                  </span>
+                </div>
+              )}
             </div>
 
             <CardContent className="space-y-6 p-6 md:p-8">
-              {/* Title and Business */}
+              {/* Título y negocio */}
               <div>
                 <h1 className="mb-2 text-2xl font-bold text-foreground md:text-3xl">
                   {coupon.title}
@@ -151,12 +162,38 @@ export default async function CouponPage({ params }: PageProps) {
                 <p className="text-lg text-muted-foreground">{coupon.business_name}</p>
               </div>
 
-              {/* Description */}
+              {/* Descripción */}
               {coupon.description && (
                 <p className="text-muted-foreground">{coupon.description}</p>
               )}
 
-              {/* Coupon Code */}
+              {/* Vigencia y política */}
+              {(coupon.expires_campaign_at || coupon.redemption_period) && (
+                <div className="flex flex-wrap gap-3">
+                  {coupon.expires_campaign_at && (
+                    <div className={`flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm font-medium ${
+                      isExpired
+                        ? "border-destructive/40 bg-destructive/10 text-destructive"
+                        : "border-primary/30 bg-primary/5 text-primary"
+                    }`}>
+                      <CalendarClock className="h-3.5 w-3.5" />
+                      {isExpired ? "Venció el " : "Válido hasta "}
+                      {new Date(coupon.expires_campaign_at).toLocaleDateString("es-CL", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      })}
+                    </div>
+                  )}
+                  {coupon.redemption_period && coupon.redemption_period !== "once" && (
+                    <div className="flex items-center gap-1.5 rounded-full border border-border bg-muted px-3 py-1 text-sm text-muted-foreground">
+                      {periodLabel[coupon.redemption_period] ?? coupon.redemption_period}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Código */}
               <div className="rounded-xl bg-secondary p-6 text-center">
                 <p className="mb-2 text-sm font-medium text-secondary-foreground/70">
                   Código de descuento
@@ -165,28 +202,40 @@ export default async function CouponPage({ params }: PageProps) {
                   {coupon.coupon_code}
                 </p>
                 <p className="text-sm text-secondary-foreground/70">
-                  Usa este código en tu próxima compra
+                  Presenta este código al momento de tu compra
                 </p>
               </div>
+
+              {/* Condiciones */}
+              {coupon.conditions && (
+                <div className="rounded-xl border border-border bg-muted/40 p-4">
+                  <p className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Condiciones
+                  </p>
+                  <p className="text-sm text-muted-foreground">{coupon.conditions}</p>
+                </div>
+              )}
 
               {/* Activar cupón */}
-              <div className="rounded-xl border border-primary/30 bg-primary/5 p-5">
-                <div className="mb-3 flex items-center gap-2">
-                  <Ticket className="h-5 w-5 text-primary" />
-                  <p className="font-semibold text-foreground">¿Quieres usar este cupón?</p>
+              {!isExpired && (
+                <div className="rounded-xl border border-primary/30 bg-primary/5 p-5">
+                  <div className="mb-3 flex items-center gap-2">
+                    <Ticket className="h-5 w-5 text-primary" />
+                    <p className="font-semibold text-foreground">¿Quieres usar este cupón?</p>
+                  </div>
+                  <p className="mb-4 text-sm text-muted-foreground">
+                    Actívalo con tu nombre y lleva este código al local para canjear tu beneficio.
+                  </p>
+                  <Link href={`/cupon/${coupon.id}/activar`}>
+                    <Button className="w-full gap-2">
+                      <Ticket className="h-4 w-4" />
+                      Activar mi cupón
+                    </Button>
+                  </Link>
                 </div>
-                <p className="mb-4 text-sm text-muted-foreground">
-                  Actívalo con tu nombre y lleva este código al local para canjear tu beneficio.
-                </p>
-                <Link href={`/cupon/${coupon.id}/activar`}>
-                  <Button className="w-full gap-2">
-                    <Ticket className="h-4 w-4" />
-                    Activar mi cupón
-                  </Button>
-                </Link>
-              </div>
+              )}
 
-              {/* Share Buttons */}
+              {/* Compartir */}
               <CouponShareButtons
                 couponId={coupon.id}
                 title={coupon.title}
@@ -199,17 +248,7 @@ export default async function CouponPage({ params }: PageProps) {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-border py-8">
-        <div className="container mx-auto px-4 text-center">
-          <p className="text-sm text-muted-foreground">
-            Cupón creado con{" "}
-            <Link href="/" className="font-medium text-primary hover:underline">
-              EcoCupon
-            </Link>
-          </p>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   )
 }

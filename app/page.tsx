@@ -3,7 +3,9 @@ import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Leaf, Sparkles, Share2, Download, Zap, Shield, Users, Ticket, QrCode, MessageCircle } from "lucide-react"
+import { Sparkles, Share2, Download, Zap, Shield, Users, Ticket, QrCode, MessageCircle } from "lucide-react"
+import { SiteHeader } from "@/components/site-header"
+import { SiteFooter } from "@/components/site-footer"
 
 export const metadata: Metadata = {
   title: "Cupones de descuento para tu negocio",
@@ -15,38 +17,7 @@ export const metadata: Metadata = {
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto flex h-16 items-center justify-between gap-2 px-3 sm:px-4">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary">
-              <Leaf className="h-6 w-6 text-primary-foreground" />
-            </div>
-            {/* La marca se oculta en pantallas muy estrechas: con el texto, el
-                logo y los dos botones no caben en 375 px y la página desbordaba. */}
-            <span className="hidden text-xl font-bold text-foreground sm:inline">EcoCupon</span>
-          </Link>
-          <nav className="hidden items-center gap-6 md:flex">
-            <Link href="#como-funciona" className="text-sm font-medium text-muted-foreground hover:text-foreground">
-              Cómo funciona
-            </Link>
-            <Link href="#beneficios" className="text-sm font-medium text-muted-foreground hover:text-foreground">
-              Beneficios
-            </Link>
-            <Link href="#precios" className="text-sm font-medium text-muted-foreground hover:text-foreground">
-              Precios
-            </Link>
-          </nav>
-          <div className="flex items-center gap-2">
-            <Link href="/auth/login">
-              <Button variant="ghost" size="sm">Iniciar sesión</Button>
-            </Link>
-            <Link href="/auth/registro">
-              <Button size="sm">Comenzar gratis</Button>
-            </Link>
-          </div>
-        </div>
-      </header>
+      <SiteHeader />
 
       {/* Hero Section */}
       <section className="relative overflow-hidden py-20 md:py-32">
@@ -335,27 +306,7 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border bg-card py-12">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
-            <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-                <Leaf className="h-4 w-4 text-primary-foreground" />
-              </div>
-              <span className="font-semibold text-foreground">EcoCupon</span>
-            </div>
-            <div className="flex gap-6 text-sm text-muted-foreground">
-              <Link href="/precios" className="hover:text-foreground">Precios</Link>
-              <Link href="/condiciones" className="hover:text-foreground">Términos</Link>
-              <Link href="/privacidad" className="hover:text-foreground">Privacidad</Link>
-              <Link href="/cuponera" className="hover:text-foreground">Cuponera</Link>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              &copy; {new Date().getFullYear()} EcoCupon. Todos los derechos reservados.
-            </p>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   )
 }

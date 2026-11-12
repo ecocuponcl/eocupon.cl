@@ -4,11 +4,12 @@ import { useState } from "react"
 import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Download, Share2, MessageCircle, Copy, Check, Eye, Trash2, Globe } from "lucide-react"
+import { Download, Share2, MessageCircle, Copy, Check, Eye, Trash2, Globe, Pencil } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
@@ -138,6 +139,7 @@ export function CouponCard({ coupon, showActions, onDelete, onTogglePublic }: Co
                   </>
                 )}
               </DropdownMenuItem>
+              <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
                 <Link href={`/cupon/${coupon.id}`}>
                   <Eye className="mr-2 h-4 w-4" />
@@ -148,6 +150,17 @@ export function CouponCard({ coupon, showActions, onDelete, onTogglePublic }: Co
           </DropdownMenu>
           {showActions && (
             <>
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-1"
+                asChild
+              >
+                <Link href={`/dashboard/${coupon.id}/editar`}>
+                  <Pencil className="h-4 w-4" />
+                  <span className="hidden sm:inline">Editar</span>
+                </Link>
+              </Button>
               <Button
                 variant="outline"
                 size="sm"

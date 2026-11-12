@@ -7,7 +7,9 @@ test("la cuponera pública carga sin sesión", async ({ page }) => {
 
   expect(respuesta?.status()).toBe(200)
   await expect(page.getByRole("heading", { name: "Cuponera de Descuentos" })).toBeVisible()
-  await expect(page.getByRole("link", { name: "EcoCupon" })).toBeVisible()
+  // Con SiteHeader+SiteFooter compartidos hay dos links "EcoCupon" (header y pie).
+  // Verificamos el del header (landmark banner) que es el navegacional principal.
+  await expect(page.getByRole("banner").getByRole("link", { name: "EcoCupon" })).toBeVisible()
   // El input tiene aria-label explícito, no placeholder como nombre accesible
   await expect(page.getByLabel("Buscar cupones por negocio, título o código")).toBeVisible()
   await expect(page.getByRole("link", { name: "Iniciar sesión" })).toBeVisible()
