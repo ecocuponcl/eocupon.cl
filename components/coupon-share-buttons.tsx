@@ -22,6 +22,7 @@ export function CouponShareButtons({
 }: CouponShareButtonsProps) {
   const [copied, setCopied] = useState(false)
   const [downloaded, setDownloaded] = useState(false)
+  const [avisoAdjuntar, setAvisoAdjuntar] = useState(false)
   // `false` en el servidor y el valor real en el cliente: evita el desajuste
   // de hidratación (React #418, que llegó a producción) sin renders en cascada.
   const canNativeShare = useSyncExternalStore(
@@ -75,7 +76,7 @@ export function CouponShareButtons({
     }
 
     try {
-      await navigator.share({ files: [file], title, text: shareTextWithLink })
+      await navigator.share({ files: [file], title, text: shareText })
       incrementShares()
       return true
     } catch {
@@ -98,16 +99,18 @@ export function CouponShareButtons({
     setTimeout(() => setDownloaded(false), 2000)
   }
 
+  // Lo que se manda es el cupón, no un enlace.
+  //
+  // En el teléfono el sistema adjunta el PNG y WhatsApp lo recibe como imagen.
+  // En escritorio los navegadores no permiten adjuntar archivos desde la web,
+  // así que en vez de mandar un enlace se descarga la imagen y se avisa: el
+  // comerciante la adjunta él. Mandar el enlace era mandar otra cosa.
   const handleWhatsApp = async () => {
-    // Si el dispositivo puede compartir archivos, WhatsApp recibe el cupón
-    // adjunto. Si no, se cae al enlace, que sigue funcionando.
+    setAvisoAdjuntar(false)
     if (await shareImage()) return
 
-    incrementShares()
-    window.open(
-      `https://wa.me/?text=${encodeURIComponent(shareTextWithLink)}`,
-      "_blank",
-    )
+    await handleDownload()
+    setAvisoAdjuntar(true)
   }
 
   const handleCopyLink = () => {
@@ -168,6 +171,12 @@ export function CouponShareButtons({
           </Button>
         )}
       </div>
+      {avisoAdjuntar && (
+        <p className="rounded-lg bg-secondary/60 p-3 text-center text-sm text-secondary-foreground">
+          Este navegador no puede adjuntar archivos por ti. Descargamos la
+          imagen: adjúntala en WhatsApp.
+        </p>
+      )}
       {imageUrl && (
         <Button
           variant="ghost"
