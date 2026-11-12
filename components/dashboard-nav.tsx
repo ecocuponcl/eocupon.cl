@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Leaf, Plus, LayoutGrid, LogOut } from "lucide-react"
+import { Leaf, Plus, LayoutGrid, LogOut, QrCode } from "lucide-react"
 import type { User as SupabaseUser } from "@supabase/supabase-js"
 
 interface DashboardNavProps {
@@ -53,8 +53,7 @@ export function DashboardNav({ user }: DashboardNavProps) {
                 Crear cupón
               </Button>
             </Link>
-          </nav>
-        </div>
+          </nav>        </div>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

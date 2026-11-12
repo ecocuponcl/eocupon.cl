@@ -9,7 +9,8 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { FieldGroup, Field, FieldLabel } from "@/components/ui/field"
-import { Sparkles, Globe, Download, MessageCircle, Copy, Check, AlertCircle } from "lucide-react"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Sparkles, Globe, Download, MessageCircle, Copy, Check, AlertCircle, QrCode } from "lucide-react"
 
 function buildImageUrl(
   title: string,
@@ -38,6 +39,8 @@ export default function CreateCouponPage() {
   const [businessName, setBusinessName] = useState("")
   const [logoUrl, setLogoUrl] = useState<string | null>(null)
   const [uploading, setUploading] = useState(false)
+  const [redemptionPeriod, setRedemptionPeriod] = useState("once")
+  const [expiresAt, setExpiresAt] = useState("")
 
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -112,6 +115,8 @@ export default function CreateCouponPage() {
           generated_image_url: baseImageUrl,
           logo_url: logoUrl,
           is_public: isPublic,
+          redemption_period: redemptionPeriod,
+          expires_campaign_at: expiresAt ? new Date(expiresAt).toISOString() : null,
         })
         .select()
         .single()
@@ -236,6 +241,14 @@ export default function CreateCouponPage() {
                 <Button variant="outline" className="w-full" onClick={() => router.push("/dashboard")}>
                   Ver mis cupones
                 </Button>
+                <Button
+                  variant="ghost"
+                  className="w-full gap-2"
+                  onClick={() => router.push(`/dashboard/${savedCouponId}/canjes`)}
+                >
+                  <QrCode className="h-4 w-4" />
+                  Configurar validador
+                </Button>
               </CardContent>
             </Card>
           ) : (
@@ -340,6 +353,35 @@ export default function CreateCouponPage() {
                     onChange={(e) => setBusinessName(e.target.value)}
                   />
                 </Field>
+                <div className="grid grid-cols-2 gap-4">
+                  <Field>
+                    <FieldLabel>Política de canje</FieldLabel>
+                    <Select value={redemptionPeriod} onValueChange={setRedemptionPeriod}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="once">Canje único</SelectItem>
+                        <SelectItem value="monthly">1 canje por mes</SelectItem>
+                        <SelectItem value="weekly">1 canje por semana</SelectItem>
+                        <SelectItem value="daily">1 canje por día</SelectItem>
+                        <SelectItem value="unlimited">Sin límite</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </Field>
+                  <Field>
+                    <FieldLabel>
+                      Vence el{" "}
+                      <span className="font-normal text-muted-foreground">(opcional)</span>
+                    </FieldLabel>
+                    <Input
+                      type="date"
+                      value={expiresAt}
+                      min={new Date().toISOString().split("T")[0]}
+                      onChange={(e) => setExpiresAt(e.target.value)}
+                    />
+                  </Field>
+                </div>
               </FieldGroup>
             </CardContent>
           </Card>

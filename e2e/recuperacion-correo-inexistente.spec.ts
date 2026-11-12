@@ -14,7 +14,9 @@ test("la recuperación no revela si el correo está registrado", async ({ page }
   await page.getByRole("button", { name: "Enviar enlace" }).click()
 
   // Misma pantalla que para un correo válido, sin confirmar ni negar nada.
-  await expect(page.getByText("Revisa tu correo")).toBeVisible()
+  // Usamos getByRole para evitar la colisión en modo strict con el párrafo
+  // que también contiene "Revisa tu correo".
+  await expect(page.getByRole("heading", { name: "Revisa tu correo" })).toBeVisible()
   await expect(
     page.getByText(/Si .* está registrado, te enviamos un enlace/),
   ).toBeVisible()

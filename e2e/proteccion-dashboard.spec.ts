@@ -1,6 +1,13 @@
 import { expect, test } from "@playwright/test"
+import { UUID_INEXISTENTE } from "./helpers"
 
-const RUTAS_PRIVADAS = ["/dashboard", "/dashboard/crear", "/dashboard/mis-cupones"]
+const RUTAS_PRIVADAS = [
+  "/dashboard",
+  "/dashboard/crear",
+  "/dashboard/mis-cupones",
+  `/dashboard/${UUID_INEXISTENTE}/validar`,
+  `/dashboard/${UUID_INEXISTENTE}/canjes`,
+]
 
 test("las rutas privadas redirigen a login cuando no hay sesión", async ({ page }) => {
   for (const ruta of RUTAS_PRIVADAS) {
