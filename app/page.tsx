@@ -301,7 +301,7 @@ export default function LandingPage() {
                   </li>
                   <li className="flex items-center gap-2 text-muted-foreground">
                     <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                    Vistas y compartidos
+                    Descarga del cupón en PNG
                   </li>
                 </ul>
                 <a
