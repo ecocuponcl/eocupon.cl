@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server"
 import { createAdminClient, warnIfNoServiceRole } from "@/lib/supabase/admin"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Leaf, Copy, MessageCircle, ArrowLeft } from "lucide-react"
+import { Leaf, Copy, MessageCircle, ArrowLeft, Ticket } from "lucide-react"
 import { CouponShareButtons } from "@/components/coupon-share-buttons"
 
 // Siempre dinámico: increment_views debe ejecutarse en cada visita (no cachear)
@@ -167,6 +167,23 @@ export default async function CouponPage({ params }: PageProps) {
                 <p className="text-sm text-secondary-foreground/70">
                   Usa este código en tu próxima compra
                 </p>
+              </div>
+
+              {/* Activar cupón */}
+              <div className="rounded-xl border border-primary/30 bg-primary/5 p-5">
+                <div className="mb-3 flex items-center gap-2">
+                  <Ticket className="h-5 w-5 text-primary" />
+                  <p className="font-semibold text-foreground">¿Quieres usar este cupón?</p>
+                </div>
+                <p className="mb-4 text-sm text-muted-foreground">
+                  Actívalo con tu nombre y lleva este código al local para canjear tu beneficio.
+                </p>
+                <Link href={`/cupon/${coupon.id}/activar`}>
+                  <Button className="w-full gap-2">
+                    <Ticket className="h-4 w-4" />
+                    Activar mi cupón
+                  </Button>
+                </Link>
               </div>
 
               {/* Share Buttons */}

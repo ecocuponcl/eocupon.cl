@@ -8,7 +8,8 @@ test("la cuponera pública carga sin sesión", async ({ page }) => {
   expect(respuesta?.status()).toBe(200)
   await expect(page.getByRole("heading", { name: "Cuponera de Descuentos" })).toBeVisible()
   await expect(page.getByRole("link", { name: "EcoCupon" })).toBeVisible()
-  await expect(page.getByRole("textbox", { name: "Buscar cupones..." })).toBeVisible()
+  // El input tiene aria-label explícito, no placeholder como nombre accesible
+  await expect(page.getByLabel("Buscar cupones por negocio, título o código")).toBeVisible()
   await expect(page.getByRole("link", { name: "Iniciar sesión" })).toBeVisible()
 
   const tarjetas = await page.locator('a[href^="/cupon/"]').count()
