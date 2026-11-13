@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
+import { SITE_URL } from "@/lib/site-url"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -11,6 +12,25 @@ import { FieldGroup, Field, FieldLabel } from "@/components/ui/field"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { AlertCircle, ArrowLeft, Save, Loader2 } from "lucide-react"
 import Link from "next/link"
+
+// Genera la URL de la imagen igual que en /dashboard/crear
+function buildImageUrl(
+  title: string,
+  business: string,
+  code: string,
+  discount: number,
+  logo = "",
+  url = "",
+) {
+  const params = new URLSearchParams()
+  params.set("title", title)
+  params.set("business", business)
+  params.set("code", code)
+  params.set("discount", String(discount))
+  if (logo) params.set("logo", logo)
+  if (url) params.set("url", url)
+  return `/api/coupon-image?${params.toString()}`
+}
 
 interface CouponForm {
   title: string
@@ -21,8 +41,8 @@ interface CouponForm {
   redemption_period: string
   expires_campaign_at: string
   is_public: boolean
+  max_total_redemptions: string
 }
-
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
 export default function EditarCuponPage() {
@@ -39,7 +59,9 @@ export default function EditarCuponPage() {
     redemption_period: "once",
     expires_campaign_at: "",
     is_public: false,
+    max_total_redemptions: "",
   })
+  const [logoUrl, setLogoUrl] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -62,7 +84,7 @@ export default function EditarCuponPage() {
 
       const { data, error } = await supabase
         .from("coupons")
-        .select("title, business_name, coupon_code, discount_percentage, conditions, redemption_period, expires_campaign_at, is_public")
+        .select("title, business_name, coupon_code, discount_percentage, conditions, redemption_period, expires_campaign_at, is_public, logo_url, max_total_redemptions")
         .eq("id", id)
         .eq("user_id", user.id)
         .maybeSingle()
@@ -73,6 +95,7 @@ export default function EditarCuponPage() {
         return
       }
 
+      setLogoUrl(data.logo_url ?? null)
       setForm({
         title: data.title ?? "",
         business_name: data.business_name ?? "",
@@ -84,6 +107,7 @@ export default function EditarCuponPage() {
           ? new Date(data.expires_campaign_at).toISOString().split("T")[0]
           : "",
         is_public: data.is_public ?? false,
+        max_total_redemptions: data.max_total_redemptions ? String(data.max_total_redemptions) : "",
       })
       setLoading(false)
     }
@@ -108,6 +132,17 @@ export default function EditarCuponPage() {
 
     try {
       const supabase = createClient()
+
+      // Regenerar URL de la imagen con los datos actualizados
+      const newImageUrl = buildImageUrl(
+        form.title.trim(),
+        form.business_name.trim(),
+        form.coupon_code.trim().toUpperCase(),
+        discount,
+        logoUrl ?? "",
+        `${SITE_URL}/cupon/${id}`,
+      )
+
       const { error } = await supabase
         .from("coupons")
         .update({
@@ -121,9 +156,12 @@ export default function EditarCuponPage() {
             ? new Date(form.expires_campaign_at).toISOString()
             : null,
           is_public: form.is_public,
+          generated_image_url: newImageUrl,
+          max_total_redemptions: form.max_total_redemptions
+            ? parseInt(form.max_total_redemptions, 10)
+            : null,
         })
         .eq("id", id)
-
       if (error) throw error
 
       setSaved(true)
@@ -157,7 +195,7 @@ export default function EditarCuponPage() {
         </Link>
         <div>
           <h1 className="text-2xl font-bold text-foreground">Editar cupón</h1>
-          <p className="text-muted-foreground">Los cambios no actualizan la imagen generada</p>
+          <p className="text-muted-foreground">Guardar regenera la imagen automáticamente</p>
         </div>
       </div>
 
@@ -271,6 +309,23 @@ export default function EditarCuponPage() {
                   type="date"
                   value={form.expires_campaign_at}
                   onChange={set("expires_campaign_at")}
+                />
+              </Field>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <Field>
+                <FieldLabel htmlFor="max_redemptions">
+                  Límite de canjes{" "}
+                  <span className="font-normal text-muted-foreground">(opcional)</span>
+                </FieldLabel>
+                <Input
+                  id="max_redemptions"
+                  type="number"
+                  min="1"
+                  placeholder="Sin límite"
+                  value={form.max_total_redemptions}
+                  onChange={set("max_total_redemptions")}
                 />
               </Field>
             </div>

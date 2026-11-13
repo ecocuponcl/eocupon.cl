@@ -157,8 +157,9 @@ export function CouponCard({ coupon, showActions, onDelete, onTogglePublic }: Co
                 asChild
               >
                 <Link href={`/dashboard/${coupon.id}/editar`}>
-                  <Pencil className="h-4 w-4" />
+                  <Pencil className="h-4 w-4" aria-hidden="true" />
                   <span className="hidden sm:inline">Editar</span>
+                  <span className="sr-only sm:hidden">Editar cupón</span>
                 </Link>
               </Button>
               <Button
@@ -166,8 +167,9 @@ export function CouponCard({ coupon, showActions, onDelete, onTogglePublic }: Co
                 size="sm"
                 className="gap-1 text-destructive hover:text-destructive"
                 onClick={onTogglePublic}
+                aria-label={coupon.is_public ? "Ocultar de la cuponera" : "Publicar en la cuponera"}
               >
-                <Globe className="h-4 w-4" />
+                <Globe className="h-4 w-4" aria-hidden="true" />
                 <span className="hidden sm:inline">
                   {coupon.is_public ? "Ocultar" : "Publicar"}
                 </span>
@@ -177,8 +179,9 @@ export function CouponCard({ coupon, showActions, onDelete, onTogglePublic }: Co
                 size="sm"
                 className="gap-1 text-destructive hover:text-destructive"
                 onClick={onDelete}
+                aria-label="Eliminar cupón"
               >
-                <Trash2 className="h-4 w-4" />
+                <Trash2 className="h-4 w-4" aria-hidden="true" />
                 <span className="hidden sm:inline">Borrar</span>
               </Button>
             </>

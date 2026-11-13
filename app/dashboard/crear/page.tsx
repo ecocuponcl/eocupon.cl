@@ -41,6 +41,7 @@ export default function CreateCouponPage() {
   const [uploading, setUploading] = useState(false)
   const [redemptionPeriod, setRedemptionPeriod] = useState("once")
   const [expiresAt, setExpiresAt] = useState("")
+  const [maxRedemptions, setMaxRedemptions] = useState("")
 
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -117,6 +118,7 @@ export default function CreateCouponPage() {
           is_public: isPublic,
           redemption_period: redemptionPeriod,
           expires_campaign_at: expiresAt ? new Date(expiresAt).toISOString() : null,
+          max_total_redemptions: maxRedemptions ? parseInt(maxRedemptions, 10) : null,
         })
         .select()
         .single()
@@ -379,6 +381,21 @@ export default function CreateCouponPage() {
                       value={expiresAt}
                       min={new Date().toISOString().split("T")[0]}
                       onChange={(e) => setExpiresAt(e.target.value)}
+                    />
+                  </Field>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <Field>
+                    <FieldLabel>
+                      Límite de canjes{" "}
+                      <span className="font-normal text-muted-foreground">(opcional)</span>
+                    </FieldLabel>
+                    <Input
+                      type="number"
+                      min="1"
+                      placeholder="Sin límite"
+                      value={maxRedemptions}
+                      onChange={(e) => setMaxRedemptions(e.target.value)}
                     />
                   </Field>
                 </div>

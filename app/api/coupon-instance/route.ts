@@ -81,7 +81,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Esta campaña ya venció" }, { status: 410 })
   }
 
-  // 3. Crear la instancia con service role
+  // 3. Crear la instancia con service role.
+  // Si el consumidor ya tiene una instancia activa para este cupón (mismo teléfono),
+  // devolvemos la existente en lugar de crear un duplicado. Para cupones 'once'
+  // esto evita que el mismo cliente acumule múltiples instancias canjeables.
   if (!admin) {
     console.warn("[coupon-instance] SUPABASE_SERVICE_ROLE_KEY no configurada")
     return NextResponse.json(
@@ -91,6 +94,30 @@ export async function POST(req: NextRequest) {
   }
 
   const expiresAt = computeExpiresAt(coupon.redemption_period, null)
+
+  // Si hay teléfono, buscar instancia existente activa para este cupón y teléfono
+  if (phone) {
+    const { data: existing } = await admin
+      .from("coupon_instances")
+      .select("id, coupon_id, consumer_name, activated_at, expires_at")
+      .eq("coupon_id", coupon_id)
+      .eq("consumer_phone", phone)
+      .eq("is_active", true)
+      .maybeSingle()
+
+    if (existing) {
+      return NextResponse.json({
+        id: existing.id,
+        coupon_id: existing.coupon_id,
+        consumer_name: existing.consumer_name,
+        activated_at: existing.activated_at,
+        expires_at: existing.expires_at,
+        coupon_title: coupon.title,
+        business_name: coupon.business_name,
+        reactivated: true,
+      })
+    }
+  }
 
   const { data: instance, error: instanceError } = await admin
     .from("coupon_instances")

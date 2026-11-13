@@ -66,9 +66,9 @@ export default function ActivarCuponPage() {
     }
   }
 
+  // Redirigir a la URL recuperable del consumidor
   if (result) {
-    const shareUrl = `${SITE_URL}/cupon/${couponId}`
-    const instanceUrl = `${SITE_URL}/cupon/${couponId}/activar?i=${result.id}`
+    const recoveryUrl = `/cupon/${couponId}/activar/${result.id}`
 
     return (
       <div className="min-h-screen bg-background">
@@ -126,6 +126,7 @@ export default function ActivarCuponPage() {
                 <div className="space-y-3">
                   <p className="text-sm font-medium text-muted-foreground">
                     Muestra este código en el local para canjear tu beneficio.
+                    Guarda este enlace para volver cuando quieras.
                   </p>
                   <Button
                     variant="outline"
@@ -135,6 +136,15 @@ export default function ActivarCuponPage() {
                     }}
                   >
                     Copiar código
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    className="w-full"
+                    onClick={() => {
+                      navigator.clipboard.writeText(`${window.location.origin}${recoveryUrl}`)
+                    }}
+                  >
+                    Copiar enlace permanente
                   </Button>
                   <Link href={`/cupon/${couponId}`}>
                     <Button variant="ghost" className="w-full gap-2">
