@@ -25,6 +25,7 @@ tsconfig.tsbuildinfo
 test-results/
 playwright-report/
 blob-report/
+.playwright-mcp/
 
 # Local tooling / agent config (not part of the product)
 .claude/
