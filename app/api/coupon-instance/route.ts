@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
 
   const { data: coupon, error: couponError } = await reader
     .from("coupons")
-    .select("id, title, business_name, expires_campaign_at, redemption_period, is_active_campaign:is_public")
+    .select("id, title, business_name, coupon_code, expires_campaign_at, redemption_period, is_active_campaign:is_public")
     .eq("id", coupon_id)
     .maybeSingle()
 
@@ -114,6 +114,7 @@ export async function POST(req: NextRequest) {
         expires_at: existing.expires_at,
         coupon_title: coupon.title,
         business_name: coupon.business_name,
+        coupon_code: coupon.coupon_code,
         reactivated: true,
       })
     }
@@ -146,5 +147,6 @@ export async function POST(req: NextRequest) {
     expires_at: instance.expires_at,
     coupon_title: coupon.title,
     business_name: coupon.business_name,
+    coupon_code: coupon.coupon_code,
   })
 }

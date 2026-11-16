@@ -213,68 +213,70 @@ export default function CreateCouponPage() {
             </CardContent>
           </Card>
 
-          {/* Action Buttons */}
-          {savedCouponId ? (
-            <Card className="border-border">
-              <CardContent className="space-y-4 p-6">
-                <Button className="w-full gap-2" variant="outline" onClick={handleDownload}>
-                  <Download className="h-4 w-4" />
-                  Descargar cupón
-                </Button>
-                <div className="grid grid-cols-2 gap-3">
-                  <Button onClick={handleWhatsApp} className="gap-2">
-                    <MessageCircle className="h-4 w-4" />
-                    Enviar por WhatsApp
+          {/* Action Buttons — solo visible en lg+ (desktop/tablet wide) */}
+          <div className="hidden lg:block">
+            {savedCouponId ? (
+              <Card className="border-border">
+                <CardContent className="space-y-4 p-6">
+                  <Button className="w-full gap-2" variant="outline" onClick={handleDownload}>
+                    <Download className="h-4 w-4" />
+                    Descargar cupón
                   </Button>
-                  <Button variant="secondary" onClick={handleCopyLink} className="gap-2">
-                    {copied ? (
-                      <>
-                        <Check className="h-4 w-4" />
-                        Copiado
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="h-4 w-4" />
-                        Copiar link
-                      </>
-                    )}
+                  <div className="grid grid-cols-2 gap-3">
+                    <Button onClick={handleWhatsApp} className="gap-2">
+                      <MessageCircle className="h-4 w-4" />
+                      Enviar por WhatsApp
+                    </Button>
+                    <Button variant="secondary" onClick={handleCopyLink} className="gap-2">
+                      {copied ? (
+                        <>
+                          <Check className="h-4 w-4" />
+                          Copiado
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="h-4 w-4" />
+                          Copiar link
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                  <Button variant="outline" className="w-full" onClick={() => router.push("/dashboard")}>
+                    Ver mis cupones
                   </Button>
-                </div>
-                <Button variant="outline" className="w-full" onClick={() => router.push("/dashboard")}>
-                  Ver mis cupones
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="w-full gap-2"
-                  onClick={() => router.push(`/dashboard/${savedCouponId}/canjes`)}
-                >
-                  <QrCode className="h-4 w-4" />
-                  Configurar validador
-                </Button>
-              </CardContent>
-            </Card>
-          ) : (
-            <Card className="border-border">
-              <CardContent className="space-y-4 p-6">
-                <Button
-                  className="w-full gap-2"
-                  onClick={() => handleSave(false)}
-                  disabled={isSaving || !title || !couponCode || !businessName}
-                >
-                  {isSaving ? "Guardando..." : "Guardar"}
-                </Button>
-                <Button
-                  variant="secondary"
-                  className="w-full gap-2"
-                  onClick={() => handleSave(true)}
-                  disabled={isSaving || !title || !couponCode || !businessName}
-                >
-                  <Globe className="h-4 w-4" />
-                  Publicar en cuponera
-                </Button>
-              </CardContent>
-            </Card>
-          )}
+                  <Button
+                    variant="ghost"
+                    className="w-full gap-2"
+                    onClick={() => router.push(`/dashboard/${savedCouponId}/canjes`)}
+                  >
+                    <QrCode className="h-4 w-4" />
+                    Configurar validador
+                  </Button>
+                </CardContent>
+              </Card>
+            ) : (
+              <Card className="border-border">
+                <CardContent className="space-y-4 p-6">
+                  <Button
+                    className="w-full gap-2"
+                    onClick={() => handleSave(false)}
+                    disabled={isSaving || !title || !couponCode || !businessName}
+                  >
+                    {isSaving ? "Guardando..." : "Guardar"}
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    className="w-full gap-2"
+                    onClick={() => handleSave(true)}
+                    disabled={isSaving || !title || !couponCode || !businessName}
+                  >
+                    <Globe className="h-4 w-4" />
+                    Publicar en cuponera
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+          </div>
         </div>
 
         {/* Personalize Section */}
@@ -402,6 +404,60 @@ export default function CreateCouponPage() {
               </FieldGroup>
             </CardContent>
           </Card>
+        </div>
+      </div>
+
+      {/* Sticky CTA bar — solo visible en mobile/tablet (<lg).
+          fixed bottom-0 se mantiene en su posición incluso cuando el teclado
+          virtual sube el contenido (el navegador ajusta el viewport visual, no
+          el layout viewport). safe-area-inset-bottom cubre el notch del iPhone. */}
+      <div className="lg:hidden">
+        <div className="h-20" aria-hidden="true" /> {/* spacer para que el contenido no quede detrás */}
+        <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80"
+          style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
+        >
+          <div className="container mx-auto px-4 py-3">
+            {savedCouponId ? (
+              <div className="grid grid-cols-2 gap-2">
+                <Button onClick={handleWhatsApp} className="gap-2">
+                  <MessageCircle className="h-4 w-4" />
+                  WhatsApp
+                </Button>
+                <Button variant="secondary" onClick={handleCopyLink} className="gap-2">
+                  {copied ? (
+                    <>
+                      <Check className="h-4 w-4" />
+                      Copiado
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="h-4 w-4" />
+                      Copiar link
+                    </>
+                  )}
+                </Button>
+              </div>
+            ) : (
+              <div className="flex gap-2">
+                <Button
+                  className="flex-1 gap-2"
+                  onClick={() => handleSave(false)}
+                  disabled={isSaving || !title || !couponCode || !businessName}
+                >
+                  {isSaving ? "Guardando…" : "Guardar"}
+                </Button>
+                <Button
+                  variant="secondary"
+                  className="flex-1 gap-2"
+                  onClick={() => handleSave(true)}
+                  disabled={isSaving || !title || !couponCode || !businessName}
+                >
+                  <Globe className="h-4 w-4" />
+                  Publicar
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

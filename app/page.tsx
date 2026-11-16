@@ -3,7 +3,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Sparkles, Share2, Download, Zap, Shield, Users, Ticket, QrCode, MessageCircle } from "lucide-react"
+import { Sparkles, Share2, Download, Zap, Shield, Users, Ticket, QrCode, MessageCircle, Check } from "lucide-react"
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 
@@ -24,11 +24,11 @@ export default function LandingPage() {
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/10" />
         <div className="container relative mx-auto px-4">
           <div className="mx-auto max-w-3xl text-center">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/15 px-4 py-2 text-sm font-semibold text-primary">
               <Ticket className="h-4 w-4" />
               Imagen, enlace y código QR en un solo paso
             </div>
-            <h1 className="mb-6 text-balance text-4xl font-bold tracking-tight text-foreground md:text-6xl">
+            <h1 className="mb-6 text-balance text-4xl font-bold tracking-tight text-foreground lg:text-5xl xl:text-6xl">
               Tu oferta lista para <span className="text-primary">compartir</span>
             </h1>
             <p className="mb-10 text-pretty text-lg text-muted-foreground md:text-xl">
@@ -229,15 +229,15 @@ export default function LandingPage() {
                 </div>
                 <ul className="mb-8 space-y-3 text-sm">
                   <li className="flex items-center gap-2 text-muted-foreground">
-                    <div className="h-1.5 w-1.5 rounded-full bg-primary" />
+                    <Check className="h-4 w-4 shrink-0 text-primary" />
                     3 cupones por mes
                   </li>
                   <li className="flex items-center gap-2 text-muted-foreground">
-                    <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                    Marca de agua EcoCupon
+                    <Check className="h-4 w-4 shrink-0 text-primary" />
+                    Imagen con código QR
                   </li>
                   <li className="flex items-center gap-2 text-muted-foreground">
-                    <div className="h-1.5 w-1.5 rounded-full bg-primary" />
+                    <Check className="h-4 w-4 shrink-0 text-primary" />
                     Compartir por WhatsApp
                   </li>
                 </ul>
@@ -259,19 +259,19 @@ export default function LandingPage() {
                 </div>
                 <ul className="mb-8 space-y-3 text-sm">
                   <li className="flex items-center gap-2 text-muted-foreground">
-                    <div className="h-1.5 w-1.5 rounded-full bg-primary" />
+                    <Check className="h-4 w-4 shrink-0 text-primary" />
                     50 cupones por mes
                   </li>
                   <li className="flex items-center gap-2 text-muted-foreground">
-                    <div className="h-1.5 w-1.5 rounded-full bg-primary" />
+                    <Check className="h-4 w-4 shrink-0 text-primary" />
                     Logo de tu negocio
                   </li>
                   <li className="flex items-center gap-2 text-muted-foreground">
-                    <div className="h-1.5 w-1.5 rounded-full bg-primary" />
+                    <Check className="h-4 w-4 shrink-0 text-primary" />
                     Publicar en cuponera
                   </li>
                   <li className="flex items-center gap-2 text-muted-foreground">
-                    <div className="h-1.5 w-1.5 rounded-full bg-primary" />
+                    <Check className="h-4 w-4 shrink-0 text-primary" />
                     Descarga del cupón en PNG
                   </li>
                 </ul>

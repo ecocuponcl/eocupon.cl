@@ -4,7 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Download, Share2, MessageCircle, Copy, Check, Eye, Trash2, Globe, Pencil } from "lucide-react"
+import { Download, Share2, MessageCircle, Copy, Check, Eye, Trash2, Globe, Pencil, QrCode } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -187,6 +187,14 @@ export function CouponCard({ coupon, showActions, onDelete, onTogglePublic }: Co
             </>
           )}
         </div>
+        {showActions && (
+          <Link href={`/dashboard/${coupon.id}/validar`} className="mt-3 block">
+            <Button variant="outline" size="sm" className="w-full gap-2">
+              <QrCode className="h-3.5 w-3.5" />
+              Validar canjes
+            </Button>
+          </Link>
+        )}
       </CardContent>
     </Card>
   )

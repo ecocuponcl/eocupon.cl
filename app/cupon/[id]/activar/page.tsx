@@ -7,8 +7,34 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { FieldGroup, Field, FieldLabel } from "@/components/ui/field"
-import { Leaf, CheckCircle2, AlertCircle, Ticket, ArrowLeft } from "lucide-react"
+import { SiteHeader } from "@/components/site-header"
+import { CheckCircle2, AlertCircle, Ticket, ArrowLeft, Copy, Check } from "lucide-react"
 import { SITE_URL } from "@/lib/site-url"
+
+/** Botón que copia una URL y da feedback visual. */
+function CopyLinkButton({ label, value }: { label: string; value: string }) {
+  const [copied, setCopied] = useState(false)
+  const handleCopy = () => {
+    navigator.clipboard.writeText(value)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2500)
+  }
+  return (
+    <Button variant="outline" className="w-full gap-2" onClick={handleCopy}>
+      {copied ? (
+        <>
+          <Check className="h-4 w-4 text-primary" />
+          Enlace copiado
+        </>
+      ) : (
+        <>
+          <Copy className="h-4 w-4" />
+          {label}
+        </>
+      )}
+    </Button>
+  )
+}
 
 type ActivationResult = {
   id: string
@@ -17,6 +43,7 @@ type ActivationResult = {
   expires_at: string | null
   coupon_title: string
   business_name: string
+  coupon_code: string
 }
 
 export default function ActivarCuponPage() {
@@ -66,95 +93,111 @@ export default function ActivarCuponPage() {
     }
   }
 
-  // Redirigir a la URL recuperable del consumidor
+  // Pantalla de éxito tras activar
   if (result) {
     const recoveryUrl = `/cupon/${couponId}/activar/${result.id}`
 
     return (
       <div className="min-h-screen bg-background">
-        <header className="border-b border-border bg-background">
-          <div className="container mx-auto flex h-16 items-center px-4">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary">
-                <Leaf className="h-6 w-6 text-primary-foreground" />
-              </div>
-              <span className="text-xl font-bold text-foreground">EcoCupon</span>
+        <SiteHeader
+          action={
+            <Link href={`/cupon/${couponId}`}>
+              <Button variant="ghost" size="sm" className="gap-2">
+                <ArrowLeft className="h-4 w-4" />
+                Volver al cupón
+              </Button>
             </Link>
-          </div>
-        </header>
+          }
+        />
 
         <main className="container mx-auto px-4 py-10 md:py-16">
-          <div className="mx-auto max-w-md">
+          <div className="mx-auto max-w-md space-y-4">
+            {/* Estado de éxito */}
             <Card className="overflow-hidden border-border">
               <CardContent className="p-8 text-center">
-                <div className="mb-6 flex justify-center">
+                <div className="mb-5 flex justify-center">
                   <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
                     <CheckCircle2 className="h-10 w-10 text-primary" />
                   </div>
                 </div>
-
-                <h1 className="mb-2 text-2xl font-bold text-foreground">
+                <h1 className="mb-1 text-2xl font-bold text-foreground">
                   ¡Cupón activado!
                 </h1>
-                <p className="mb-6 text-muted-foreground">
-                  Hola <span className="font-semibold text-foreground">{result.consumer_name}</span>,
-                  tu cupón de <span className="font-semibold text-foreground">{result.business_name}</span> está activo.
+                <p className="text-muted-foreground">
+                  Hola{" "}
+                  <span className="font-semibold text-foreground">{result.consumer_name}</span>
+                  , tu cupón de{" "}
+                  <span className="font-semibold text-foreground">{result.business_name}</span>{" "}
+                  está listo.
                 </p>
-
-                <div className="mb-6 rounded-xl bg-secondary p-5">
-                  <p className="mb-1 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                    Tu código de activación
-                  </p>
-                  <p className="font-mono text-sm font-bold text-secondary-foreground break-all">
-                    {result.id}
-                  </p>
-                </div>
-
-                {result.expires_at && (
-                  <p className="mb-6 text-sm text-muted-foreground">
-                    Válido hasta:{" "}
-                    <span className="font-medium text-foreground">
-                      {new Date(result.expires_at).toLocaleDateString("es-CL", {
-                        day: "2-digit",
-                        month: "long",
-                        year: "numeric",
-                      })}
-                    </span>
-                  </p>
-                )}
-
-                <div className="space-y-3">
-                  <p className="text-sm font-medium text-muted-foreground">
-                    Muestra este código en el local para canjear tu beneficio.
-                    Guarda este enlace para volver cuando quieras.
-                  </p>
-                  <Button
-                    variant="outline"
-                    className="w-full"
-                    onClick={() => {
-                      navigator.clipboard.writeText(result.id)
-                    }}
-                  >
-                    Copiar código
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    className="w-full"
-                    onClick={() => {
-                      navigator.clipboard.writeText(`${window.location.origin}${recoveryUrl}`)
-                    }}
-                  >
-                    Copiar enlace permanente
-                  </Button>
-                  <Link href={`/cupon/${couponId}`}>
-                    <Button variant="ghost" className="w-full gap-2">
-                      <ArrowLeft className="h-4 w-4" />
-                      Volver al cupón
-                    </Button>
-                  </Link>
-                </div>
               </CardContent>
             </Card>
+
+            {/* Instrucción principal: qué hacer en el local */}
+            <Card className="border-primary/30 bg-primary/5">
+              <CardContent className="p-5">
+                <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-primary">
+                  Cómo usar tu cupón
+                </p>
+                <ol className="space-y-2 text-sm text-foreground">
+                  <li className="flex items-start gap-2">
+                    <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">1</span>
+                    Muestra esta pantalla o el QR en el local al momento de pagar.
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">2</span>
+                    El encargado escaneará tu código o lo verificará en su sistema.
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">3</span>
+                    ¡Listo! Recibirás tu beneficio de inmediato.
+                  </li>
+                </ol>
+              </CardContent>
+            </Card>
+
+            {/* Código del cupón — el que el consumidor le dice al comercio */}
+            <Card className="border-border">
+              <CardContent className="p-5 text-center">
+                <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Código del cupón
+                </p>
+                <p className="mb-1 font-mono text-3xl font-bold tracking-widest text-foreground">
+                  {result.coupon_code}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Muéstraselo al encargado si te lo piden
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Vigencia */}
+            {result.expires_at && (
+              <p className="text-center text-sm text-muted-foreground">
+                Válido hasta{" "}
+                <span className="font-medium text-foreground">
+                  {new Date(result.expires_at).toLocaleDateString("es-CL", {
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </span>
+              </p>
+            )}
+
+            {/* Acciones secundarias */}
+            <div className="space-y-2">
+              <CopyLinkButton
+                label="Guardar enlace de mi cupón"
+                value={`${SITE_URL}${recoveryUrl}`}
+              />
+              <Link href={`/cupon/${couponId}`}>
+                <Button variant="ghost" className="w-full gap-2">
+                  <ArrowLeft className="h-4 w-4" />
+                  Volver al cupón
+                </Button>
+              </Link>
+            </div>
           </div>
         </main>
       </div>
@@ -163,22 +206,16 @@ export default function ActivarCuponPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b border-border bg-background">
-        <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary">
-              <Leaf className="h-6 w-6 text-primary-foreground" />
-            </div>
-            <span className="text-xl font-bold text-foreground">EcoCupon</span>
-          </Link>
+      <SiteHeader
+        action={
           <Link href={`/cupon/${couponId}`}>
             <Button variant="ghost" size="sm" className="gap-2">
               <ArrowLeft className="h-4 w-4" />
               Volver
             </Button>
           </Link>
-        </div>
-      </header>
+        }
+      />
 
       <main className="container mx-auto px-4 py-10 md:py-16">
         <div className="mx-auto max-w-md">

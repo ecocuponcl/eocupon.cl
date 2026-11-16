@@ -8,7 +8,7 @@ export const CREDENCIALES = {
 
 export const MOTIVO_SIN_CREDENCIALES =
   "Falta E2E_USER_EMAIL/E2E_USER_PASSWORD: se necesita una cuenta de prueba " +
-  "autorizada en el proyecto Supabase (hoy apunta a producción)."
+  "autorizada en el proyecto Supabase (staging)."
 
 export const CORREO_INEXISTENTE = "auditoria-no-existe@example.invalid"
 

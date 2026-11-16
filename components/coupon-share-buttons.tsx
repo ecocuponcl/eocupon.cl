@@ -3,7 +3,6 @@
 import { useState, useSyncExternalStore } from "react"
 import { Button } from "@/components/ui/button"
 import { MessageCircle, Copy, Check, Share2, Download } from "lucide-react"
-import { createClient } from "@/lib/supabase/client"
 
 interface CouponShareButtonsProps {
   couponId: string
@@ -42,12 +41,16 @@ export function CouponShareButtons({
   const shareTextWithLink = couponUrl ? `${shareText}. Ver cupón: ${couponUrl}` : shareText
 
   const incrementShares = async () => {
-    const supabase = createClient()
-    const { error } = await supabase.rpc("increment_shares", { coupon_id: couponId })
-
-    // El contador es métrica secundaria: si falla, el usuario ya compartió igual.
-    if (error) {
-      console.error("No se pudo registrar el compartido:", error.message)
+    // Llama al Route Handler del servidor en vez de Supabase directamente.
+    // Esto permite cerrar el GRANT EXECUTE to anon en las RPCs sin romper el UX.
+    try {
+      await fetch("/api/track", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ coupon_id: couponId, event: "share" }),
+      })
+    } catch {
+      // El contador es métrica secundaria: si falla, el usuario ya compartió.
     }
   }
 

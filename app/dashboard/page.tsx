@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Empty, EmptyHeader, EmptyTitle, EmptyDescription, EmptyMedia, EmptyContent } from "@/components/ui/empty"
-import { AlertCircle, Plus, Ticket, Eye, Share2, QrCode } from "lucide-react"
+import { AlertCircle, Plus, Ticket, Eye, Share2 } from "lucide-react"
 import { CouponCard } from "@/components/coupon-card"
 
 export default async function DashboardPage() {
@@ -69,8 +69,8 @@ export default async function DashboardPage() {
         </Card>
         <Card className="border-border">
           <CardContent className="flex items-center gap-4 p-6">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-secondary/50">
-              <Eye className="h-6 w-6 text-secondary-foreground" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50">
+              <Eye className="h-6 w-6 text-blue-600" />
             </div>
             <div>
               <p className="text-2xl font-bold text-foreground">{stats.views}</p>
@@ -80,8 +80,8 @@ export default async function DashboardPage() {
         </Card>
         <Card className="border-border">
           <CardContent className="flex items-center gap-4 p-6">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent/50">
-              <Share2 className="h-6 w-6 text-accent-foreground" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-orange-50">
+              <Share2 className="h-6 w-6 text-orange-500" />
             </div>
             <div>
               <p className="text-2xl font-bold text-foreground">{stats.shares}</p>
@@ -95,15 +95,7 @@ export default async function DashboardPage() {
       {coupons && coupons.length > 0 ? (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {coupons.map((coupon) => (
-            <div key={coupon.id} className="space-y-2">
-              <CouponCard coupon={coupon} />
-              <Link href={`/dashboard/${coupon.id}/validar`}>
-                <Button variant="outline" size="sm" className="w-full gap-2">
-                  <QrCode className="h-3.5 w-3.5" />
-                  Validar canjes
-                </Button>
-              </Link>
-            </div>
+            <CouponCard key={coupon.id} coupon={coupon} showActions />
           ))}
         </div>
       ) : (

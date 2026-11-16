@@ -136,8 +136,8 @@ export default async function CanjesPage({ params }: PageProps) {
         </Card>
         <Card className="border-border">
           <CardContent className="flex items-center gap-4 p-5">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-secondary/50">
-              <CheckCircle2 className="h-5 w-5 text-secondary-foreground" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50">
+              <CheckCircle2 className="h-5 w-5 text-blue-600" />
             </div>
             <div>
               <p className="text-2xl font-bold text-foreground">{stats.redemptions}</p>
@@ -147,8 +147,8 @@ export default async function CanjesPage({ params }: PageProps) {
         </Card>
         <Card className="border-border">
           <CardContent className="flex items-center gap-4 p-5">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent/50">
-              <TrendingUp className="h-5 w-5 text-accent-foreground" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-50">
+              <TrendingUp className="h-5 w-5 text-orange-500" />
             </div>
             <div>
               <p className="text-2xl font-bold text-foreground">{stats.conversion}%</p>

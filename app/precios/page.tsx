@@ -91,7 +91,7 @@ export default function PreciosPage() {
                 {plan.popular && (
                   <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                     <span className="bg-primary text-primary-foreground text-sm font-medium px-3 py-1 rounded-full">
-                      Mas Popular
+                      Más Popular
                     </span>
                   </div>
                 )}
@@ -119,10 +119,10 @@ export default function PreciosPage() {
                 <CardFooter>
                   <Button 
                     asChild 
-                    className={`w-full ${plan.popular ? "bg-primary hover:bg-primary/90" : ""}`}
-                    variant={plan.popular ? "default" : "outline"}
+                    className="w-full"
+                    variant={plan.popular ? "default" : plan.name === "Business" ? "secondary" : "outline"}
                   >
-                    <Link href={plan.href} target={plan.href.startsWith("http") ? "_blank" : undefined}>
+                    <Link href={plan.href} target={plan.href.startsWith("http") ? "_blank" : undefined} rel={plan.href.startsWith("http") ? "noopener noreferrer" : undefined}>
                       {plan.cta}
                     </Link>
                   </Button>
@@ -139,16 +139,16 @@ export default function PreciosPage() {
           <h2 className="text-3xl font-bold text-center mb-8">Preguntas Frecuentes</h2>
           <div className="space-y-4">
             <div className="bg-card p-6 rounded-xl border border-border">
-              <h3 className="font-semibold mb-2">Puedo cambiar de plan en cualquier momento?</h3>
-              <p className="text-muted-foreground">Si, puedes actualizar o cambiar tu plan cuando quieras. Los cambios se aplican inmediatamente.</p>
+              <h3 className="font-semibold mb-2">¿Puedo cambiar de plan en cualquier momento?</h3>
+              <p className="text-muted-foreground">Sí, puedes actualizar o cambiar tu plan cuando quieras. Los cambios se aplican inmediatamente.</p>
             </div>
             <div className="bg-card p-6 rounded-xl border border-border">
-              <h3 className="font-semibold mb-2">Que metodos de pago aceptan?</h3>
-              <p className="text-muted-foreground">Aceptamos tarjetas de credito, debito y transferencia bancaria a traves de Reveniu.</p>
+              <h3 className="font-semibold mb-2">¿Qué métodos de pago aceptan?</h3>
+              <p className="text-muted-foreground">Aceptamos tarjetas de crédito, débito y transferencia bancaria a través de Reveniu.</p>
             </div>
             <div className="bg-card p-6 rounded-xl border border-border">
-              <h3 className="font-semibold mb-2">Hay garantia de devolucion?</h3>
-              <p className="text-muted-foreground">Si, ofrecemos garantia de devolucion de 30 dias si no estas satisfecho con el servicio.</p>
+              <h3 className="font-semibold mb-2">¿Hay garantía de devolución?</h3>
+              <p className="text-muted-foreground">Sí, ofrecemos garantía de devolución de 30 días si no estás satisfecho con el servicio.</p>
             </div>
           </div>
         </div>

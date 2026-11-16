@@ -32,6 +32,86 @@ jobs:
       - name: Build
         run: pnpm build
 
-      # La suite E2E necesita NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY
-      # como secretos del repositorio. No se ejecuta aquí para no fallar en forks
-      # ni en pull requests sin acceso a los secretos.
+  e2e:
+    runs-on: ubuntu-latest
+    # Solo se ejecuta si hay secretos de staging configurados en el repo.
+    # En forks y PRs externos, los secretos no están disponibles y el job se salta.
+    # Configurar en GitHub → Settings → Secrets and variables → Actions:
+    #   STAGING_NEXT_PUBLIC_SUPABASE_URL
+    #   STAGING_NEXT_PUBLIC_SUPABASE_ANON_KEY
+    #   STAGING_SUPABASE_SERVICE_ROLE_KEY
+    #   STAGING_E2E_USER_EMAIL
+    #   STAGING_E2E_USER_PASSWORD
+    #   STAGING_E2E_COUPON_ID
+    if: >
+      github.event_name == 'push' ||
+      (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository)
+    needs: verify
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Instalar dependencias
+        run: pnpm install --frozen-lockfile
+
+      - name: Instalar Playwright Chromium
+        run: npx playwright install chromium --with-deps
+
+      - name: Build (staging)
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.STAGING_NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.STAGING_NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          NEXT_PUBLIC_SITE_URL: http://localhost:3000
+        run: pnpm build
+
+      - name: Ejecutar suite E2E (sin credenciales)
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.STAGING_NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.STAGING_NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.STAGING_SUPABASE_SERVICE_ROLE_KEY }}
+          NEXT_PUBLIC_SITE_URL: http://localhost:3000
+          # E2E_USER_EMAIL y E2E_USER_PASSWORD se leen del entorno para tests con sesión
+          E2E_USER_EMAIL: ${{ secrets.STAGING_E2E_USER_EMAIL }}
+          E2E_USER_PASSWORD: ${{ secrets.STAGING_E2E_USER_PASSWORD }}
+          E2E_COUPON_ID: ${{ secrets.STAGING_E2E_COUPON_ID }}
+        run: |
+          # Levantar el servidor Next.js apuntando al staging
+          pnpm start &
+          SERVER_PID=$!
+          sleep 5
+
+          # Verificar que el servidor levantó
+          curl -sf http://localhost:3000/ > /dev/null || (echo "Server failed to start" && exit 1)
+
+          # Ejecutar los tests (fixtures sin credenciales siempre pasan;
+          # fixtures con credenciales se saltan si las variables no están)
+          PLAYWRIGHT_BASE_URL=http://localhost:3000 npx playwright test \
+            e2e/acceso-login.spec.ts \
+            e2e/login-invalido.spec.ts \
+            e2e/validacion-registro.spec.ts \
+            e2e/cuponera-publica.spec.ts \
+            e2e/cupon-publico.spec.ts \
+            e2e/proteccion-dashboard.spec.ts \
+            e2e/activacion-cupon.spec.ts \
+            e2e/google-oauth.spec.ts \
+            e2e/recuperacion-correo-inexistente.spec.ts \
+            e2e/confirmacion-correo.spec.ts \
+            --reporter=list
+
+          kill $SERVER_PID || true
+
+      - name: Subir reporte de Playwright
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7

@@ -52,7 +52,7 @@ export function CuponeraGrid({ coupons }: { coupons: CuponeraCoupon[] }) {
             onChange={(event) => setQuery(event.target.value)}
           />
         </div>
-        {query ? (
+        {query && (
           <Button
             variant="outline"
             className="h-11"
@@ -60,10 +60,6 @@ export function CuponeraGrid({ coupons }: { coupons: CuponeraCoupon[] }) {
             aria-label="Limpiar búsqueda"
           >
             <X className="h-4 w-4" />
-          </Button>
-        ) : (
-          <Button className="h-11" onClick={() => setQuery(term)}>
-            Buscar
           </Button>
         )}
       </div>
