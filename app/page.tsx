@@ -225,7 +225,7 @@ export default function LandingPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Button className="w-full">Suscribirse</Button>
+                  <Button className="w-full">Suscribirse anual</Button>
                 </a>
               </CardContent>
             </Card>

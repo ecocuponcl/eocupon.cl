@@ -44,7 +44,7 @@ const plans = [
       "Cuponera pública",
       "Soporte por WhatsApp",
     ],
-    cta: "Suscribirse",
+    cta: "Suscribirse anual",
     href: "https://app.reveniu.com/checkout-custom-link/xKK23b48El4xxc6ANca8FfyMlHq43P0N",
     popular: true,
   },
