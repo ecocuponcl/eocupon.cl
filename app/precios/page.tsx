@@ -18,12 +18,14 @@ const plans = [
     name: "Gratis",
     description: "Para empezar a probar",
     price: "0",
+    priceSuffix: "/mes",
+    note: "7 días de Pro al registrarte, sin tarjeta",
     icon: Leaf,
     features: [
       "3 cupones por mes",
       "Imagen con QR y código",
       "Compartir por WhatsApp",
-      "Enlace público",
+      "Cuponera pública",
     ],
     cta: "Comenzar Gratis",
     href: "/auth/registro",
@@ -32,15 +34,15 @@ const plans = [
   {
     name: "Pro",
     description: "Para negocios en crecimiento",
-    price: "9.990",
+    price: "9.000",
+    priceSuffix: "/mes + IVA",
+    note: "o $80.000 al año + IVA (2 meses gratis)",
     icon: Sparkles,
     features: [
       "50 cupones por mes",
-      "Imagen con QR y tu logo",
-      "Subir imágenes propias",
-      "Publicar en cuponera",
-      "Descarga del cupón en PNG",
-      "Soporte prioritario",
+      "Logo de tu negocio en el cupón",
+      "Cuponera pública",
+      "Soporte por WhatsApp",
     ],
     cta: "Suscribirse",
     href: "https://app.reveniu.com/checkout-custom-link/xKK23b48El4xxc6ANca8FfyMlHq43P0N",
@@ -50,13 +52,14 @@ const plans = [
     name: "Business",
     description: "Para empresas y agencias",
     price: "29.990",
+    priceSuffix: "/mes",
+    note: "",
     icon: Crown,
     features: [
       "Cupones ilimitados",
       "Cupones con tu logo",
       "Atención por WhatsApp",
       "Acompañamiento personalizado",
-      "Publicar en cuponera",
       "Soporte dedicado",
     ],
     cta: "Contactar Ventas",
@@ -103,10 +106,11 @@ export default function PreciosPage() {
                   <CardDescription>{plan.description}</CardDescription>
                 </CardHeader>
                 <CardContent className="text-center">
-                  <div className="mb-6">
+                  <div className="mb-1">
                     <span className="text-4xl font-bold text-foreground">${plan.price}</span>
-                    <span className="text-muted-foreground">/mes</span>
+                    <span className="text-muted-foreground">{plan.priceSuffix}</span>
                   </div>
+                  <p className="mb-6 min-h-5 text-sm text-muted-foreground">{plan.note}</p>
                   <ul className="space-y-3 text-left">
                     {plan.features.map((feature) => (
                       <li key={feature} className="flex items-center gap-2">

@@ -220,7 +220,7 @@ export default function MisCuponesPage() {
             <AlertDialogTitle>¿Eliminar este cupón?</AlertDialogTitle>
             <AlertDialogDescription>
               Se eliminará permanentemente el cupón{" "}
-              <span className="font-semibold">"{pendingDelete?.title}"</span>{" "}
+              <span className="font-semibold">&quot;{pendingDelete?.title}&quot;</span>{" "}
               y su imagen. Esta acción no se puede deshacer.
             </AlertDialogDescription>
           </AlertDialogHeader>

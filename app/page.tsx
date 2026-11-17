@@ -162,10 +162,13 @@ export default function LandingPage() {
               <CardContent className="p-8">
                 <h3 className="mb-2 text-xl font-semibold text-foreground">Gratis</h3>
                 <p className="mb-6 text-muted-foreground">Para probar la plataforma</p>
-                <div className="mb-6">
+                <div className="mb-1">
                   <span className="text-4xl font-bold text-foreground">$0</span>
                   <span className="text-muted-foreground">/mes</span>
                 </div>
+                <p className="mb-6 text-sm text-muted-foreground">
+                  7 días de Pro al registrarte, sin tarjeta
+                </p>
                 <ul className="mb-8 space-y-3 text-sm">
                   <li className="flex items-center gap-2 text-muted-foreground">
                     <Check className="h-4 w-4 shrink-0 text-primary" />
@@ -178,6 +181,10 @@ export default function LandingPage() {
                   <li className="flex items-center gap-2 text-muted-foreground">
                     <Check className="h-4 w-4 shrink-0 text-primary" />
                     Compartir por WhatsApp
+                  </li>
+                  <li className="flex items-center gap-2 text-muted-foreground">
+                    <Check className="h-4 w-4 shrink-0 text-primary" />
+                    Cuponera pública
                   </li>
                 </ul>
                 <Link href="/auth/registro">
@@ -192,10 +199,13 @@ export default function LandingPage() {
               <CardContent className="p-8">
                 <h3 className="mb-2 text-xl font-semibold text-foreground">Pro</h3>
                 <p className="mb-6 text-muted-foreground">Para negocios en crecimiento</p>
-                <div className="mb-6">
-                  <span className="text-4xl font-bold text-foreground">$9.990</span>
-                  <span className="text-muted-foreground">/mes</span>
+                <div className="mb-1">
+                  <span className="text-4xl font-bold text-foreground">$9.000</span>
+                  <span className="text-muted-foreground">/mes + IVA</span>
                 </div>
+                <p className="mb-6 text-sm text-muted-foreground">
+                  o $80.000 al año + IVA (2 meses gratis)
+                </p>
                 <ul className="mb-8 space-y-3 text-sm">
                   <li className="flex items-center gap-2 text-muted-foreground">
                     <Check className="h-4 w-4 shrink-0 text-primary" />
@@ -203,15 +213,11 @@ export default function LandingPage() {
                   </li>
                   <li className="flex items-center gap-2 text-muted-foreground">
                     <Check className="h-4 w-4 shrink-0 text-primary" />
-                    Logo de tu negocio
+                    Logo de tu negocio en el cupón
                   </li>
                   <li className="flex items-center gap-2 text-muted-foreground">
                     <Check className="h-4 w-4 shrink-0 text-primary" />
-                    Publicar en cuponera
-                  </li>
-                  <li className="flex items-center gap-2 text-muted-foreground">
-                    <Check className="h-4 w-4 shrink-0 text-primary" />
-                    Descarga del cupón en PNG
+                    Soporte por WhatsApp
                   </li>
                 </ul>
                 <a

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createClient as createAdminClient } from "@supabase/supabase-js"
 import { createClient as createServerClient } from "@/lib/supabase/server"
+import { limitsFor, effectivePlan } from "@/lib/plans"
 
 // SVG queda fuera a propósito: es un documento con scripts y estilos, y el
 // bucket `logos` es público, así que servirlo permitiría XSS alojado en nuestro
@@ -61,7 +62,22 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "No autenticado" }, { status: 401 })
   }
 
-  // 2) Leer el archivo del body (multipart/form-data).
+  // 2) El logo es una función del plan Pro. Se valida en el servidor porque el
+  //    cliente podría llamar este endpoint directo sin pasar por la interfaz.
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
+    .single()
+
+  if (!limitsFor(effectivePlan(profile?.plan_type, profile?.trial_ends_at)).logo) {
+    return NextResponse.json(
+      { error: "El logo de tu negocio está disponible en el plan Pro." },
+      { status: 403 },
+    )
+  }
+
+  // 3) Leer el archivo del body (multipart/form-data).
   const form = await req.formData()
   const file = form.get("file")
   if (!file || typeof file === "string") {

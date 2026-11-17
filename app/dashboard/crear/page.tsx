@@ -2,8 +2,10 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 import { createClient } from "@/lib/supabase/client"
 import { SITE_URL } from "@/lib/site-url"
+import { usePlan } from "@/hooks/use-plan"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -32,6 +34,7 @@ function buildImageUrl(
 
 export default function CreateCouponPage() {
   const router = useRouter()
+  const { limits } = usePlan()
 
   const [title, setTitle] = useState("")
   const [discountPercentage, setDiscountPercentage] = useState("20")
@@ -308,9 +311,17 @@ export default function CreateCouponPage() {
                       type="file"
                       accept="image/png,image/jpeg,image/webp,image/gif,image/avif"
                       onChange={handleLogoChange}
-                      disabled={uploading}
+                      disabled={uploading || !limits.logo}
                     />
                   </div>
+                  {!limits.logo && (
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      El logo es parte del plan Pro.{" "}
+                      <Link href="/precios" className="font-medium text-primary hover:underline">
+                        Ver planes
+                      </Link>
+                    </p>
+                  )}
                   {uploading && (
                     <p className="mt-1 text-xs text-muted-foreground">Subiendo logo…</p>
                   )}
