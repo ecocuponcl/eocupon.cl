@@ -3,6 +3,7 @@ import { notFound } from "next/navigation"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/server"
 import { createAdminClient, warnIfNoServiceRole } from "@/lib/supabase/admin"
+import { SITE_URL } from "@/lib/site-url"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { ArrowLeft, Ticket, CalendarClock } from "lucide-react"
@@ -35,7 +36,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const { data } = await (reader ?? supabase)
     .from("coupons")
-    .select("title, business_name, discount_percentage")
+    .select("title, business_name, discount_percentage, coupon_code, logo_url")
     .eq("id", id)
     .maybeSingle()
 
@@ -46,11 +47,35 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const title = `${data.discount_percentage}% de descuento en ${data.business_name}`
   const description = `${data.title} — cupón de ${data.business_name}, canjeable con código.`
 
+  // Construimos la URL de la imagen del cupón para que WhatsApp (y cualquier
+  // scraper de OG) la descargue directamente. Se necesita una URL absoluta;
+  // usamos SITE_URL para que funcione tanto en producción como en staging.
+  const ogImageParams = new URLSearchParams({
+    title: data.title,
+    business: data.business_name,
+    code: data.coupon_code,
+    discount: String(data.discount_percentage),
+    ...(data.logo_url ? { logo: data.logo_url } : {}),
+    url: `${SITE_URL}/cupon/${id}`,
+  })
+  const ogImageUrl = `${SITE_URL}/api/coupon-image?${ogImageParams.toString()}`
+
   return {
     title,
     description,
     alternates: { canonical: `/cupon/${id}` },
-    openGraph: { title, description, type: "website" },
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      images: [{ url: ogImageUrl, width: 800, height: 600, alt: title }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [ogImageUrl],
+    },
   }
 }
 

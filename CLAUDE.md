@@ -4,8 +4,7 @@ SaaS para comercios chilenos que generan cupones de descuento, los comparten por
 link/QR y miden vistas y compartidos. El sitio público vive en
 `https://www.ecocupon.cl`.
 
-El repo nació de una plantilla de [v0](https://v0.app) y sigue enlazado a ese
-proyecto: v0 puede hacer push directo a `main` y cada merge despliega solo.
+El deploy corre en Vercel: cada merge a `main` despliega automáticamente.
 
 ## Stack
 
@@ -85,10 +84,10 @@ la usa `app/api/upload-logo`, que antes de subir valida la sesión del usuario).
   Endurecer `script-src` con nonces es la mejora pendiente conocida.
 - **Idioma**: UI, rutas, comentarios y textos legales en español de Chile. Los
   legales (`/privacidad`, `/condiciones`) siguen la Ley 19.628.
-- **v0**: no reescribir historia de `main` ni forzar push; v0 y el deploy de Vercel
-  leen esa rama.
-- Formato: el código generado por v0/shadcn usa comillas dobles y sin punto y
-  coma; los archivos de configuración y algunos de `lib/` usan comillas simples
+- **v0**: no reescribir historia de `main` ni forzar push; el deploy de Vercel
+  lee esa rama.
+- Formato: algunos archivos de componentes usan comillas dobles y sin punto y
+  coma (shadcn/ui); los archivos de configuración y algunos de `lib/` usan comillas simples
   con punto y coma. Sigue el estilo del archivo que toques en vez de unificarlo.
 
 ## EGM
