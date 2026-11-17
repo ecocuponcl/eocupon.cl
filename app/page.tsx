@@ -1,11 +1,11 @@
 import type { Metadata } from "next"
-import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Sparkles, Share2, Download, Zap, Shield, Users, Ticket, QrCode, MessageCircle, Check } from "lucide-react"
+import { Sparkles, Share2, Download, Zap, Shield, Users, Ticket, Check } from "lucide-react"
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
+import { ReelPlayer } from "@/components/reel-player"
 
 export const metadata: Metadata = {
   title: "Cupones de descuento para tu negocio",
@@ -41,7 +41,7 @@ export default function LandingPage() {
                   Crear mi primer cupón
                 </Button>
               </Link>
-              <Link href="#como-funciona">
+              <Link href="#demo">
                 <Button variant="outline" size="lg" className="px-8">
                   Ver demostración
                 </Button>
@@ -51,81 +51,20 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Preview Section */}
-      <section className="border-y border-border bg-muted/30 py-16">
+      {/* Demo: el cupón se arma y se comparte, animado */}
+      <section id="demo" className="scroll-mt-20 border-y border-border bg-muted/30 py-16">
         <div className="container mx-auto px-4">
-          <div className="mx-auto max-w-4xl">
-            <div className="relative mx-auto max-w-sm overflow-hidden rounded-2xl border border-border bg-card shadow-2xl">
-              <div className="flex items-center gap-3 bg-gradient-to-br from-primary to-primary/75 px-6 py-5">
-                <div className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-xl bg-background p-1.5">
-                  <Image
-                    src="/marca/4time-logo.png"
-                    alt="4Time Repuestos"
-                    width={56}
-                    height={56}
-                    className="h-full w-full object-contain"
-                  />
-                </div>
-                <div className="text-primary-foreground">
-                  <p className="font-semibold leading-tight">4Time Repuestos</p>
-                  <p className="text-xs opacity-90">Repuestos para tu vehículo</p>
-                </div>
-              </div>
-
-              <div className="relative aspect-[4/3] bg-muted">
-                <Image
-                  src="/marca/4time-producto.jpg"
-                  alt="Producto en promoción de 4Time Repuestos"
-                  width={768}
-                  height={576}
-                  sizes="(max-width: 768px) 90vw, 384px"
-                  className="h-full w-full object-cover"
-                />
-                <span className="absolute right-3 top-3 rounded-full bg-primary px-3 py-1 text-sm font-bold text-primary-foreground">
-                  -10%
-                </span>
-              </div>
-
-              <div className="space-y-4 p-5">
-                <div className="text-center">
-                  <p className="text-2xl font-bold leading-tight text-foreground">
-                    10% de descuento
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    en tu primera compra
-                  </p>
-                </div>
-
-                <div className="rounded-xl bg-secondary p-4 text-center">
-                  <p className="text-xs font-medium text-secondary-foreground/70">
-                    Código de descuento
-                  </p>
-                  <p className="font-mono text-2xl font-bold tracking-widest text-secondary-foreground">
-                    HOLA4TIME
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-3 rounded-xl border border-dashed border-border p-3">
-                  <div className="grid h-14 w-14 shrink-0 place-items-center rounded-lg bg-foreground/5">
-                    <QrCode className="h-8 w-8 text-foreground/60" />
-                  </div>
-                  <p className="text-sm leading-snug text-muted-foreground">
-                    Escanea el QR o comparte el enlace. Válido en la primera compra.
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-2 gap-2">
-                  <div className="flex h-10 items-center justify-center gap-2 rounded-lg bg-primary text-sm font-medium text-primary-foreground">
-                    <MessageCircle className="h-4 w-4" />
-                    WhatsApp
-                  </div>
-                  <div className="flex h-10 items-center justify-center gap-2 rounded-lg border border-border text-sm font-medium text-foreground">
-                    <Download className="h-4 w-4" />
-                    Imagen
-                  </div>
-                </div>
-              </div>
-            </div>
+          <div className="mx-auto mb-10 max-w-2xl text-center">
+            <h2 className="mb-4 text-3xl font-bold text-foreground md:text-4xl">
+              Mira el cupón en movimiento
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              Quince segundos en cinco planos: el cupón se arma paso a paso, se comparte por
+              WhatsApp y los contadores de vistas y compartidos se mueven.
+            </p>
+          </div>
+          <div className="mx-auto max-w-5xl">
+            <ReelPlayer />
           </div>
         </div>
       </section>
