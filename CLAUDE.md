@@ -77,9 +77,10 @@ cuenta en prueba opera como Pro sin cambiar su plan guardado.
 la usan `app/api/upload-logo` y `app/api/reveniu/webhook`, que validan la sesión del
 usuario y escriben `plan_type` respectivamente).
 
-Del webhook de Reveniu y la herramienta privada: `REVENIU_WEBHOOK_TOKEN` (token que
-viaja en la URL del webhook), `DEV_PLAN_EMAIL` y `DEV_PLAN_CODE` (`/dev/plan`, solo
-para la cuenta dueña).
+Del webhook de Reveniu y la herramienta privada: `REVENIU_API_KEY` (secret key de la
+API: Reveniu la envía en el header `Reveniu-Secret-Key` de cada webhook y además se
+usa para consultar la suscripción, porque el payload no trae correo), `DEV_PLAN_EMAIL`
+y `DEV_PLAN_CODE` (`/dev/plan`, solo para la cuenta dueña).
 
 ## Reglas del proyecto
 
