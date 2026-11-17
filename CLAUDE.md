@@ -59,20 +59,27 @@ siguientes.
 
 Cambios de esquema: nueva migración numerada. Nunca editar migraciones ya aplicadas.
 
-**Antes de cualquier `supabase db push`, lee esto**: el historial está
-desincronizado. `0003`, `0004`, `0007`, `0008` y `0009` están aplicadas en la base
-pero **no registradas** en `supabase_migrations.schema_migrations`, así que
-`db push` las vería como pendientes y reintentaría un DDL que ya está hecho.
-Primero hay que reparar el historial (`supabase migration repair --status applied …`)
-y confirmar con `db push --dry-run` que solo queda la migración nueva. El
-procedimiento completo, con verificación y reversión, está en
+El historial de `supabase_migrations.schema_migrations` está al día: `0001`–`0015`
+registradas con los mismos números que los archivos locales. Antes de cualquier
+`supabase db push`, confirma con `db push --dry-run` que solo aparece la migración
+nueva. El procedimiento de verificación y reversión está en
 `docs/runbooks/migraciones-procedimiento.md`.
+
+`0015` crea `profiles.trial_ends_at` (7 días de Pro desde el registro) y el trigger
+`coupons_plan_limits`, que aplica los cupos por plan en la base: 3/mes gratis,
+50/mes Pro, sin límite en Business. La prueba manda sobre `plan_type`, así que una
+cuenta en prueba opera como Pro sin cambiar su plan guardado.
 
 ## Variables de entorno
 
 `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_SITE_URL`,
 `NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL` y `SUPABASE_SERVICE_ROLE_KEY` (solo servidor:
-la usa `app/api/upload-logo`, que antes de subir valida la sesión del usuario).
+la usan `app/api/upload-logo` y `app/api/reveniu/webhook`, que validan la sesión del
+usuario y escriben `plan_type` respectivamente).
+
+Del webhook de Reveniu y la herramienta privada: `REVENIU_WEBHOOK_TOKEN` (token que
+viaja en la URL del webhook), `DEV_PLAN_EMAIL` y `DEV_PLAN_CODE` (`/dev/plan`, solo
+para la cuenta dueña).
 
 ## Reglas del proyecto
 

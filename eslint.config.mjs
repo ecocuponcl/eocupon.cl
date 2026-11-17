@@ -3,7 +3,16 @@ import next from "eslint-config-next"
 const config = [
   ...next,
   {
-    ignores: [".next/**", "node_modules/**", "next-env.d.ts"],
+    ignores: [
+      ".next/**",
+      "node_modules/**",
+      "next-env.d.ts",
+      // Artefactos generados por Playwright: bundles minificados que ESLint
+      // intenta parsear y llenan la salida de errores falsos.
+      "playwright-report/**",
+      "test-results/**",
+      ".playwright-mcp/**",
+    ],
   },
   {
     // Primitivas generadas por shadcn/ui (y sus hooks): el código original de

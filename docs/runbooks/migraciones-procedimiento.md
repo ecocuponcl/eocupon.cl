@@ -1,6 +1,9 @@
-# Procedimiento de migraciones — pendiente de autorización
+# Procedimiento de migraciones — historial al día (reparación aplicada)
 
-**No ejecutado.** Este documento describe exactamente qué se haría, qué cambia y
+**Estado 2026-11-17: el historial ya está reparado.** `0001`–`0015` figuran
+registradas y `0015_plan_limits` se aplicó por MCP. El texto de abajo queda como
+referencia del procedimiento y de la reversión. Texto original (ya ejecutado):
+este documento describía exactamente qué se haría, qué cambia y
 cómo se revierte. Nada de esto se ha corrido: ni `supabase link`, ni
 `migration repair`, ni `db push`, ni DDL por MCP.
 

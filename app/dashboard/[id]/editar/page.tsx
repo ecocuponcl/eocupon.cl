@@ -49,6 +49,9 @@ export default function EditarCuponPage() {
   const params = useParams()
   const router = useRouter()
   const id = params.id as string
+  // Derivado, no estado: avisar de un id inválido desde un efecto obliga a
+  // escribir estado en el cuerpo del efecto y provoca renders en cascada.
+  const invalidId = !UUID_RE.test(id)
 
   const [form, setForm] = useState<CouponForm>({
     title: "",
@@ -62,17 +65,13 @@ export default function EditarCuponPage() {
     max_total_redemptions: "",
   })
   const [logoUrl, setLogoUrl] = useState<string | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(!invalidId)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [saved, setSaved] = useState(false)
 
   useEffect(() => {
-    if (!UUID_RE.test(id)) {
-      setError("ID de cupón inválido")
-      setLoading(false)
-      return
-    }
+    if (invalidId) return
 
     async function load() {
       const supabase = createClient()
@@ -113,7 +112,7 @@ export default function EditarCuponPage() {
     }
 
     load()
-  }, [id, router])
+  }, [id, invalidId, router])
 
   const handleSave = async () => {
     if (!form.title.trim() || !form.business_name.trim() || !form.coupon_code.trim()) {
@@ -177,6 +176,9 @@ export default function EditarCuponPage() {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => setForm((f) => ({ ...f, [key]: e.target.value }))
 
+  // El id inválido se avisa sin pasar por estado.
+  const shownError = error ?? (invalidId ? "ID de cupón inválido" : null)
+
   if (loading) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
@@ -204,10 +206,10 @@ export default function EditarCuponPage() {
           <CardTitle className="text-lg">Datos del cupón</CardTitle>
         </CardHeader>
         <CardContent>
-          {error && (
+          {shownError && (
             <div className="mb-4 flex items-center gap-2 rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
               <AlertCircle className="h-4 w-4 shrink-0" />
-              {error}
+              {shownError}
             </div>
           )}
           {saved && (

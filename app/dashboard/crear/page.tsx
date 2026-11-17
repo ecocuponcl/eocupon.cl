@@ -291,8 +291,18 @@ export default function CreateCouponPage() {
             <CardContent>
               {error && (
                 <div className="mb-4 flex items-center gap-2 rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
-                  <AlertCircle className="h-4 w-4" />
-                  {error}
+                  <AlertCircle className="h-4 w-4 shrink-0" />
+                  <span>
+                    {error}
+                    {error.includes("Límite del plan") && (
+                      <>
+                        {" "}
+                        <Link href="/precios" className="underline underline-offset-2">
+                          Ver planes
+                        </Link>
+                      </>
+                    )}
+                  </span>
                 </div>
               )}
               <FieldGroup>

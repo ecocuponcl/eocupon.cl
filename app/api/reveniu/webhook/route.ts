@@ -35,6 +35,21 @@ const DEACTIVATE = new Set([
   "refund.created",
 ])
 
+// Cuando el evento no está en las listas, manda el estado de la suscripción.
+// `trialing` importa: con prueba configurada en el plan de Reveniu, el primer
+// evento llega en prueba y el usuario ya debe operar como Pro.
+const ACTIVE_STATUSES = new Set(["active", "trialing", "trial", "authorized"])
+const INACTIVE_STATUSES = new Set([
+  "canceled",
+  "cancelled",
+  "expired",
+  "past_due",
+  "unpaid",
+  "paused",
+  "failed",
+  "rejected",
+])
+
 type Json = Record<string, unknown>
 
 function read(source: Json, path: string): unknown {
@@ -98,8 +113,8 @@ export async function POST(request: Request) {
   let plan: "pro" | "free" | null = null
   if (ACTIVATE.has(type)) plan = "pro"
   else if (DEACTIVATE.has(type)) plan = "free"
-  else if (status === "active" && type.includes("subscription")) plan = "pro"
-  else if (status === "canceled" || status === "cancelled" || status === "expired") plan = "free"
+  else if (ACTIVE_STATUSES.has(status)) plan = "pro"
+  else if (INACTIVE_STATUSES.has(status)) plan = "free"
 
   if (!plan || !email) {
     console.warn("[reveniu] evento sin acción", { type, status, email, keys: Object.keys(body) })
