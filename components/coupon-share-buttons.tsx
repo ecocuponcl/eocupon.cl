@@ -1,7 +1,8 @@
 "use client"
 
-import { useState, useSyncExternalStore } from "react"
-import { MessageCircle, Copy, Check, Share2, Download } from "lucide-react"
+import { useRef, useState, useSyncExternalStore } from "react"
+import { MessageCircle, Copy, Check, Share2, Download, CircleHelp, X } from "lucide-react"
+import { type CouponLayout, useCouponFormat } from "@/components/coupon-format"
 
 interface CouponShareButtonsProps {
   couponId: string
@@ -10,7 +11,7 @@ interface CouponShareButtonsProps {
   title: string
   code: string
   discount: number
-  imageUrl?: string | null
+  images: Record<CouponLayout, string>
 }
 
 export function CouponShareButtons({
@@ -19,11 +20,13 @@ export function CouponShareButtons({
   title,
   code,
   discount,
-  imageUrl,
+  images,
 }: CouponShareButtonsProps) {
+  const { layout } = useCouponFormat()
   const [copied, setCopied] = useState(false)
   const [downloaded, setDownloaded] = useState(false)
   const [aviso, setAviso] = useState<"copiada" | "descargada" | null>(null)
+  const helpRef = useRef<HTMLDialogElement>(null)
   // `false` en el servidor y el valor real en el cliente: evita el desajuste
   // de hidratación (React #418, que llegó a producción) sin renders en cascada.
   const canNativeShare = useSyncExternalStore(
@@ -33,6 +36,7 @@ export function CouponShareButtons({
   )
 
   const couponUrl = url
+  const imageUrl = images[layout]
 
   const shareText = `${title} - ${discount}% OFF con el código ${code}`
 
@@ -56,12 +60,11 @@ export function CouponShareButtons({
   }
 
   const fetchImageFile = async (): Promise<File | null> => {
-    if (!imageUrl) return null
     try {
       const response = await fetch(imageUrl)
       if (!response.ok) return null
       const blob = await response.blob()
-      return new File([blob], `cupon-${code}.png`, {
+      return new File([blob], `cupon-${code}-${layout}.png`, {
         type: blob.type || "image/png",
       })
     } catch {
@@ -204,6 +207,19 @@ export function CouponShareButtons({
             Compartir
           </button>
         )}
+        <button type="button" onClick={handleDownload} className="eco-btn eco-btn--sm">
+          {downloaded ? (
+            <>
+              <Check size={18} aria-hidden="true" />
+              Descargada
+            </>
+          ) : (
+            <>
+              <Download size={18} aria-hidden="true" />
+              Descargar {layout === "vertical" ? "vertical" : "horizontal"}
+            </>
+          )}
+        </button>
       </div>
       {aviso && (
         <p className="eco-share__note">
@@ -212,25 +228,77 @@ export function CouponShareButtons({
             : "Descargamos la imagen: adjúntala en WhatsApp junto al texto."}
         </p>
       )}
-      {imageUrl && (
-        <button
-          type="button"
-          onClick={handleDownload}
-          className="eco-btn eco-btn--quiet eco-btn--sm"
-        >
-          {downloaded ? (
-            <>
-              <Check size={18} aria-hidden="true" />
-              Imagen descargada
-            </>
-          ) : (
-            <>
-              <Download size={18} aria-hidden="true" />
-              Descargar imagen
-            </>
-          )}
-        </button>
-      )}
+      <button
+        type="button"
+        onClick={() => helpRef.current?.showModal()}
+        className="eco-btn eco-btn--quiet eco-btn--sm"
+      >
+        <CircleHelp size={18} aria-hidden="true" />
+        ¿Cómo lo envío desde el computador?
+      </button>
+
+      {/* Diálogo nativo: se dibuja en la capa superior, así no lo recorta el
+          overflow del artículo. El texto explica la ruta de escritorio, que es
+          la única donde WhatsApp no recibe la imagen sola. */}
+      <dialog
+        ref={helpRef}
+        className="eco-dialog"
+        aria-labelledby="ayuda-compartir-title"
+        onClick={(event) => {
+          if (event.target === helpRef.current) helpRef.current?.close()
+        }}
+      >
+        <div className="eco-dialog__head">
+          <h2 className="eco-dialog__title" id="ayuda-compartir-title">
+            Cómo enviar el cupón por WhatsApp
+          </h2>
+          <button
+            type="button"
+            className="eco-dialog__close"
+            aria-label="Cerrar"
+            onClick={() => helpRef.current?.close()}
+          >
+            <X size={18} aria-hidden="true" />
+          </button>
+        </div>
+
+        <ol className="eco-dialog__steps">
+          <li>
+            <strong>Haz clic en «WhatsApp».</strong> Se abre el chat con el texto y el enlace del
+            cupón.
+          </li>
+          <li>
+            <strong>Pega la imagen.</strong> Queda copiada: en el campo del chat usa{" "}
+            <kbd>Ctrl</kbd> + <kbd>V</kbd> (<kbd>⌘</kbd> + <kbd>V</kbd> en Mac) y envíala junto al
+            texto.
+          </li>
+          <li>
+            <strong>Si no se pudo copiar,</strong> la descargamos: adjúntala con el clip y elige el
+            archivo PNG.
+          </li>
+        </ol>
+
+        <p className="eco-dialog__alt">Otras formas de compartir</p>
+        <ul className="eco-dialog__list">
+          <li>
+            <strong>Copiar link:</strong> pégalo en cualquier chat, correo o red social; el cupón
+            aparece como vista previa con la imagen.
+          </li>
+          <li>
+            <strong>Descargar imagen:</strong> publícala como estado, historia o adjunto en
+            Instagram, Facebook o correo.
+          </li>
+          <li>
+            <strong>Elegir formato:</strong> arriba de la imagen puedes alternar entre vertical
+            (ideal para estados y chats) y horizontal (ideal para correo y publicaciones).
+          </li>
+        </ul>
+
+        <p className="eco-dialog__foot">
+          Desde el celular no necesitas hacer nada de esto: el botón «WhatsApp» adjunta la imagen y
+          el enlace en un solo mensaje.
+        </p>
+      </dialog>
     </div>
   )
 }

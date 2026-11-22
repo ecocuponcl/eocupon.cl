@@ -6,6 +6,8 @@ import { createAdminClient, warnIfNoServiceRole } from "@/lib/supabase/admin"
 import { SITE_URL } from "@/lib/site-url"
 import { ArrowLeft, CalendarClock, Ticket } from "lucide-react"
 import { CouponShareButtons } from "@/components/coupon-share-buttons"
+import { CouponArtwork } from "@/components/coupon-artwork"
+import { CouponFormatProvider } from "@/components/coupon-format"
 import { EcoPage } from "@/components/eco-page"
 import { EcoHeader } from "@/components/eco-header"
 import { EcoFooter } from "@/components/eco-footer"
@@ -127,19 +129,26 @@ export default async function CouponPage({ params }: PageProps) {
   const isExpired =
     coupon.expires_campaign_at ? new Date() > new Date(coupon.expires_campaign_at) : false
 
-  // La imagen se genera on demand, así que ningún cupón queda sin ella aunque no
-  // tenga `generated_image_url` guardada. La misma URL sirve para mostrarla y
-  // para compartirla; el QR de la imagen apunta a este cupón.
-  const shareImageUrl =
-    coupon.generated_image_url ??
-    `${SITE_URL}/api/coupon-image?${new URLSearchParams({
-      title: coupon.title,
-      business: coupon.business_name,
-      code: coupon.coupon_code,
-      discount: String(coupon.discount_percentage),
-      ...(coupon.logo_url ? { logo: coupon.logo_url } : {}),
-      url: `${SITE_URL}/cupon/${coupon.id}`,
-    }).toString()}`
+  // Las imágenes se generan on demand, así que ningún cupón queda sin ellas
+  // aunque no tenga `generated_image_url` guardada. La horizontal es la que
+  // usan los OG de WhatsApp; la vertical es el diseño de postal para estados.
+  // Se sirven como rutas relativas para que el CSP (`img-src 'self'`) también
+  // funcione en local; el `url` del QR sí va absoluto.
+  const imageParams = new URLSearchParams({
+    title: coupon.title,
+    business: coupon.business_name,
+    code: coupon.coupon_code,
+    discount: String(coupon.discount_percentage),
+    ...(coupon.logo_url ? { logo: coupon.logo_url } : {}),
+    url: `${SITE_URL}/cupon/${coupon.id}`,
+  })
+  const verticalParams = new URLSearchParams(imageParams)
+  verticalParams.set("layout", "vertical")
+
+  const images = {
+    horizontal: coupon.generated_image_url ?? `/api/coupon-image?${imageParams.toString()}`,
+    vertical: `/api/coupon-image?${verticalParams.toString()}`,
+  }
 
   const periodLabel: Record<string, string> = {
     once: "canje único por persona",
@@ -163,19 +172,13 @@ export default async function CouponPage({ params }: PageProps) {
           </div>
 
           <article className="eco-coupon">
-            <div className="eco-coupon__media">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={shareImageUrl}
+            <CouponFormatProvider defaultLayout="vertical">
+              <CouponArtwork
                 alt={`Cupón de ${coupon.business_name}: ${coupon.title}`}
+                discount={coupon.discount_percentage}
+                isExpired={isExpired}
+                images={images}
               />
-              <span className="eco-coupon__tag">-{coupon.discount_percentage}% OFF</span>
-              {isExpired && (
-                <div className="eco-coupon__expired">
-                  <span>Cupón vencido</span>
-                </div>
-              )}
-            </div>
 
             <div className="eco-coupon__body">
               <div>
@@ -241,9 +244,10 @@ export default async function CouponPage({ params }: PageProps) {
                 title={coupon.title}
                 code={coupon.coupon_code}
                 discount={coupon.discount_percentage}
-                imageUrl={shareImageUrl}
+                images={images}
               />
             </div>
+            </CouponFormatProvider>
           </article>
         </div>
       </main>

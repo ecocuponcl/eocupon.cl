@@ -57,6 +57,7 @@ export async function GET(request: Request) {
   )
   const logoParam = searchParams.get("logo")
   const qrUrl = searchParams.get("url")
+  const isVertical = searchParams.get("layout") === "vertical"
 
   // Logo y QR se resuelven antes de renderizar (data URLs).
   const logoDataUrl = await toDataUrl(logoParam)
@@ -85,6 +86,181 @@ export async function GET(request: Request) {
   const accent = "#007948"
   const accentDeep = "#005F3A"
   const accentSoft = "#A9E8C6"
+
+  const headers = {
+    // Imagen determinista por parámetros: cached en el CDN de Vercel.
+    "Cache-Control":
+      "public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800",
+  }
+
+  // Formato vertical (2:3): pensado para estados y chats, con el logo arriba,
+  // el descuento como protagonista y el QR al pie.
+  if (isVertical) {
+    return new ImageResponse(
+      (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            width: "100%",
+            height: "100%",
+            background: paper,
+            color: ink,
+          }}
+        >
+          <div style={{ display: "flex", height: 12, background: accent }} />
+
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              flex: 1,
+              padding: "48px 48px 40px 48px",
+            }}
+          >
+            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 20 }}>
+              {logoDataUrl ? (
+                <img
+                  src={logoDataUrl}
+                  alt=""
+                  width={72}
+                  height={72}
+                  style={{ borderRadius: 18, objectFit: "cover" }}
+                />
+              ) : (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: 72,
+                    height: 72,
+                    borderRadius: 18,
+                    background: accent,
+                    color: "#FFFFFF",
+                    fontSize: 32,
+                    fontWeight: 700,
+                  }}
+                >
+                  {(business || "E").charAt(0)}
+                </div>
+              )}
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                <div style={{ display: "flex", fontSize: 26, fontWeight: 700, color: ink }}>
+                  {business || "EcoCupon"}
+                </div>
+                <div style={{ display: "flex", fontSize: 15, color: muted }}>
+                  Cupón de descuento
+                </div>
+              </div>
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                flex: 1,
+                gap: 44,
+              }}
+            >
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    fontSize: 210,
+                    fontWeight: 800,
+                    lineHeight: 0.88,
+                    letterSpacing: -8,
+                    color: accentDeep,
+                  }}
+                >
+                  {discount}%
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    marginTop: 28,
+                    fontSize: 42,
+                    fontWeight: 700,
+                    lineHeight: 1.2,
+                    color: ink,
+                  }}
+                >
+                  {title}
+                </div>
+              </div>
+
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: 6,
+                  padding: "24px 24px",
+                  borderRadius: 22,
+                  background: accentSoft,
+                  color: ink,
+                }}
+              >
+                <div style={{ display: "flex", fontSize: 15, color: accentDeep }}>Código</div>
+                <div
+                  style={{
+                    display: "flex",
+                    fontSize: 40,
+                    fontWeight: 700,
+                    letterSpacing: 3,
+                    maxWidth: 620,
+                    overflowWrap: "anywhere",
+                    textAlign: "center",
+                  }}
+                >
+                  {code}
+                </div>
+              </div>
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 28,
+                paddingTop: 28,
+                borderTop: `2px dashed ${rule}`,
+              }}
+            >
+              {qrDataUrl ? (
+                <div
+                  style={{
+                    display: "flex",
+                    background: "#FFFFFF",
+                    padding: 12,
+                    borderRadius: 18,
+                    border: `1px solid ${rule}`,
+                  }}
+                >
+                  <img src={qrDataUrl} alt="" width={168} height={168} />
+                </div>
+              ) : null}
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                <div style={{ display: "flex", fontSize: 18, fontWeight: 500, color: ink2 }}>
+                  Escanea o presenta el código
+                </div>
+                <div style={{ display: "flex", fontSize: 15, color: muted }}>
+                  Usa este código en tu compra
+                </div>
+                <div style={{ display: "flex", fontSize: 13, color: muted }}>
+                  Creado con EcoCupon.cl
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ),
+      { width: 800, height: 1200, headers },
+    )
+  }
 
   return new ImageResponse(
     (
@@ -268,14 +444,6 @@ export async function GET(request: Request) {
         </div>
       </div>
     ),
-    {
-      width: 800,
-      height: 600,
-      headers: {
-        // Imagen determinista por parámetros: cached en el CDN de Vercel.
-        "Cache-Control":
-          "public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800",
-      },
-    },
+    { width: 800, height: 600, headers },
   )
 }
