@@ -133,17 +133,24 @@ export function CouponShareButtons({
     if (isMobile && (await shareImage())) return
 
     const whatsapp = `https://wa.me/?text=${encodeURIComponent(shareTextWithLink)}`
-    window.open(whatsapp, "_blank", "noopener,noreferrer")
+
+    // La pestaña se abre en blanco dentro del clic (si se abre después del
+    // `await`, el navegador la bloquea) y recién navega cuando la imagen ya
+    // está copiada, así el aviso alcanza a quedar visible.
+    const tab = window.open("", "_blank")
     incrementShares()
 
     const file = await fetchImageFile()
-    if (file && (await copyImage(file))) {
-      setAviso("copiada")
-      return
-    }
+    const copied = file ? await copyImage(file) : false
 
-    if (file) downloadFile(file)
-    setAviso("descargada")
+    if (file && !copied) downloadFile(file)
+    setAviso(copied ? "copiada" : "descargada")
+
+    if (tab) {
+      tab.location.href = whatsapp
+    } else {
+      window.open(whatsapp, "_blank", "noopener,noreferrer")
+    }
   }
 
   const handleCopyLink = () => {
@@ -201,8 +208,8 @@ export function CouponShareButtons({
       {aviso && (
         <p className="eco-share__note">
           {aviso === "copiada"
-            ? "Imagen copiada. Pégala en el chat de WhatsApp con Ctrl+V (⌘V en Mac)."
-            : "Descargamos la imagen: adjúntala en el chat de WhatsApp."}
+            ? "Imagen copiada. En WhatsApp, pégala con Ctrl+V (⌘V en Mac) para enviarla con el texto."
+            : "Descargamos la imagen: adjúntala en WhatsApp junto al texto."}
         </p>
       )}
       {imageUrl && (

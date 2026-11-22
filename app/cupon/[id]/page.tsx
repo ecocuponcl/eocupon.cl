@@ -100,7 +100,7 @@ export default async function CouponPage({ params }: PageProps) {
 
   const { data: coupon, error } = await (reader ?? supabase)
     .from("coupons")
-    .select("id, title, description, business_name, discount_percentage, coupon_code, generated_image_url, is_public, conditions, expires_campaign_at, redemption_period")
+    .select("id, title, description, business_name, discount_percentage, coupon_code, generated_image_url, logo_url, is_public, conditions, expires_campaign_at, redemption_period")
     .eq("id", id)
     .maybeSingle()
 
@@ -123,6 +123,20 @@ export default async function CouponPage({ params }: PageProps) {
 
   const isExpired =
     coupon.expires_campaign_at ? new Date() > new Date(coupon.expires_campaign_at) : false
+
+  // La imagen se genera on demand, así que ningún cupón queda sin ella aunque no
+  // tenga `generated_image_url` guardada. La misma URL sirve para mostrarla y
+  // para compartirla; el QR de la imagen apunta a este cupón.
+  const shareImageUrl =
+    coupon.generated_image_url ??
+    `${SITE_URL}/api/coupon-image?${new URLSearchParams({
+      title: coupon.title,
+      business: coupon.business_name,
+      code: coupon.coupon_code,
+      discount: String(coupon.discount_percentage),
+      ...(coupon.logo_url ? { logo: coupon.logo_url } : {}),
+      url: `${SITE_URL}/cupon/${coupon.id}`,
+    }).toString()}`
 
   const periodLabel: Record<string, string> = {
     once: "canje único por persona",
@@ -147,17 +161,11 @@ export default async function CouponPage({ params }: PageProps) {
 
           <article className="eco-coupon">
             <div className="eco-coupon__media">
-              {coupon.generated_image_url ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={coupon.generated_image_url}
-                  alt={`Cupón de ${coupon.business_name}: ${coupon.title}`}
-                />
-              ) : (
-                <span className="eco-coupon__fallback" aria-hidden="true">
-                  {coupon.discount_percentage}%
-                </span>
-              )}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={shareImageUrl}
+                alt={`Cupón de ${coupon.business_name}: ${coupon.title}`}
+              />
               <span className="eco-coupon__tag">-{coupon.discount_percentage}% OFF</span>
               {isExpired && (
                 <div className="eco-coupon__expired">
@@ -230,7 +238,7 @@ export default async function CouponPage({ params }: PageProps) {
                 title={coupon.title}
                 code={coupon.coupon_code}
                 discount={coupon.discount_percentage}
-                imageUrl={coupon.generated_image_url}
+                imageUrl={shareImageUrl}
               />
             </div>
           </article>

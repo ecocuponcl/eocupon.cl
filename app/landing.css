@@ -786,16 +786,6 @@
   object-fit: cover;
 }
 
-.eco-coupon__fallback {
-  display: grid;
-  place-items: center;
-  height: 100%;
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: clamp(3rem, 8vw, 5rem);
-  letter-spacing: var(--tracking-display);
-  color: var(--color-accent-deep);
-}
 
 .eco-coupon__tag {
   position: absolute;
