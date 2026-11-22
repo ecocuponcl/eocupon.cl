@@ -114,8 +114,12 @@ export default async function CouponPage({ params }: PageProps) {
   }
 
   // Incrementa vistas vía RPC SECURITY DEFINER (evita abrir UPDATE a anon).
+  // La 0014 revocó el EXECUTE a anon, así que va con el cliente admin; si no
+  // hay service key, cae al cliente de la sesión (solo sirve con login).
   // Un fallo aquí no debe impedir ver el cupón.
-  const { error: viewError } = await supabase.rpc("increment_views", { coupon_id: id })
+  const { error: viewError } = await (reader ?? supabase).rpc("increment_views", {
+    coupon_id: id,
+  })
 
   if (viewError) {
     console.error("No se pudo incrementar las vistas:", viewError.message)
