@@ -1,29 +1,9 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { Schibsted_Grotesk, Instrument_Sans, DM_Mono } from "next/font/google"
+import { EcoPage } from "@/components/eco-page"
 import { EcoHeader } from "@/components/eco-header"
 import { EcoFooter } from "@/components/eco-footer"
 import { ReelPlayer } from "@/components/reel-player"
-import "./landing.css"
-
-const display = Schibsted_Grotesk({
-  subsets: ["latin"],
-  weight: ["700"],
-  variable: "--eco-display",
-  display: "swap",
-})
-const body = Instrument_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--eco-body",
-  display: "swap",
-})
-const mono = DM_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--eco-mono",
-  display: "swap",
-})
 
 export const metadata: Metadata = {
   title: "Cupones de descuento para tu negocio",
@@ -79,9 +59,9 @@ const plans = [
     suffix: "/mes + IVA",
     note: "o $80.000 al año + IVA (2 meses gratis)",
     features: ["50 cupones por mes", "Logo de tu negocio en el cupón", "Soporte por WhatsApp"],
-    cta: "Suscribirse anual",
-    href: "https://app.reveniu.com/checkout-custom-link/xKK23b48El4xxc6ANca8FfyMlHq43P0N",
-    external: true,
+    cta: "Suscribirse",
+    href: "/dashboard/cuenta",
+    external: false,
     featured: true,
   },
   {
@@ -129,7 +109,7 @@ const faq = [
 
 export default function LandingPage() {
   return (
-    <div className={`eco ${display.variable} ${body.variable} ${mono.variable}`} data-theme="dose">
+    <EcoPage>
       <EcoHeader />
 
       <main>
@@ -355,6 +335,6 @@ export default function LandingPage() {
       </main>
 
       <EcoFooter />
-    </div>
+    </EcoPage>
   )
 }

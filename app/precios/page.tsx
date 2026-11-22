@@ -1,10 +1,8 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Check, Leaf, Sparkles, Crown } from "lucide-react"
-import { SiteHeader } from "@/components/site-header"
-import { SiteFooter } from "@/components/site-footer"
+import { EcoPage } from "@/components/eco-page"
+import { EcoHeader } from "@/components/eco-header"
+import { EcoFooter } from "@/components/eco-footer"
 
 export const metadata: Metadata = {
   title: "Planes y precios",
@@ -17,44 +15,43 @@ const plans = [
   {
     name: "Gratis",
     description: "Para empezar a probar",
-    price: "0",
-    priceSuffix: "/mes",
+    price: "$0",
+    suffix: "/mes",
     note: "7 días de Pro al registrarte, sin tarjeta",
-    icon: Leaf,
     features: [
       "3 cupones por mes",
       "Imagen con QR y código",
       "Compartir por WhatsApp",
       "Cuponera pública",
     ],
-    cta: "Comenzar Gratis",
+    cta: "Comenzar gratis",
     href: "/auth/registro",
-    popular: false,
+    external: false,
+    featured: false,
   },
   {
     name: "Pro",
     description: "Para negocios en crecimiento",
-    price: "9.000",
-    priceSuffix: "/mes + IVA",
+    price: "$9.000",
+    suffix: "/mes + IVA",
     note: "o $80.000 al año + IVA (2 meses gratis)",
-    icon: Sparkles,
     features: [
       "50 cupones por mes",
       "Logo de tu negocio en el cupón",
       "Cuponera pública",
       "Soporte por WhatsApp",
     ],
-    cta: "Suscribirse anual",
-    href: "https://app.reveniu.com/checkout-custom-link/xKK23b48El4xxc6ANca8FfyMlHq43P0N",
-    popular: true,
+    cta: "Suscribirme",
+    href: "/dashboard/cuenta",
+    external: false,
+    featured: true,
   },
   {
     name: "Business",
     description: "Para empresas y agencias",
-    price: "29.990",
-    priceSuffix: "/mes",
+    price: "$29.990",
+    suffix: "/mes + IVA",
     note: "",
-    icon: Crown,
     features: [
       "Cupones ilimitados",
       "Cupones con tu logo",
@@ -62,103 +59,102 @@ const plans = [
       "Acompañamiento personalizado",
       "Soporte dedicado",
     ],
-    cta: "Contactar Ventas",
+    cta: "Contactar ventas",
     href: "https://wa.me/56979540471?text=Hola,%20me%20interesa%20el%20plan%20Business%20de%20EcoCupon",
-    popular: false,
+    external: true,
+    featured: false,
+  },
+]
+
+const faq = [
+  {
+    q: "¿Puedo cambiar o cancelar mi plan?",
+    a: "Sí. El cambio o la cancelación se gestiona por WhatsApp y aplica al periodo siguiente; no pierdes lo que ya pagaste.",
+  },
+  {
+    q: "¿Qué métodos de pago aceptan?",
+    a: "Tarjetas de crédito y débito a través de Flow, con cobro automático cada mes. La boleta sale con el RUT de tu comercio.",
+  },
+  {
+    q: "¿Hay garantía de devolución?",
+    a: "Sí: 30 días de garantía si el servicio no te sirve.",
+  },
+  {
+    q: "¿Necesito tarjeta para la prueba?",
+    a: "No. Al registrarte tienes 7 días de Pro sin tarjeta, y al terminar sigues en el plan Gratis.",
   },
 ]
 
 export default function PreciosPage() {
   return (
-    <div className="min-h-screen bg-background">
-      <SiteHeader />
+    <EcoPage>
+      <EcoHeader />
 
-      {/* Pricing Section */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-              Planes y Precios
-            </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Elige el plan para tu negocio. Todos incluyen cupones con imagen, código y QR.
-            </p>
-          </div>
+      <main>
+        <section className="eco-section" aria-labelledby="precios-title">
+          <div className="eco-container">
+            <div className="eco-headblock">
+              <h1 id="precios-title" className="eco-h1">
+                Planes y precios
+              </h1>
+              <p className="eco-lead">
+                Elige el plan para tu negocio. Todos incluyen cupones con imagen, código y QR.
+              </p>
+            </div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {plans.map((plan) => (
-              <Card 
-                key={plan.name}
-                className={`relative ${plan.popular ? "border-primary shadow-lg scale-105" : "border-border"}`}
-              >
-                {plan.popular && (
-                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                    <span className="bg-primary text-primary-foreground text-sm font-medium px-3 py-1 rounded-full">
-                      Más Popular
-                    </span>
+            <div className="eco-plans" style={{ marginTop: "var(--space-2xl)" }}>
+              {plans.map((plan) => (
+                <div
+                  key={plan.name}
+                  className={plan.featured ? "eco-plan eco-plan--featured" : "eco-plan"}
+                >
+                  <div className="eco-plan__head">
+                    <h2 className="eco-plan__name">{plan.name}</h2>
+                    {plan.featured ? <span className="eco-plan__tag">Más popular</span> : null}
                   </div>
-                )}
-                <CardHeader className="text-center pb-2">
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-4 ${plan.popular ? "bg-primary" : "bg-secondary"}`}>
-                    <plan.icon className={`h-6 w-6 ${plan.popular ? "text-primary-foreground" : "text-secondary-foreground"}`} />
+                  <p className="eco-plan__for">{plan.description}</p>
+                  <div>
+                    <p className="eco-plan__price">
+                      {plan.price}
+                      <small> {plan.suffix}</small>
+                    </p>
+                    {plan.note ? <p className="eco-plan__note">{plan.note}</p> : null}
                   </div>
-                  <CardTitle className="text-2xl">{plan.name}</CardTitle>
-                  <CardDescription>{plan.description}</CardDescription>
-                </CardHeader>
-                <CardContent className="text-center">
-                  <div className="mb-1">
-                    <span className="text-4xl font-bold text-foreground">${plan.price}</span>
-                    <span className="text-muted-foreground">{plan.priceSuffix}</span>
-                  </div>
-                  <p className="mb-6 min-h-5 text-sm text-muted-foreground">{plan.note}</p>
-                  <ul className="space-y-3 text-left">
+                  <ul className="eco-plan__list">
                     {plan.features.map((feature) => (
-                      <li key={feature} className="flex items-center gap-2">
-                        <Check className="h-5 w-5 text-primary flex-shrink-0" />
-                        <span className="text-muted-foreground">{feature}</span>
-                      </li>
+                      <li key={feature}>{feature}</li>
                     ))}
                   </ul>
-                </CardContent>
-                <CardFooter>
-                  <Button 
-                    asChild 
-                    className="w-full"
-                    variant={plan.popular ? "default" : plan.name === "Business" ? "secondary" : "outline"}
-                  >
-                    <Link href={plan.href} target={plan.href.startsWith("http") ? "_blank" : undefined} rel={plan.href.startsWith("http") ? "noopener noreferrer" : undefined}>
+                  <div className="eco-plan__action">
+                    <Link
+                      href={plan.href}
+                      className={plan.featured ? "eco-btn eco-btn--primary" : "eco-btn"}
+                      target={plan.external ? "_blank" : undefined}
+                      rel={plan.external ? "noopener noreferrer" : undefined}
+                    >
                       {plan.cta}
                     </Link>
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
+                  </div>
+                </div>
+              ))}
+            </div>
 
-      {/* FAQ Section */}
-      <section className="py-16 bg-secondary/30">
-        <div className="container mx-auto px-4 max-w-3xl">
-          <h2 className="text-3xl font-bold text-center mb-8">Preguntas Frecuentes</h2>
-          <div className="space-y-4">
-            <div className="bg-card p-6 rounded-xl border border-border">
-              <h3 className="font-semibold mb-2">¿Puedo cambiar de plan en cualquier momento?</h3>
-              <p className="text-muted-foreground">Sí, puedes actualizar o cambiar tu plan cuando quieras. Los cambios se aplican inmediatamente.</p>
-            </div>
-            <div className="bg-card p-6 rounded-xl border border-border">
-              <h3 className="font-semibold mb-2">¿Qué métodos de pago aceptan?</h3>
-              <p className="text-muted-foreground">Aceptamos tarjetas de crédito, débito y transferencia bancaria a través de Reveniu.</p>
-            </div>
-            <div className="bg-card p-6 rounded-xl border border-border">
-              <h3 className="font-semibold mb-2">¿Hay garantía de devolución?</h3>
-              <p className="text-muted-foreground">Sí, ofrecemos garantía de devolución de 30 días si no estás satisfecho con el servicio.</p>
+            <div className="eco-faq">
+              <h2 className="eco-faq__title">Preguntas frecuentes</h2>
+              <div className="eco-faq__list">
+                {faq.map((item) => (
+                  <details key={item.q} className="eco-faq__item">
+                    <summary>{item.q}</summary>
+                    <p>{item.a}</p>
+                  </details>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </main>
 
-      <SiteFooter />
-    </div>
+      <EcoFooter />
+    </EcoPage>
   )
 }

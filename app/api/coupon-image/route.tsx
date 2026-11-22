@@ -65,137 +65,206 @@ export async function GET(request: Request) {
     try {
       qrDataUrl = await QRCode.toDataURL(qrUrl, {
         margin: 1,
-        width: 240,
-        color: { dark: "#15803d", light: "#ffffff" },
+        width: 300,
+        color: { dark: "#005F3A", light: "#FFFFFF" },
       })
     } catch {
       qrDataUrl = null
     }
   }
 
+  // Dose: papel cálido, tinta verde-negra y un solo verde de acento. Son los
+  // mismos tokens del landing (app/landing.css), en hex porque Satori no
+  // resuelve oklch.
+  const paper = "#FAF7EF"
+  const paper2 = "#E9F8EF"
+  const ink = "#0C1C16"
+  const ink2 = "#26342F"
+  const muted = "#54655D"
+  const rule = "#CBD6C9"
+  const accent = "#007948"
+  const accentDeep = "#005F3A"
+  const accentSoft = "#A9E8C6"
+
   return new ImageResponse(
     (
       <div
         style={{
           display: "flex",
-          flexDirection: "column",
+          flexDirection: "row",
           width: "100%",
           height: "100%",
-          background: "linear-gradient(135deg, #15803d 0%, #65a30d 100%)",
-          color: "white",
-          padding: "48px",
+          background: paper,
+          color: ink,
+          position: "relative",
         }}
       >
-        {/* Fila superior: logo + negocio + descuento */}
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 16,
-            }}
-          >
-            {logoDataUrl ? (
-              <img
-                src={logoDataUrl}
-                width={72}
-                height={72}
-                style={{ borderRadius: 36, objectFit: "cover" }}
-              />
-            ) : null}
-            <div style={{ display: "flex", fontSize: 30, fontWeight: 700 }}>
-              {business || "EcoCupon"}
-            </div>
-          </div>
-          <div
-            style={{
-              display: "flex",
-              backgroundColor: "white",
-              color: "#15803d",
-              fontSize: 40,
-              fontWeight: 800,
-              padding: "8px 20px",
-              borderRadius: 16,
-            }}
-          >
-            {discount}%
-          </div>
-        </div>
+        {/* Lomo de plástico: la firma del tema, un borde de acento sin radio */}
+        <div style={{ display: "flex", width: 12, height: "100%", background: accent }} />
 
-        {/* Centro: título + código */}
+        {/* Cuerpo: negocio, descuento y oferta */}
         <div
           style={{
             display: "flex",
             flexDirection: "column",
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-            textAlign: "center",
-          }}
-        >
-          <div style={{ display: "flex", fontSize: 52, fontWeight: 800, lineHeight: 1.1 }}>
-            {title}
-          </div>
-          <div
-            style={{
-              display: "flex",
-              marginTop: 28,
-              backgroundColor: "#fef08a",
-              color: "#422006",
-              fontSize: 34,
-              fontWeight: 800,
-              padding: "12px 28px",
-              borderRadius: 14,
-              letterSpacing: 2,
-            }}
-          >
-            {code}
-          </div>
-        </div>
-
-        {/* Pie: QR (si aplica) + CTA + marca */}
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
             justifyContent: "space-between",
-            alignItems: "flex-end",
+            flex: 1,
+            padding: "44px 40px 40px 40px",
           }}
         >
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-start",
-            }}
-          >
-            <div style={{ display: "flex", fontSize: 22 }}>
+          <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 16 }}>
+            {logoDataUrl ? (
+              <img
+                src={logoDataUrl}
+                alt=""
+                width={56}
+                height={56}
+                style={{ borderRadius: 14, objectFit: "cover" }}
+              />
+            ) : (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: 56,
+                  height: 56,
+                  borderRadius: 14,
+                  background: accent,
+                  color: "#FFFFFF",
+                  fontSize: 26,
+                  fontWeight: 700,
+                }}
+              >
+                {(business || "E").charAt(0)}
+              </div>
+            )}
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <div style={{ display: "flex", fontSize: 22, fontWeight: 700, color: ink }}>
+                {business || "EcoCupon"}
+              </div>
+              <div style={{ display: "flex", fontSize: 14, color: muted }}>
+                Cupón de descuento
+              </div>
+            </div>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <div
+              style={{
+                display: "flex",
+                fontSize: 112,
+                fontWeight: 800,
+                lineHeight: 0.9,
+                letterSpacing: -4,
+                color: accentDeep,
+              }}
+            >
+              {discount}%
+            </div>
+            <div
+              style={{
+                display: "flex",
+                marginTop: 18,
+                maxWidth: 400,
+                fontSize: 30,
+                fontWeight: 700,
+                lineHeight: 1.2,
+                color: ink,
+              }}
+            >
+              {title}
+            </div>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <div style={{ display: "flex", fontSize: 16, fontWeight: 500, color: ink2 }}>
               Usa este código en tu compra
             </div>
-            <div style={{ display: "flex", marginTop: 8, fontSize: 16, opacity: 0.85 }}>
+            <div style={{ display: "flex", fontSize: 13, color: muted }}>
               Creado con EcoCupon.cl
             </div>
           </div>
+        </div>
+
+        {/* Troquel: línea perforada y las muescas del talón */}
+        <div
+          style={{
+            display: "flex",
+            position: "absolute",
+            top: 26,
+            left: 514,
+            width: 36,
+            height: 36,
+            borderRadius: 18,
+            background: paper,
+          }}
+        />
+        <div
+          style={{
+            display: "flex",
+            position: "absolute",
+            bottom: 26,
+            left: 514,
+            width: 36,
+            height: 36,
+            borderRadius: 18,
+            background: paper,
+          }}
+        />
+
+        {/* Talón: QR y código */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 18,
+            width: 268,
+            padding: "40px 24px",
+            background: paper2,
+            borderLeft: `2px dashed ${rule}`,
+          }}
+        >
           {qrDataUrl ? (
             <div
               style={{
                 display: "flex",
-                backgroundColor: "white",
-                padding: 10,
-                borderRadius: 14,
+                background: "#FFFFFF",
+                padding: 12,
+                borderRadius: 16,
+                border: `1px solid ${rule}`,
               }}
             >
-              <img src={qrDataUrl} width={120} height={120} />
+              <img src={qrDataUrl} alt="" width={150} height={150} />
             </div>
           ) : null}
+
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+            <div style={{ display: "flex", fontSize: 13, color: muted }}>Código</div>
+            <div
+              style={{
+                display: "flex",
+                padding: "10px 18px",
+                borderRadius: 12,
+                background: accentSoft,
+                color: ink,
+                fontSize: 22,
+                fontWeight: 700,
+                letterSpacing: 1,
+                maxWidth: 220,
+                overflowWrap: "anywhere",
+                textAlign: "center",
+              }}
+            >
+              {code}
+            </div>
+          </div>
+
+          <div style={{ display: "flex", fontSize: 13, color: muted }}>
+            Escanea o presenta el código
+          </div>
         </div>
       </div>
     ),

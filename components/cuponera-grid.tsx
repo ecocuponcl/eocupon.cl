@@ -2,17 +2,6 @@
 
 import { useMemo, useState } from "react"
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import {
-  Empty,
-  EmptyHeader,
-  EmptyTitle,
-  EmptyDescription,
-  EmptyMedia,
-  EmptyContent,
-} from "@/components/ui/empty"
-import { Input } from "@/components/ui/input"
 import { Search, Ticket, X } from "lucide-react"
 
 export interface CuponeraCoupon {
@@ -39,28 +28,28 @@ export function CuponeraGrid({ coupons }: { coupons: CuponeraCoupon[] }) {
 
   return (
     <>
-      <div className="mx-auto flex max-w-md items-center gap-2">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
+      <div className="eco-search">
+        <div className="eco-search__field">
+          <Search className="eco-search__icon" aria-hidden="true" />
+          <input
             type="search"
             name="q"
             aria-label="Buscar cupones por negocio, título o código"
             placeholder="Buscar por negocio, título o código"
-            className="h-11 pl-10"
+            className="eco-input"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
           />
         </div>
         {query && (
-          <Button
-            variant="outline"
-            className="h-11"
+          <button
+            type="button"
+            className="eco-btn"
             onClick={() => setQuery("")}
             aria-label="Limpiar búsqueda"
           >
-            <X className="h-4 w-4" />
-          </Button>
+            <X size={18} aria-hidden="true" />
+          </button>
         )}
       </div>
 
@@ -71,74 +60,50 @@ export function CuponeraGrid({ coupons }: { coupons: CuponeraCoupon[] }) {
       </div>
 
       {results.length > 0 ? (
-        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="eco-cards">
           {results.map((coupon) => (
-            <Link key={coupon.id} href={`/cupon/${coupon.id}`}>
-              <Card className="group h-full overflow-hidden border-border transition-all hover:border-primary/30 hover:shadow-lg">
-                <div className="relative aspect-[4/3] overflow-hidden bg-muted">
-                  {coupon.generated_image_url ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={coupon.generated_image_url}
-                      alt={`Cupón de ${coupon.business_name ?? "comercio"}: ${coupon.title}`}
-                      className="absolute inset-0 h-full w-full object-cover transition-transform group-hover:scale-105"
-                    />
-                  ) : (
-                    <div className="flex h-full items-center justify-center bg-gradient-to-br from-primary/20 to-secondary/30">
-                      <span className="text-4xl font-bold text-primary">
-                        {coupon.discount_percentage}%
-                      </span>
-                    </div>
-                  )}
-                  <div className="absolute right-3 top-3 rounded-full bg-primary px-3 py-1 text-sm font-bold text-primary-foreground">
-                    -{coupon.discount_percentage}%
-                  </div>
-                </div>
-                <CardContent className="p-4">
-                  <h3 className="mb-1 line-clamp-1 font-semibold text-foreground group-hover:text-primary">
-                    {coupon.title}
-                  </h3>
-                  <p className="mb-3 text-sm text-muted-foreground">
-                    {coupon.business_name}
-                  </p>
-                  <div className="rounded-lg bg-secondary/50 p-2 text-center">
-                    <span className="font-mono text-sm font-bold text-secondary-foreground">
-                      {coupon.coupon_code}
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
+            <Link key={coupon.id} href={`/cupon/${coupon.id}`} className="eco-card">
+              <div className="eco-card__media">
+                {coupon.generated_image_url ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={coupon.generated_image_url}
+                    alt={`Cupón de ${coupon.business_name ?? "comercio"}: ${coupon.title}`}
+                    loading="lazy"
+                  />
+                ) : (
+                  <span className="eco-card__fallback" aria-hidden="true">
+                    {coupon.discount_percentage}%
+                  </span>
+                )}
+                <span className="eco-card__tag">-{coupon.discount_percentage}%</span>
+              </div>
+              <div className="eco-card__body">
+                <h2 className="eco-card__title">{coupon.title}</h2>
+                <p className="eco-card__biz">{coupon.business_name}</p>
+                <p className="eco-card__code">{coupon.coupon_code}</p>
+              </div>
             </Link>
           ))}
         </div>
       ) : (
-        <div className="mt-12">
-          <Empty>
-            <EmptyHeader>
-              <EmptyMedia variant="icon">
-                <Ticket className="h-10 w-10" />
-              </EmptyMedia>
-              <EmptyTitle>
-                {term ? "Ningún cupón coincide" : "No hay cupones disponibles"}
-              </EmptyTitle>
-              <EmptyDescription>
-                {term
-                  ? "Prueba con el nombre del negocio, el título de la oferta o el código."
-                  : "Sé el primero en publicar un cupón de descuento"}
-              </EmptyDescription>
-            </EmptyHeader>
-            <EmptyContent>
-              {term ? (
-                <Button variant="outline" onClick={() => setQuery("")}>
-                  Ver todos los cupones
-                </Button>
-              ) : (
-                <Link href="/auth/registro">
-                  <Button>Crear mi cupón</Button>
-                </Link>
-              )}
-            </EmptyContent>
-          </Empty>
+        <div className="eco-empty">
+          <Ticket size={40} aria-hidden="true" />
+          <h2>{term ? "Ningún cupón coincide" : "No hay cupones disponibles"}</h2>
+          <p>
+            {term
+              ? "Prueba con el nombre del negocio, el título de la oferta o el código."
+              : "Sé el primero en publicar un cupón de descuento."}
+          </p>
+          {term ? (
+            <button type="button" className="eco-btn" onClick={() => setQuery("")}>
+              Ver todos los cupones
+            </button>
+          ) : (
+            <Link href="/auth/registro" className="eco-btn eco-btn--primary">
+              Crear mi cupón
+            </Link>
+          )}
         </div>
       )}
     </>

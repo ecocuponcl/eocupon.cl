@@ -1,11 +1,12 @@
 "use client"
 
 import { useState, useSyncExternalStore } from "react"
-import { Button } from "@/components/ui/button"
 import { MessageCircle, Copy, Check, Share2, Download } from "lucide-react"
 
 interface CouponShareButtonsProps {
   couponId: string
+  /** URL canónica del cupón. Sale del servidor (SITE_URL), no del navegador. */
+  url: string
   title: string
   code: string
   discount: number
@@ -14,6 +15,7 @@ interface CouponShareButtonsProps {
 
 export function CouponShareButtons({
   couponId,
+  url,
   title,
   code,
   discount,
@@ -21,7 +23,7 @@ export function CouponShareButtons({
 }: CouponShareButtonsProps) {
   const [copied, setCopied] = useState(false)
   const [downloaded, setDownloaded] = useState(false)
-  const [avisoAdjuntar, setAvisoAdjuntar] = useState(false)
+  const [aviso, setAviso] = useState<"copiada" | "descargada" | null>(null)
   // `false` en el servidor y el valor real en el cliente: evita el desajuste
   // de hidratación (React #418, que llegó a producción) sin renders en cascada.
   const canNativeShare = useSyncExternalStore(
@@ -30,8 +32,7 @@ export function CouponShareButtons({
     () => false,
   )
 
-  const couponUrl =
-    typeof window !== "undefined" ? `${window.location.origin}/cupon/${couponId}` : ""
+  const couponUrl = url
 
   const shareText = `${title} - ${discount}% OFF con el código ${code}`
 
@@ -69,7 +70,8 @@ export function CouponShareButtons({
   }
 
   // Comparte la imagen como archivo cuando el navegador lo permite (móvil).
-  // Es lo que un comerciante espera: el cupón adjunto, no solo un enlace.
+  // El texto lleva el enlace, así el mensaje llega con la imagen y con la
+  // página del cupón: quien lo reciba puede mirarlo o abrirlo.
   const shareImage = async (): Promise<boolean> => {
     const file = await fetchImageFile()
     if (!file) return false
@@ -79,7 +81,7 @@ export function CouponShareButtons({
     }
 
     try {
-      await navigator.share({ files: [file], title, text: shareText })
+      await navigator.share({ files: [file], title, text: shareTextWithLink })
       incrementShares()
       return true
     } catch {
@@ -87,9 +89,7 @@ export function CouponShareButtons({
     }
   }
 
-  const handleDownload = async () => {
-    const file = await fetchImageFile()
-    if (!file) return
+  const downloadFile = (file: File) => {
     const objectUrl = URL.createObjectURL(file)
     const link = document.createElement("a")
     link.href = objectUrl
@@ -98,22 +98,52 @@ export function CouponShareButtons({
     link.click()
     link.remove()
     URL.revokeObjectURL(objectUrl)
+  }
+
+  const handleDownload = async () => {
+    const file = await fetchImageFile()
+    if (!file) return
+    downloadFile(file)
     setDownloaded(true)
     setTimeout(() => setDownloaded(false), 2000)
   }
 
-  // Lo que se manda es el cupón, no un enlace.
-  //
-  // En el teléfono el sistema adjunta el PNG y WhatsApp lo recibe como imagen.
-  // En escritorio los navegadores no permiten adjuntar archivos desde la web,
-  // así que en vez de mandar un enlace se descarga la imagen y se avisa: el
-  // comerciante la adjunta él. Mandar el enlace era mandar otra cosa.
-  const handleWhatsApp = async () => {
-    setAvisoAdjuntar(false)
-    if (await shareImage()) return
+  // En escritorio no hay share de archivos, pero sí portapapeles: se copia el
+  // PNG y WhatsApp lo recibe con un pegado. Si el navegador no lo permite, se
+  // descarga y se avisa.
+  const copyImage = async (file: File): Promise<boolean> => {
+    if (typeof navigator === "undefined" || !navigator.clipboard || typeof ClipboardItem === "undefined") {
+      return false
+    }
+    try {
+      await navigator.clipboard.write([new ClipboardItem({ [file.type]: file })])
+      return true
+    } catch {
+      return false
+    }
+  }
 
-    await handleDownload()
-    setAvisoAdjuntar(true)
+  // El mensaje va con imagen y enlace: en el teléfono el sistema adjunta el PNG,
+  // en escritorio WhatsApp abre con el texto (el enlace muestra el cupón como
+  // vista previa) y la imagen queda copiada para pegarla en el chat.
+  const handleWhatsApp = async () => {
+    setAviso(null)
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
+
+    if (isMobile && (await shareImage())) return
+
+    const whatsapp = `https://wa.me/?text=${encodeURIComponent(shareTextWithLink)}`
+    window.open(whatsapp, "_blank", "noopener,noreferrer")
+    incrementShares()
+
+    const file = await fetchImageFile()
+    if (file && (await copyImage(file))) {
+      setAviso("copiada")
+      return
+    }
+
+    if (file) downloadFile(file)
+    setAviso("descargada")
   }
 
   const handleCopyLink = () => {
@@ -137,67 +167,62 @@ export function CouponShareButtons({
   }
 
   return (
-    <div className="space-y-3">
-      <p className="text-center text-sm font-medium text-muted-foreground">
-        Comparte este cupón
-      </p>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-        <Button onClick={handleWhatsApp} className="h-11 min-h-11 gap-2">
-          <MessageCircle className="h-4 w-4" />
-          WhatsApp
-        </Button>
-        <Button
-          variant="outline"
-          onClick={handleCopyLink}
-          className="h-11 min-h-11 gap-2"
+    <div className="eco-share">
+      <p className="eco-share__label">Comparte este cupón</p>
+      <div className="eco-share__grid">
+        <button
+          type="button"
+          onClick={handleWhatsApp}
+          className="eco-btn eco-btn--primary eco-btn--sm"
         >
+          <MessageCircle size={18} aria-hidden="true" />
+          WhatsApp
+        </button>
+        <button type="button" onClick={handleCopyLink} className="eco-btn eco-btn--sm">
           {copied ? (
             <>
-              <Check className="h-4 w-4" />
+              <Check size={18} aria-hidden="true" />
               Copiado
             </>
           ) : (
             <>
-              <Copy className="h-4 w-4" />
+              <Copy size={18} aria-hidden="true" />
               Copiar link
             </>
           )}
-        </Button>
+        </button>
         {canNativeShare && (
-          <Button
-            variant="secondary"
-            onClick={handleShare}
-            className="h-11 min-h-11 gap-2"
-          >
-            <Share2 className="h-4 w-4" />
+          <button type="button" onClick={handleShare} className="eco-btn eco-btn--sm">
+            <Share2 size={18} aria-hidden="true" />
             Compartir
-          </Button>
+          </button>
         )}
       </div>
-      {avisoAdjuntar && (
-        <p className="rounded-lg bg-secondary/60 p-3 text-center text-sm text-secondary-foreground">
-          Este navegador no puede adjuntar archivos por ti. Descargamos la
-          imagen: adjúntala en WhatsApp.
+      {aviso && (
+        <p className="eco-share__note">
+          {aviso === "copiada"
+            ? "Imagen copiada. Pégala en el chat de WhatsApp con Ctrl+V (⌘V en Mac)."
+            : "Descargamos la imagen: adjúntala en el chat de WhatsApp."}
         </p>
       )}
       {imageUrl && (
-        <Button
-          variant="ghost"
+        <button
+          type="button"
           onClick={handleDownload}
-          className="h-11 min-h-11 w-full gap-2"
+          className="eco-btn eco-btn--quiet eco-btn--sm"
         >
           {downloaded ? (
             <>
-              <Check className="h-4 w-4" />
+              <Check size={18} aria-hidden="true" />
               Imagen descargada
             </>
           ) : (
             <>
-              <Download className="h-4 w-4" />
+              <Download size={18} aria-hidden="true" />
               Descargar imagen
             </>
           )}
-        </Button>
+        </button>
       )}
     </div>
   )

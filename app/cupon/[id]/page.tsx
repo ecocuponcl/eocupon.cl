@@ -4,12 +4,11 @@ import Link from "next/link"
 import { createClient } from "@/lib/supabase/server"
 import { createAdminClient, warnIfNoServiceRole } from "@/lib/supabase/admin"
 import { SITE_URL } from "@/lib/site-url"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { ArrowLeft, Ticket, CalendarClock } from "lucide-react"
+import { ArrowLeft, CalendarClock, Ticket } from "lucide-react"
 import { CouponShareButtons } from "@/components/coupon-share-buttons"
-import { SiteHeader } from "@/components/site-header"
-import { SiteFooter } from "@/components/site-footer"
+import { EcoPage } from "@/components/eco-page"
+import { EcoHeader } from "@/components/eco-header"
+import { EcoFooter } from "@/components/eco-footer"
 
 // Siempre dinámico: increment_views debe ejecutarse en cada visita (no cachear)
 // y el cupón debe leerse fresco de la BD.
@@ -134,146 +133,111 @@ export default async function CouponPage({ params }: PageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <SiteHeader
-        action={
-          <Link href="/cuponera">
-            <Button variant="outline" size="sm">Ver más cupones</Button>
-          </Link>
-        }
-      />
+    <EcoPage>
+      <EcoHeader />
 
-      <main className="container mx-auto px-4 py-8 md:py-12">
-        <Link href="/cuponera" className="mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
-          <ArrowLeft className="h-4 w-4" />
-          Volver a la cuponera
-        </Link>
+      <main className="eco-section--s">
+        <div className="eco-container">
+          <div style={{ maxWidth: "46rem", marginInline: "auto" }}>
+            <Link href="/cuponera" className="eco-back">
+              <ArrowLeft size={16} aria-hidden="true" />
+              Volver a la cuponera
+            </Link>
+          </div>
 
-        <div className="mx-auto max-w-2xl">
-          <Card className="overflow-hidden border-border">
-            {/* Imagen del cupón */}
-            <div className="relative aspect-[4/3] bg-gradient-to-br from-primary/20 to-secondary/30">
+          <article className="eco-coupon">
+            <div className="eco-coupon__media">
               {coupon.generated_image_url ? (
+                // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={coupon.generated_image_url}
                   alt={`Cupón de ${coupon.business_name}: ${coupon.title}`}
-                  className="h-full w-full object-cover"
                 />
               ) : (
-                <div className="flex h-full items-center justify-center">
-                  <span className="text-6xl font-bold text-primary">
-                    {coupon.discount_percentage}%
-                  </span>
-                </div>
+                <span className="eco-coupon__fallback" aria-hidden="true">
+                  {coupon.discount_percentage}%
+                </span>
               )}
-              <div className="absolute right-4 top-4 rounded-full bg-primary px-4 py-2 text-lg font-bold text-primary-foreground">
-                -{coupon.discount_percentage}% OFF
-              </div>
+              <span className="eco-coupon__tag">-{coupon.discount_percentage}% OFF</span>
               {isExpired && (
-                <div className="absolute inset-0 flex items-center justify-center bg-background/70">
-                  <span className="rounded-full bg-destructive px-5 py-2 text-sm font-bold text-destructive-foreground">
-                    Cupón vencido
-                  </span>
+                <div className="eco-coupon__expired">
+                  <span>Cupón vencido</span>
                 </div>
               )}
             </div>
 
-            <CardContent className="space-y-6 p-6 md:p-8">
-              {/* Título y negocio */}
+            <div className="eco-coupon__body">
               <div>
-                <h1 className="mb-2 text-2xl font-bold text-foreground md:text-3xl">
-                  {coupon.title}
-                </h1>
-                <p className="text-lg text-muted-foreground">{coupon.business_name}</p>
+                <h1 className="eco-coupon__title">{coupon.title}</h1>
+                <p className="eco-coupon__biz">{coupon.business_name}</p>
               </div>
 
-              {/* Descripción */}
-              {coupon.description && (
-                <p className="text-muted-foreground">{coupon.description}</p>
-              )}
+              {coupon.description && <p className="eco-coupon__desc">{coupon.description}</p>}
 
-              {/* Vigencia y política */}
               {(coupon.expires_campaign_at || coupon.redemption_period) && (
-                <div className="flex flex-wrap gap-3">
+                <div className="eco-chips">
                   {coupon.expires_campaign_at && (
-                    <div className={`flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm font-medium ${
-                      isExpired
-                        ? "border-destructive/40 bg-destructive/10 text-destructive"
-                        : "border-primary/30 bg-primary/5 text-primary"
-                    }`}>
-                      <CalendarClock className="h-3.5 w-3.5" />
+                    <span className={isExpired ? "eco-chip eco-chip--warn" : "eco-chip"}>
+                      <CalendarClock size={15} aria-hidden="true" />
                       {isExpired ? "Venció el " : "Válido hasta "}
                       {new Date(coupon.expires_campaign_at).toLocaleDateString("es-CL", {
                         day: "numeric",
                         month: "long",
                         year: "numeric",
                       })}
-                    </div>
+                    </span>
                   )}
                   {coupon.redemption_period && coupon.redemption_period !== "once" && (
-                    <div className="flex items-center gap-1.5 rounded-full border border-border bg-muted px-3 py-1 text-sm text-muted-foreground">
+                    <span className="eco-chip">
                       {periodLabel[coupon.redemption_period] ?? coupon.redemption_period}
-                    </div>
+                    </span>
                   )}
                 </div>
               )}
 
-              {/* Código */}
-              <div className="rounded-xl bg-secondary p-6 text-center">
-                <p className="mb-2 text-sm font-medium text-secondary-foreground/70">
-                  Código de descuento
-                </p>
-                <p className="mb-3 font-mono text-3xl font-bold text-secondary-foreground">
-                  {coupon.coupon_code}
-                </p>
-                <p className="text-sm text-secondary-foreground/70">
-                  Presenta este código al momento de tu compra
-                </p>
+              <div className="eco-coupon__code">
+                <p className="eco-coupon__code-label">Código de descuento</p>
+                <p className="eco-coupon__code-value">{coupon.coupon_code}</p>
+                <p className="eco-coupon__code-hint">Presenta este código al momento de tu compra</p>
               </div>
 
-              {/* Condiciones */}
               {coupon.conditions && (
-                <div className="rounded-xl border border-border bg-muted/40 p-4">
-                  <p className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Condiciones
-                  </p>
-                  <p className="text-sm text-muted-foreground">{coupon.conditions}</p>
+                <div className="eco-note">
+                  <span className="eco-note__label">Condiciones</span>
+                  <p>{coupon.conditions}</p>
                 </div>
               )}
 
-              {/* Activar cupón */}
               {!isExpired && (
-                <div className="rounded-xl border border-primary/30 bg-primary/5 p-5">
-                  <div className="mb-3 flex items-center gap-2">
-                    <Ticket className="h-5 w-5 text-primary" />
-                    <p className="font-semibold text-foreground">¿Quieres usar este cupón?</p>
-                  </div>
-                  <p className="mb-4 text-sm text-muted-foreground">
+                <div className="eco-activate">
+                  <p className="eco-activate__head">
+                    <Ticket size={20} aria-hidden="true" />
+                    ¿Quieres usar este cupón?
+                  </p>
+                  <p>
                     Actívalo con tu nombre y lleva este código al local para canjear tu beneficio.
                   </p>
-                  <Link href={`/cupon/${coupon.id}/activar`}>
-                    <Button className="w-full gap-2">
-                      <Ticket className="h-4 w-4" />
-                      Activar mi cupón
-                    </Button>
+                  <Link href={`/cupon/${coupon.id}/activar`} className="eco-btn eco-btn--primary">
+                    <Ticket size={18} aria-hidden="true" />
+                    Activar mi cupón
                   </Link>
                 </div>
               )}
 
-              {/* Compartir */}
               <CouponShareButtons
                 couponId={coupon.id}
+                url={`${SITE_URL}/cupon/${coupon.id}`}
                 title={coupon.title}
                 code={coupon.coupon_code}
                 discount={coupon.discount_percentage}
                 imageUrl={coupon.generated_image_url}
               />
-            </CardContent>
-          </Card>
+            </div>
+          </article>
         </div>
       </main>
 
-      <SiteFooter />
-    </div>
+      <EcoFooter />
+    </EcoPage>
   )
 }

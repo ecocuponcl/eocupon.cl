@@ -7,7 +7,7 @@
 /* Hallmark · reworded "Comparte" to "Compártelo" · it heads a step, and the page's verbs are its own */
 /* Hallmark · reworded "Rápido y simple: menos de un minuto" · the hero says two minutes; the page kept the two */
 /* Hallmark · dropped "Imagen lista para usar", "Descarga instantánea", "Comparte fácil", "Cuponera pública", "Códigos únicos", "Rápido y simple" · craft.md § 9 wants features as a definition list, so the six headings became <dt> terms and every claim stayed on the page */
-/* Hallmark · dropped https://app.reveniu.com/checkout-custom-link/xKK23b48El4xxc6ANca8FfyMlHq43P0N · the literal left the markup for the plan data, so the static reader misses it; the Pro button still renders this exact href and the DOM holds all 11 links */
+/* Hallmark · dropped https://app.reveniu.com/checkout-custom-link/xKK23b48El4xxc6ANca8FfyMlHq43P0N · el cobro pasó a Flow y el botón de Pro ahora lleva a /dashboard/cuenta, dentro del mismo sitio */
 /* Hallmark · waive 47b · one plastic tray, a real coupon PNG the app generated inside · the tray is the theme's darkroom surface, not a device frame */
 /* Hallmark · waive 39b · the reel's transport controls, a 23px speed button inside the player bar · the reel is a player, and its chrome rides at the player's own scale */
 /* Hallmark · waive 81 · the reel's two blurred glow layers, 734x524 of ambient light · the glow is the animation's light, never a slot for a picture */
@@ -508,6 +508,412 @@
   outline-offset: 2px;
 }
 
+/* ---------- documents: the legal pages ---------- */
+
+.eco-doc {
+  display: grid;
+  gap: var(--space-xl);
+  max-width: 68ch;
+  margin-top: var(--space-xl);
+}
+
+.eco-doc__meta {
+  margin: 0;
+  font-family: var(--font-outlier);
+  font-size: var(--text-label);
+  color: var(--color-muted);
+}
+
+.eco-doc section { display: grid; gap: var(--space-sm); }
+
+.eco-doc h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-title);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--color-ink);
+  text-wrap: balance;
+}
+
+.eco-doc p { margin: 0; color: var(--color-ink-2); }
+
+.eco-doc ul {
+  display: grid;
+  gap: var(--space-xs);
+  margin: 0;
+  padding-left: 1.25em;
+  list-style: disc;
+  color: var(--color-ink-2);
+}
+
+.eco-doc li::marker { color: var(--color-accent-deep); }
+
+.eco-doc strong { color: var(--color-ink); font-weight: 500; }
+
+.eco-doc a {
+  color: var(--color-accent-deep);
+  text-decoration: underline;
+  text-underline-offset: 0.16em;
+}
+
+.eco-doc a:hover { color: var(--color-ink); }
+
+.eco-doc a:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+/* ---------- cuponera: the search and the coupons ---------- */
+
+.eco-search {
+  display: flex;
+  gap: var(--space-xs);
+  max-width: 32rem;
+  margin-inline: auto;
+}
+
+.eco-search__field { position: relative; flex: 1 1 auto; }
+
+.eco-search__icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  translate: 0 -50%;
+  width: 18px;
+  height: 18px;
+  color: var(--color-muted);
+  pointer-events: none;
+}
+
+.eco-input {
+  width: 100%;
+  height: 52px;
+  padding: 0 var(--space-md) 0 44px;
+  border: 0;
+  border-radius: var(--radius-input);
+  background: var(--color-paper-2);
+  color: var(--color-ink);
+  font: inherit;
+  box-shadow: inset 0 1px 0 var(--glint), 0 0 0 1px var(--color-rule);
+}
+
+.eco-input::placeholder { color: var(--color-muted); }
+
+.eco-input:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.eco-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: var(--gap-columns);
+  margin-top: var(--space-2xl);
+}
+
+.eco-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: var(--color-paper-2);
+  color: inherit;
+  text-decoration: none;
+  box-shadow: inset 0 1px 0 var(--glint), 0 0 0 1px var(--color-rule);
+  transition: box-shadow var(--dur-short) var(--ease-out), transform var(--dur-short) var(--ease-out);
+}
+
+.eco-card:hover {
+  transform: translateY(-2px);
+  box-shadow: inset 0 1px 0 var(--glint), 0 0 0 1px var(--color-accent), var(--shadow-lift);
+}
+
+.eco-card:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.eco-card__media {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: linear-gradient(160deg, var(--color-paper-2), var(--color-paper-3));
+}
+
+.eco-card__media img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--dur-short) var(--ease-out);
+}
+
+.eco-card:hover .eco-card__media img { transform: scale(1.03); }
+
+.eco-card__fallback {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-section);
+  letter-spacing: var(--tracking-display);
+  color: var(--color-accent-deep);
+}
+
+.eco-card__tag {
+  position: absolute;
+  right: var(--space-sm);
+  top: var(--space-sm);
+  padding: 2px var(--space-sm);
+  border-radius: var(--radius-pill);
+  background: var(--color-accent-deep);
+  color: var(--color-accent-ink);
+  font-family: var(--font-outlier);
+  font-size: var(--text-label);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.eco-card__body {
+  display: grid;
+  gap: var(--space-2xs);
+  padding: var(--space-md);
+}
+
+.eco-card__title {
+  margin: 0;
+  overflow: hidden;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-md);
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.eco-card__biz {
+  margin: 0;
+  overflow: hidden;
+  font-size: var(--text-label);
+  color: var(--color-muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.eco-card__code {
+  margin-top: var(--space-xs);
+  padding: var(--space-xs);
+  border-radius: var(--radius-input);
+  background: var(--color-paper-3);
+  text-align: center;
+  font-family: var(--font-outlier);
+  font-size: var(--text-label);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+.eco-empty {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-2xl);
+  padding: var(--space-2xl) var(--space-lg);
+  border-radius: var(--radius-card);
+  background: var(--color-paper-2);
+  text-align: center;
+  box-shadow: 0 0 0 1px var(--color-rule);
+}
+
+.eco-empty svg { color: var(--color-accent-deep); }
+
+.eco-empty h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-title);
+  letter-spacing: var(--tracking-display);
+}
+
+.eco-empty p {
+  margin: 0;
+  max-width: 46ch;
+  color: var(--color-ink-2);
+}
+
+/* ---------- the coupon itself, opened ---------- */
+
+.eco-back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  margin-bottom: var(--space-lg);
+  font-size: var(--text-label);
+  color: var(--color-ink-2);
+  text-decoration: none;
+}
+
+.eco-back:hover { color: var(--color-ink); text-decoration: underline; text-underline-offset: 0.16em; }
+
+.eco-back:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+
+.eco-coupon {
+  display: grid;
+  max-width: 46rem;
+  margin-inline: auto;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: var(--color-paper-2);
+  box-shadow: inset 0 1px 0 var(--glint), 0 0 0 1px var(--color-rule), var(--shadow-card);
+}
+
+.eco-coupon__media {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: linear-gradient(160deg, var(--color-paper-2), var(--color-paper-3));
+}
+
+.eco-coupon__media img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.eco-coupon__fallback {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(3rem, 8vw, 5rem);
+  letter-spacing: var(--tracking-display);
+  color: var(--color-accent-deep);
+}
+
+.eco-coupon__tag {
+  position: absolute;
+  right: var(--space-md);
+  top: var(--space-md);
+  padding: var(--space-2xs) var(--space-md);
+  border-radius: var(--radius-pill);
+  background: var(--color-accent-deep);
+  color: var(--color-accent-ink);
+  font-family: var(--font-outlier);
+  font-size: var(--text-label);
+  font-weight: 500;
+}
+
+.eco-coupon__expired {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: color-mix(in oklab, var(--color-paper) 74%, transparent);
+}
+
+.eco-coupon__expired span {
+  padding: var(--space-xs) var(--space-lg);
+  border-radius: var(--radius-pill);
+  background: var(--color-ink);
+  color: var(--color-paper);
+  font-weight: 500;
+}
+
+.eco-coupon__body {
+  display: grid;
+  gap: var(--space-lg);
+  padding: var(--space-xl);
+}
+
+.eco-coupon__title {
+  margin: 0 0 var(--space-2xs);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-display-s);
+  line-height: 1.05;
+  letter-spacing: var(--tracking-display);
+  text-wrap: balance;
+}
+
+.eco-coupon__biz { margin: 0; font-size: var(--text-lead); color: var(--color-muted); }
+.eco-coupon__desc { margin: 0; color: var(--color-ink-2); }
+
+.eco-chips { display: flex; flex-wrap: wrap; gap: var(--space-xs); }
+
+.eco-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px var(--space-sm);
+  border-radius: var(--radius-pill);
+  background: var(--color-paper-3);
+  font-size: var(--text-label);
+  color: var(--color-ink-2);
+}
+
+.eco-chip--warn {
+  background: color-mix(in oklab, var(--color-ink) 12%, transparent);
+  color: var(--color-ink);
+}
+
+.eco-coupon__code {
+  display: grid;
+  gap: var(--space-2xs);
+  padding: var(--space-lg);
+  border-radius: var(--radius-card);
+  background: var(--color-accent-soft);
+  text-align: center;
+}
+
+.eco-coupon__code-label { margin: 0; font-size: var(--text-label); font-weight: 500; color: var(--color-accent-deep); }
+
+.eco-coupon__code-value {
+  margin: 0;
+  font-family: var(--font-outlier);
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--color-ink);
+  overflow-wrap: anywhere;
+}
+
+.eco-coupon__code-hint { margin: 0; font-size: var(--text-label); color: var(--color-accent-deep); }
+
+.eco-note {
+  display: grid;
+  gap: var(--space-2xs);
+  padding: var(--space-md);
+  border-radius: var(--radius-input);
+  background: var(--color-paper-3);
+}
+
+.eco-note__label { font-family: var(--font-outlier); font-size: var(--text-label); font-weight: 500; color: var(--color-muted); }
+.eco-note p { margin: 0; color: var(--color-ink-2); }
+
+.eco-activate {
+  display: grid;
+  gap: var(--space-sm);
+  padding: var(--space-lg);
+  border-radius: var(--radius-card);
+  background: var(--color-paper-3);
+}
+
+.eco-activate__head { display: flex; align-items: center; gap: var(--space-xs); font-weight: 500; color: var(--color-ink); }
+.eco-activate__head svg { color: var(--color-accent-deep); }
+.eco-activate p { margin: 0; color: var(--color-ink-2); }
+
+.eco-share { display: grid; gap: var(--space-sm); }
+.eco-share__label { margin: 0; text-align: center; font-size: var(--text-label); font-weight: 500; color: var(--color-muted); }
+.eco-share__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr)); gap: var(--space-sm); }
+.eco-share__note { margin: 0; padding: var(--space-sm); border-radius: var(--radius-input); background: var(--color-paper-3); text-align: center; font-size: var(--text-label); color: var(--color-ink-2); }
+
 /* ---------- the close ---------- */
 
 .eco-close { background: var(--color-ink); color: var(--color-paper); padding-block: var(--section-gap-s); }
@@ -549,12 +955,16 @@
   .eco-hero__grid { align-items: start; }
   .eco-tray { order: 2; }
   .eco-plans { grid-template-columns: minmax(0, 1fr); }
+  .eco-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .eco-seq__item { grid-template-columns: minmax(0, 3rem) minmax(0, 1fr); gap: var(--space-lg); padding: var(--space-lg); }
   .eco-seq__detail { grid-column: 2; }
 }
 
 @media (max-width: 40rem) {
   .eco-dl { grid-template-columns: minmax(0, 1fr); }
+  .eco-coupon__body { padding: var(--space-lg); gap: var(--space-md); }
+  .eco-coupon__title { font-size: var(--text-section); }
+  .eco-cards { grid-template-columns: minmax(0, 1fr); }
   .eco-nav__actions .eco-btn--quiet { display: none; }
   .eco-nav__actions .eco-btn--sm { height: 44px; }
   .eco-hero__actions .eco-btn { width: 100%; }
