@@ -652,7 +652,7 @@ export function ReelPlayer() {
             <h3 {...at("s4h")} className={styles.s4H}>Tus cupones, a la vista de más clientes</h3>
             <div className={styles.minis}>
               {SHOPS.map((shop) => (
-                <article {...at("mini")} key={shop.code} className={styles.mini}>
+                <article key={shop.code} {...at("mini")} className={styles.mini}>
                   <h4 className={styles.miniName}>{shop.name}</h4>
                   <div className={styles.miniRow}>
                     <div>

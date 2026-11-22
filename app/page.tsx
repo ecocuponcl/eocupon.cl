@@ -1,11 +1,29 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Sparkles, Share2, Download, Zap, Shield, Users, Ticket, Check } from "lucide-react"
-import { SiteHeader } from "@/components/site-header"
-import { SiteFooter } from "@/components/site-footer"
+import { Schibsted_Grotesk, Instrument_Sans, DM_Mono } from "next/font/google"
+import { EcoHeader } from "@/components/eco-header"
+import { EcoFooter } from "@/components/eco-footer"
 import { ReelPlayer } from "@/components/reel-player"
+import "./landing.css"
+
+const display = Schibsted_Grotesk({
+  subsets: ["latin"],
+  weight: ["700"],
+  variable: "--eco-display",
+  display: "swap",
+})
+const body = Instrument_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--eco-body",
+  display: "swap",
+})
+const mono = DM_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--eco-mono",
+  display: "swap",
+})
 
 export const metadata: Metadata = {
   title: "Cupones de descuento para tu negocio",
@@ -14,244 +32,329 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 }
 
+const steps = [
+  {
+    title: "Elige la oferta",
+    line: "Elige el descuento, el código y el nombre de tu negocio.",
+    detail: "20 %",
+  },
+  {
+    title: "El cupón se arma",
+    line: "La imagen sale con el código y el QR puestos, sin diseñar nada.",
+    detail: "TARDE15",
+  },
+  {
+    title: "Compártelo",
+    line: "Descárgalo o mándalo por WhatsApp, y publícalo en la cuponera.",
+    detail: "ecocupon.cl",
+  },
+]
+
+const specs = [
+  { name: "Imagen lista para usar", line: "Tu cupón en PNG con el código y el QR, sin diseñar nada." },
+  { name: "Descarga instantánea", line: "Baja el cupón como imagen, listo para usar." },
+  { name: "Comparte fácil", line: "Mándalo por WhatsApp o copia el enlace con un clic." },
+  { name: "Cuponera pública", line: "Publícalo en la cuponera y alcanza más clientes." },
+  { name: "Códigos únicos", line: "Cada cupón lleva su propio código, rastreable." },
+  { name: "Rápido y simple", line: "El cupón queda listo antes de que cierres la pantalla." },
+]
+
+const plans = [
+  {
+    name: "Gratis",
+    audience: "Para probar la plataforma",
+    price: "$0",
+    suffix: "/mes",
+    note: "7 días de Pro al registrarte, sin tarjeta",
+    features: ["3 cupones por mes", "Imagen con código QR", "Compartir por WhatsApp", "Cuponera pública"],
+    cta: "Comenzar gratis",
+    href: "/auth/registro",
+    external: false,
+    featured: false,
+  },
+  {
+    name: "Pro",
+    audience: "Para negocios en crecimiento",
+    price: "$9.000",
+    suffix: "/mes + IVA",
+    note: "o $80.000 al año + IVA (2 meses gratis)",
+    features: ["50 cupones por mes", "Logo de tu negocio en el cupón", "Soporte por WhatsApp"],
+    cta: "Suscribirse anual",
+    href: "https://app.reveniu.com/checkout-custom-link/xKK23b48El4xxc6ANca8FfyMlHq43P0N",
+    external: true,
+    featured: true,
+  },
+  {
+    name: "Business",
+    audience: "Para empresas y agencias",
+    price: "$29.990",
+    suffix: "/mes + IVA",
+    note: "",
+    features: [
+      "Cupones ilimitados",
+      "Cupones con tu logo",
+      "Atención por WhatsApp",
+      "Acompañamiento personalizado",
+      "Soporte dedicado",
+    ],
+    cta: "Contactar ventas",
+    href: "https://wa.me/56979540471?text=Hola,%20me%20interesa%20el%20plan%20Business%20de%20EcoCupon",
+    external: true,
+    featured: false,
+  },
+]
+
+const faq = [
+  {
+    q: "¿Cuánto cuesta empezar?",
+    a: "Gratis: 3 cupones al mes con imagen, código QR y enlace. El plan Pro suma 50 cupones y el logo de tu negocio.",
+  },
+  {
+    q: "¿Necesito tarjeta para la prueba?",
+    a: "No. Al registrarte tienes 7 días de Pro sin tarjeta, y al terminar sigues en el plan Gratis.",
+  },
+  {
+    q: "¿Cómo comparto el cupón?",
+    a: "Descárgalo como imagen o mándalo por WhatsApp. También queda en la cuponera, con su enlace y su QR apuntando al mismo cupón.",
+  },
+  {
+    q: "¿Los cupones son distintos entre sí?",
+    a: "Sí: cada cupón lleva su propio código, y ves cuántas veces se vio y cuántas se compartió.",
+  },
+  {
+    q: "¿Puedo poner el logo de mi negocio?",
+    a: "Sí. En Pro y en Business el cupón sale con el logo de tu comercio.",
+  },
+]
+
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-background">
-      <SiteHeader />
+    <div className={`eco ${display.variable} ${body.variable} ${mono.variable}`} data-theme="dose">
+      <EcoHeader />
 
-      {/* Hero Section */}
-      <section className="relative overflow-hidden py-20 md:py-32">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/10" />
-        <div className="container relative mx-auto px-4">
-          <div className="mx-auto max-w-3xl text-center">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/15 px-4 py-2 text-sm font-semibold text-primary">
-              <Ticket className="h-4 w-4" />
-              Imagen, enlace y código QR en un solo paso
-            </div>
-            <h1 className="mb-6 text-balance text-4xl font-bold tracking-tight text-foreground lg:text-5xl xl:text-6xl">
-              Tu oferta lista para <span className="text-primary">compartir</span>
-            </h1>
-            <p className="mb-10 text-pretty text-lg text-muted-foreground md:text-xl">
-              Crea un cupón con el descuento, el código y el QR de tu negocio, y mándalo por WhatsApp en dos minutos.
-            </p>
-            <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <Link href="/auth/registro">
-                <Button size="lg" className="gap-2 px-8">
-                  <Zap className="h-5 w-5" />
+      <main>
+        {/* Hero · Stage: la copia a la izquierda, el cupón real sobre su bandeja */}
+        <section className="eco-hero" aria-labelledby="hero-title">
+          <div className="eco-container eco-hero__grid">
+            <div className="eco-hero__copy">
+              <h1 id="hero-title" className="eco-h1">
+                Tu oferta lista para compartir
+              </h1>
+              <p className="eco-lead">
+                Crea tu cupón y mándalo por WhatsApp en dos minutos.
+              </p>
+              <div className="eco-hero__actions">
+                <Link href="/auth/registro" className="eco-btn eco-btn--primary">
                   Crear mi primer cupón
-                </Button>
-              </Link>
-              <Link href="#demo">
-                <Button variant="outline" size="lg" className="px-8">
+                </Link>
+                <Link href="#demo" className="eco-btn">
                   Ver demostración
-                </Button>
+                </Link>
+              </div>
+              <p className="eco-small">Gratis para empezar. 7 días de Pro al registrarte, sin tarjeta.</p>
+            </div>
+
+            <figure className="eco-tray">
+              <img
+                className="eco-tray__img"
+                src="/producto/cupon-verano20.png"
+                width={800}
+                height={600}
+                alt="Cupón de descuento del 20% con el código VERANO20 y su código QR, generado por EcoCupon"
+                fetchPriority="high"
+              />
+              <figcaption className="eco-label">
+                <span className="eco-label__line">
+                  Así se ve el cupón de tu negocio: el descuento, el código y su QR en la misma imagen.
+                </span>
+              </figcaption>
+            </figure>
+          </div>
+        </section>
+
+        {/* La demostración: el cupón en movimiento */}
+        <section id="demo" className="eco-band" aria-labelledby="demo-title">
+          <div className="eco-container">
+            <div className="eco-headblock">
+              <h2 id="demo-title" className="eco-h2">
+                Mira el cupón en movimiento
+              </h2>
+              <p className="eco-body">
+                Quince segundos en cinco planos: el cupón se arma y se comparte por WhatsApp.
+              </p>
+            </div>
+            <div className="eco-reel" style={{ marginTop: "var(--space-2xl)" }}>
+              <ReelPlayer />
+            </div>
+          </div>
+        </section>
+
+        {/* La secuencia: cada paso, una banda de plástico */}
+        <section id="como-funciona" className="eco-section" aria-labelledby="pasos-title">
+          <div className="eco-container">
+            <div className="eco-headblock">
+              <h2 id="pasos-title" className="eco-h2">
+                Crea tu cupón en 3 pasos
+              </h2>
+              <p className="eco-body">Tú defines la oferta. El cupón se arma solo.</p>
+            </div>
+            <ol className="eco-seq" style={{ marginTop: "var(--space-2xl)" }}>
+              {steps.map((step, i) => (
+                <li key={step.title} className={`eco-seq__item eco-seq__item--${i + 1}`}>
+                  <span className="eco-seq__num" aria-hidden="true">
+                    {i + 1}
+                  </span>
+                  <div className="eco-seq__body">
+                    <h3 className="eco-seq__title">{step.title}</h3>
+                    <p className="eco-seq__line">{step.line}</p>
+                  </div>
+                  <span className="eco-seq__detail">{step.detail}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
+
+        {/* La cuponera: dónde lo van a ver */}
+        <section id="cuponera" className="eco-section--s" aria-labelledby="cuponera-title">
+          <div className="eco-container eco-split">
+            <div className="eco-split__copy">
+              <div className="eco-headblock">
+                <h2 id="cuponera-title" className="eco-h2">
+                  Publica en la cuponera
+                </h2>
+                <p className="eco-body">Publica en nuestra red y alcanza más clientes.</p>
+              </div>
+              <dl className="eco-facts">
+                <div className="eco-facts__row">
+                  <dt>Código único</dt>
+                  <dd>Cada cupón lleva el suyo, y queda registrado.</dd>
+                </div>
+                <div className="eco-facts__row">
+                  <dt>Vistas y compartidos</dt>
+                  <dd>Mira cuánta gente lo vio y cuánta lo reenvió.</dd>
+                </div>
+                <div className="eco-facts__row">
+                  <dt>Enlace y QR</dt>
+                  <dd>Los dos llevan al mismo cupón.</dd>
+                </div>
+              </dl>
+            </div>
+
+            <figure className="eco-split__visual">
+              <div className="eco-slot" data-slot="cuponera" data-alt="Foto propia de los comercios que usan EcoCupon">
+                <img
+                  src="/fotos/mercado-stand-in.jpg"
+                  width={1920}
+                  height={1442}
+                  alt=""
+                  loading="lazy"
+                  sizes="50vw"
+                />
+              </div>
+            </figure>
+          </div>
+        </section>
+
+        {/* Lo que trae cada cupón */}
+        <section id="beneficios" className="eco-band" aria-labelledby="beneficios-title">
+          <div className="eco-container">
+            <div className="eco-headblock">
+              <h2 id="beneficios-title" className="eco-h2">
+                Todo lo que necesitas para promocionar
+              </h2>
+            </div>
+            <dl className="eco-dl" style={{ marginTop: "var(--space-2xl)" }}>
+              {specs.map((spec) => (
+                <div key={spec.name} className="eco-dl__pair">
+                  <dt>{spec.name}</dt>
+                  <dd>{spec.line}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </section>
+
+        {/* Precios */}
+        <section id="precios" className="eco-section" aria-labelledby="precios-title">
+          <div className="eco-container">
+            <div className="eco-headblock">
+              <h2 id="precios-title" className="eco-h2">
+                Planes simples y transparentes
+              </h2>
+            </div>
+            <div className="eco-plans" style={{ marginTop: "var(--space-2xl)" }}>
+              {plans.map((plan) => (
+                <div
+                  key={plan.name}
+                  className={plan.featured ? "eco-plan eco-plan--featured" : "eco-plan"}
+                >
+                  <div className="eco-plan__head">
+                    <h3 className="eco-plan__name">{plan.name}</h3>
+                    {plan.featured ? <span className="eco-plan__tag">Más popular</span> : null}
+                  </div>
+                  <p className="eco-plan__for">{plan.audience}</p>
+                  <div>
+                    <p className="eco-plan__price">
+                      {plan.price}
+                      <small> {plan.suffix}</small>
+                    </p>
+                    {plan.note ? <p className="eco-plan__note">{plan.note}</p> : null}
+                  </div>
+                  <ul className="eco-plan__list">
+                    {plan.features.map((feature) => (
+                      <li key={feature}>{feature}</li>
+                    ))}
+                  </ul>
+                  <div className="eco-plan__action">
+                    <Link
+                      href={plan.href}
+                      className={plan.featured ? "eco-btn eco-btn--primary" : "eco-btn"}
+                      target={plan.external ? "_blank" : undefined}
+                      rel={plan.external ? "noopener noreferrer" : undefined}
+                    >
+                      {plan.cta}
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="eco-faq">
+              <h3 className="eco-faq__title">Preguntas frecuentes</h3>
+              <div className="eco-faq__list">
+                {faq.map((item) => (
+                  <details key={item.q} className="eco-faq__item">
+                    <summary>{item.q}</summary>
+                    <p>{item.a}</p>
+                  </details>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* El cierre */}
+        <section className="eco-close" aria-labelledby="cierre-title">
+          <div className="eco-container eco-close__grid">
+            <div className="eco-headblock">
+              <h2 id="cierre-title" className="eco-h2">
+                Comienza a crear cupones hoy
+              </h2>
+              <p className="eco-close__line">
+                Crea tu cupón, compártelo por WhatsApp y mide cuánta gente lo vio y lo reenvió.
+              </p>
+            </div>
+            <div>
+              <Link href="/auth/registro" className="eco-btn">
+                Crear cuenta gratis
               </Link>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </main>
 
-      {/* Demo: el cupón se arma y se comparte, animado */}
-      <section id="demo" className="scroll-mt-20 border-y border-border bg-muted/30 py-16">
-        <div className="container mx-auto px-4">
-          <div className="mx-auto mb-10 max-w-2xl text-center">
-            <h2 className="mb-4 text-3xl font-bold text-foreground md:text-4xl">
-              Mira el cupón en movimiento
-            </h2>
-            <p className="text-lg text-muted-foreground">
-              Quince segundos en cinco planos: el cupón se arma paso a paso, se comparte por
-              WhatsApp y los contadores de vistas y compartidos se mueven.
-            </p>
-          </div>
-          <div className="mx-auto max-w-5xl">
-            <ReelPlayer />
-          </div>
-        </div>
-      </section>
-
-      {/* How it works */}
-      <section id="como-funciona" className="py-20">
-        <div className="container mx-auto px-4">
-          <div className="mx-auto mb-16 max-w-2xl text-center">
-            <h2 className="mb-4 text-3xl font-bold text-foreground md:text-4xl">
-              Crea tu cupón en 3 pasos
-            </h2>
-            <p className="text-lg text-muted-foreground">
-              Sin complicaciones y sin diseñador: tú defines la oferta, el cupón se arma solo.
-            </p>
-          </div>
-          <div className="mx-auto grid max-w-5xl gap-8 md:grid-cols-3">
-            {[
-              {
-                step: "1",
-                title: "Describe o sube",
-                description: "Elige el descuento, el nombre del negocio y el código que quieras usar. Sin plantillas que rellenar.",
-                icon: Sparkles,
-              },
-              {
-                step: "2",
-                title: "Personaliza",
-                description: "Ajusta el descuento, código promocional y nombre de tu negocio. Previsualiza al instante.",
-                icon: Zap,
-              },
-              {
-                step: "3",
-                title: "Comparte",
-                description: "Descarga tu cupón, compártelo por WhatsApp o publícalo directamente en nuestra cuponera.",
-                icon: Share2,
-              },
-            ].map((item) => (
-              <Card key={item.step} className="relative overflow-hidden border-border">
-                <div className="absolute -right-4 -top-4 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 text-4xl font-bold text-primary/30">
-                  {item.step}
-                </div>
-                <CardContent className="p-6">
-                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
-                    <item.icon className="h-6 w-6 text-primary" />
-                  </div>
-                  <h3 className="mb-2 text-xl font-semibold text-foreground">{item.title}</h3>
-                  <p className="text-muted-foreground">{item.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Benefits */}
-      <section id="beneficios" className="border-y border-border bg-muted/30 py-20">
-        <div className="container mx-auto px-4">
-          <div className="mx-auto mb-16 max-w-2xl text-center">
-            <h2 className="mb-4 text-3xl font-bold text-foreground md:text-4xl">
-              Todo lo que necesitas para promocionar
-            </h2>
-          </div>
-          <div className="mx-auto grid max-w-4xl gap-6 md:grid-cols-2">
-            {[
-              { icon: Sparkles, title: "Imagen lista para usar", description: "Tu cupón en PNG con el código y el QR, sin diseñar nada" },
-              { icon: Download, title: "Descarga instantánea", description: "Obtén tu cupón en formato imagen listo para usar" },
-              { icon: Share2, title: "Comparte fácil", description: "Envía por WhatsApp o copia el link con un clic" },
-              { icon: Users, title: "Cuponera pública", description: "Publica en nuestra red y alcanza más clientes" },
-              { icon: Shield, title: "Códigos únicos", description: "Genera códigos promocionales seguros y rastreables" },
-              { icon: Zap, title: "Rápido y simple", description: "Crea cupones profesionales en menos de un minuto" },
-            ].map((benefit) => (
-              <div key={benefit.title} className="flex gap-4 rounded-xl border border-border bg-card p-5">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-                  <benefit.icon className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-foreground">{benefit.title}</h3>
-                  <p className="text-sm text-muted-foreground">{benefit.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing */}
-      <section id="precios" className="py-20">
-        <div className="container mx-auto px-4">
-          <div className="mx-auto mb-16 max-w-2xl text-center">
-            <h2 className="mb-4 text-3xl font-bold text-foreground md:text-4xl">
-              Planes simples y transparentes
-            </h2>
-          </div>
-          <div className="mx-auto grid max-w-4xl gap-8 md:grid-cols-2">
-            <Card className="border-border">
-              <CardContent className="p-8">
-                <h3 className="mb-2 text-xl font-semibold text-foreground">Gratis</h3>
-                <p className="mb-6 text-muted-foreground">Para probar la plataforma</p>
-                <div className="mb-1">
-                  <span className="text-4xl font-bold text-foreground">$0</span>
-                  <span className="text-muted-foreground">/mes</span>
-                </div>
-                <p className="mb-6 text-sm text-muted-foreground">
-                  7 días de Pro al registrarte, sin tarjeta
-                </p>
-                <ul className="mb-8 space-y-3 text-sm">
-                  <li className="flex items-center gap-2 text-muted-foreground">
-                    <Check className="h-4 w-4 shrink-0 text-primary" />
-                    3 cupones por mes
-                  </li>
-                  <li className="flex items-center gap-2 text-muted-foreground">
-                    <Check className="h-4 w-4 shrink-0 text-primary" />
-                    Imagen con código QR
-                  </li>
-                  <li className="flex items-center gap-2 text-muted-foreground">
-                    <Check className="h-4 w-4 shrink-0 text-primary" />
-                    Compartir por WhatsApp
-                  </li>
-                  <li className="flex items-center gap-2 text-muted-foreground">
-                    <Check className="h-4 w-4 shrink-0 text-primary" />
-                    Cuponera pública
-                  </li>
-                </ul>
-                <Link href="/auth/registro">
-                  <Button variant="outline" className="w-full">Comenzar gratis</Button>
-                </Link>
-              </CardContent>
-            </Card>
-            <Card className="relative border-2 border-primary">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-4 py-1 text-sm font-medium text-primary-foreground">
-                Más popular
-              </div>
-              <CardContent className="p-8">
-                <h3 className="mb-2 text-xl font-semibold text-foreground">Pro</h3>
-                <p className="mb-6 text-muted-foreground">Para negocios en crecimiento</p>
-                <div className="mb-1">
-                  <span className="text-4xl font-bold text-foreground">$9.000</span>
-                  <span className="text-muted-foreground">/mes + IVA</span>
-                </div>
-                <p className="mb-6 text-sm text-muted-foreground">
-                  o $80.000 al año + IVA (2 meses gratis)
-                </p>
-                <ul className="mb-8 space-y-3 text-sm">
-                  <li className="flex items-center gap-2 text-muted-foreground">
-                    <Check className="h-4 w-4 shrink-0 text-primary" />
-                    50 cupones por mes
-                  </li>
-                  <li className="flex items-center gap-2 text-muted-foreground">
-                    <Check className="h-4 w-4 shrink-0 text-primary" />
-                    Logo de tu negocio en el cupón
-                  </li>
-                  <li className="flex items-center gap-2 text-muted-foreground">
-                    <Check className="h-4 w-4 shrink-0 text-primary" />
-                    Soporte por WhatsApp
-                  </li>
-                </ul>
-                <a
-                  href="https://app.reveniu.com/checkout-custom-link/xKK23b48El4xxc6ANca8FfyMlHq43P0N"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Button className="w-full">Suscribirse anual</Button>
-                </a>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="border-t border-border bg-primary py-16">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="mb-4 text-3xl font-bold text-primary-foreground md:text-4xl">
-            Comienza a crear cupones hoy
-          </h2>
-          <p className="mx-auto mb-8 max-w-xl text-primary-foreground/80">
-            Crea tu cupón, compártelo por WhatsApp y mide cuánta gente lo vio y lo reenvió.
-          </p>
-          <Link href="/auth/registro">
-            <Button size="lg" variant="secondary" className="px-8">
-              Crear cuenta gratis
-            </Button>
-          </Link>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <SiteFooter />
+      <EcoFooter />
     </div>
   )
 }

@@ -594,7 +594,7 @@
   height: 58px;
   padding: 0 14px;
   position: relative;
-  background: linear-gradient(135deg, #1e9e4e 0%, #146b36 100%);
+  background: linear-gradient(135deg, #17793d 0%, #0f5329 100%);
   color: #fff;
 }
 
@@ -619,7 +619,7 @@
 
 .cardTag {
   font-size: 11px;
-  opacity: 0.86;
+  opacity: 1;
 }
 
 .cardImg {
@@ -686,7 +686,7 @@
   font-size: 10px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #8a6d16;
+  color: #6b530e;
 }
 
 .cardCodeVal {
@@ -736,7 +736,7 @@
 }
 
 .btnWa {
-  background: #1e9e4e;
+  background: #17793d;
   color: #fff;
 }
 
@@ -810,7 +810,7 @@
 }
 
 .sumH {
-  background: linear-gradient(135deg, #1e9e4e, #146b36);
+  background: linear-gradient(135deg, #17793d, #0f5329);
   color: #fff;
   padding: 10px 12px;
   font-size: 12px;
@@ -872,7 +872,7 @@
 }
 
 .bub {
-  background: #1e9e4e;
+  background: #17793d;
   color: #fff;
   border-radius: 14px 14px 14px 4px;
   padding: 11px 14px;
@@ -1034,7 +1034,7 @@
   font-weight: 500;
   line-height: 1.4;
   letter-spacing: 0.1em;
-  color: #7a8a7e;
+  color: #5a6a5e;
 }
 
 .mini canvas {

@@ -32,3 +32,6 @@ blob-report/
 .agents/
 graphify-out/
 check-logo-upload.mjs
+
+# Hallmark (redesign): capturas y registros del linter
+.hallmark/

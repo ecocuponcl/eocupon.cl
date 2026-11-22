@@ -123,3 +123,35 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Piso de accesibilidad (Hallmark, Floor): estados de foco, desborde horizontal
+   y movimiento reducido. Vale para todo el sitio; no cambia ninguna medida. */
+html,
+body {
+  overflow-x: clip;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--primary) 22%, transparent);
+  color: var(--foreground);
+}
+
+html {
+  scrollbar-color: var(--muted-foreground) var(--background);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *:not(.keep-motion),
+  *:not(.keep-motion)::before,
+  *:not(.keep-motion)::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
