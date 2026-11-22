@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
     .eq("id", user.id)
     .single()
 
-  if (!limitsFor(effectivePlan(profile?.plan_type, profile?.trial_ends_at)).logo) {
+  if (!limitsFor(effectivePlan(profile?.plan_type, profile?.trial_ends_at, profile?.plan_ends_at)).logo) {
     return NextResponse.json(
       { error: "El logo de tu negocio está disponible en el plan Pro." },
       { status: 403 },

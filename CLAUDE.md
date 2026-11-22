@@ -74,13 +74,14 @@ cuenta en prueba opera como Pro sin cambiar su plan guardado.
 
 `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_SITE_URL`,
 `NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL` y `SUPABASE_SERVICE_ROLE_KEY` (solo servidor:
-la usan `app/api/upload-logo` y `app/api/reveniu/webhook`, que validan la sesión del
-usuario y escriben `plan_type` respectivamente).
+la usan `app/api/upload-logo`, `app/api/flow/*` y `app/dashboard/cuenta`, que validan
+la sesión del usuario y escriben el plan, el RUT y los cobros).
 
-Del webhook de Reveniu y la herramienta privada: `REVENIU_API_KEY` (secret key de la
-API: Reveniu la envía en el header `Reveniu-Secret-Key` de cada webhook y además se
-usa para consultar la suscripción, porque el payload no trae correo), `DEV_PLAN_EMAIL`
-y `DEV_PLAN_CODE` (`/dev/plan`, solo para la cuenta dueña).
+De Flow y la herramienta privada: `FLOW_API_KEY` y `FLOW_SECRET_KEY` (solo servidor:
+`lib/flow.ts` firma cada llamada con HMAC-SHA256 y la secret key nunca sale al
+navegador), `FLOW_ENV` (`sandbox` o `production`) y, opcionalmente,
+`FLOW_PRICE_MONTHLY` / `FLOW_PRICE_ANNUAL` para mover los montos sin tocar código.
+Además `DEV_PLAN_EMAIL` y `DEV_PLAN_CODE` (`/dev/plan`, solo para la cuenta dueña).
 
 ## Reglas del proyecto
 

@@ -32,12 +32,22 @@ export function normalizePlan(value: string | null | undefined): PlanType {
 export function effectivePlan(
   value: string | null | undefined,
   trialEndsAt: string | null | undefined,
+  planEndsAt?: string | null,
 ): PlanType {
+  const plan = normalizePlan(value)
+
+  // Pro y Business son de pago: si el periodo venció, la cuenta opera como free
+  // aunque el plan guardado siga escrito (la misma regla vive en el trigger).
+  if (plan !== "free" && planEndsAt) {
+    const end = new Date(planEndsAt).getTime()
+    if (Number.isFinite(end) && end <= Date.now()) return "free"
+  }
+
   if (trialEndsAt) {
     const end = new Date(trialEndsAt).getTime()
     if (Number.isFinite(end) && end > Date.now()) return "pro"
   }
-  return normalizePlan(value)
+  return plan
 }
 
 export function limitsFor(value: string | null | undefined): PlanLimits {

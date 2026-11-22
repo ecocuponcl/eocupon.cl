@@ -18,7 +18,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
-import { Leaf, Plus, LayoutGrid, LogOut, QrCode, Menu } from "lucide-react"
+import { Leaf, Plus, LayoutGrid, LogOut, QrCode, Menu, CreditCard } from "lucide-react"
 import type { User as SupabaseUser } from "@supabase/supabase-js"
 
 interface DashboardNavProps {
@@ -41,6 +41,7 @@ export function DashboardNav({ user }: DashboardNavProps) {
   const navLinks = [
     { href: "/dashboard", label: "Mis cupones", icon: LayoutGrid },
     { href: "/dashboard/crear", label: "Crear cupón", icon: Plus },
+    { href: "/dashboard/cuenta", label: "Mi cuenta", icon: CreditCard },
   ]
 
   return (
