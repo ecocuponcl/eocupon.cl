@@ -1,15 +1,21 @@
-import type { Metadata } from "next"
 import Link from "next/link"
 import { EcoPage } from "@/components/eco-page"
 import { EcoHeader } from "@/components/eco-header"
 import { EcoFooter } from "@/components/eco-footer"
+import { JsonLd } from "@/components/json-ld"
+import {
+  breadcrumbJsonLd,
+  faqJsonLd,
+  pageMetadata,
+  softwareApplicationJsonLd,
+} from "@/lib/seo"
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Planes y precios",
   description:
     "Planes de EcoCupon para comercios: empieza gratis y sube a Pro o Business cuando lo necesites.",
-  alternates: { canonical: "/precios" },
-}
+  path: "/precios",
+})
 
 const plans = [
   {
@@ -88,6 +94,14 @@ const faq = [
 export default function PreciosPage() {
   return (
     <EcoPage>
+      <JsonLd data={softwareApplicationJsonLd()} />
+      <JsonLd data={faqJsonLd(faq)} />
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Inicio", path: "/" },
+          { name: "Precios", path: "/precios" },
+        ])}
+      />
       <EcoHeader />
 
       <main>

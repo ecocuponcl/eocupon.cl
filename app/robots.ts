@@ -7,9 +7,9 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        // El panel y los formularios de sesión no aportan nada al índice, y las
-        // rutas de API no deben rastrearse.
-        disallow: ["/dashboard", "/auth/", "/api/"],
+        // El panel y los formularios de sesión no aportan nada al índice, las
+        // rutas de API no deben rastrearse y `/dev` es una herramienta interna.
+        disallow: ["/dashboard", "/auth/", "/api/", "/dev"],
       },
     ],
     sitemap: `${SITE_URL}/sitemap.xml`,

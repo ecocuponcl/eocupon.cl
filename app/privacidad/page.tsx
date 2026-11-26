@@ -1,16 +1,16 @@
 import Link from "next/link"
-import type { Metadata } from "next"
 import { EcoPage } from "@/components/eco-page"
 import { EcoHeader } from "@/components/eco-header"
 import { EcoFooter } from "@/components/eco-footer"
+import { pageMetadata } from "@/lib/seo"
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   // Sin la marca en el título: la plantilla del layout ya añade "· EcoCupon".
   title: "Política de Privacidad",
   description:
     "Cómo EcoCupon.cl recopila, usa y protege tus datos personales según la Ley N° 19.628 de Protección de la Vida Privada de Chile.",
-  alternates: { canonical: "/privacidad" },
-}
+  path: "/privacidad",
+})
 
 export default function PrivacidadPage() {
   return (

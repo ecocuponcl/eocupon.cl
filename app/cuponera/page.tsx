@@ -1,17 +1,18 @@
-import type { Metadata } from "next"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/server"
 import { CuponeraGrid } from "@/components/cuponera-grid"
 import { EcoPage } from "@/components/eco-page"
 import { EcoHeader } from "@/components/eco-header"
 import { EcoFooter } from "@/components/eco-footer"
+import { JsonLd } from "@/components/json-ld"
+import { breadcrumbJsonLd, itemListJsonLd, pageMetadata } from "@/lib/seo"
 
-export const metadata: Metadata = {
-  title: "Cuponera",
+export const metadata = pageMetadata({
+  title: "Cuponera de descuentos",
   description:
-    "Cupones de descuento publicados por comercios chilenos. Filtra por negocio y aprovecha las ofertas vigentes.",
-  alternates: { canonical: "/cuponera" },
-}
+    "Cupones de descuento vigentes de comercios chilenos, con su código y su QR. Filtra por negocio y presenta el cupón al comprar.",
+  path: "/cuponera",
+})
 
 export default async function CuponeraPage() {
   const supabase = await createClient()
@@ -30,6 +31,22 @@ export default async function CuponeraPage() {
 
   return (
     <EcoPage>
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Inicio", path: "/" },
+          { name: "Cuponera", path: "/cuponera" },
+        ])}
+      />
+      {coupons && coupons.length > 0 && (
+        <JsonLd
+          data={itemListJsonLd(
+            coupons.map((coupon) => ({
+              name: `${coupon.business_name}: ${coupon.title}`,
+              path: `/cupon/${coupon.id}`,
+            })),
+          )}
+        />
+      )}
       <EcoHeader />
 
       <main>
@@ -53,6 +70,35 @@ export default async function CuponeraPage() {
             <div style={{ marginTop: "var(--space-2xl)" }}>
               <CuponeraGrid coupons={coupons ?? []} />
             </div>
+          </div>
+        </section>
+
+        <section className="eco-section--s" aria-labelledby="como-usar-title">
+          <div className="eco-container">
+            <div className="eco-headblock">
+              <h2 id="como-usar-title" className="eco-h2">
+                ¿Cómo se usa un cupón de la cuponera?
+              </h2>
+              <p className="eco-body">
+                Cada cupón de la cuponera es un descuento publicado por un comercio chileno. No
+                necesitas cuenta para verlo ni para compartirlo: abres el cupón, muestras el código
+                en el local y listo.
+              </p>
+            </div>
+            <dl className="eco-dl" style={{ marginTop: "var(--space-2xl)" }}>
+              <div className="eco-dl__pair">
+                <dt>Elige el cupón</dt>
+                <dd>Filtra por negocio y abre la oferta que te sirva.</dd>
+              </div>
+              <div className="eco-dl__pair">
+                <dt>Muestra el código</dt>
+                <dd>El cupón trae un código y un QR que el comercio usa para validarlo.</dd>
+              </div>
+              <div className="eco-dl__pair">
+                <dt>Compártelo</dt>
+                <dd>Mándalo por WhatsApp o descárgalo como imagen para regalarlo.</dd>
+              </div>
+            </dl>
           </div>
         </section>
 

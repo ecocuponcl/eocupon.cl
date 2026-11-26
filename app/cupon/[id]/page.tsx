@@ -4,6 +4,7 @@ import Link from "next/link"
 import { createClient } from "@/lib/supabase/server"
 import { createAdminClient, warnIfNoServiceRole } from "@/lib/supabase/admin"
 import { SITE_URL } from "@/lib/site-url"
+import { breadcrumbJsonLd, couponJsonLd, pageMetadata } from "@/lib/seo"
 import { ArrowLeft, CalendarClock, Ticket } from "lucide-react"
 import { CouponShareButtons } from "@/components/coupon-share-buttons"
 import { CouponArtwork } from "@/components/coupon-artwork"
@@ -11,6 +12,7 @@ import { CouponFormatProvider } from "@/components/coupon-format"
 import { EcoPage } from "@/components/eco-page"
 import { EcoHeader } from "@/components/eco-header"
 import { EcoFooter } from "@/components/eco-footer"
+import { JsonLd } from "@/components/json-ld"
 
 // Siempre dinámico: increment_views debe ejecutarse en cada visita (no cachear)
 // y el cupón debe leerse fresco de la BD.
@@ -61,23 +63,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   })
   const ogImageUrl = `${SITE_URL}/api/coupon-image?${ogImageParams.toString()}`
 
-  return {
+  return pageMetadata({
     title,
     description,
-    alternates: { canonical: `/cupon/${id}` },
-    openGraph: {
-      title,
-      description,
-      type: "website",
-      images: [{ url: ogImageUrl, width: 800, height: 600, alt: title }],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: [ogImageUrl],
-    },
-  }
+    path: `/cupon/${id}`,
+    image: { url: ogImageUrl, width: 800, height: 600, alt: title },
+  })
 }
 
 export default async function CouponPage({ params }: PageProps) {
@@ -160,6 +151,26 @@ export default async function CouponPage({ params }: PageProps) {
 
   return (
     <EcoPage>
+      <JsonLd
+        data={couponJsonLd({
+          id: coupon.id,
+          title: coupon.title,
+          description: coupon.description,
+          businessName: coupon.business_name,
+          discount: coupon.discount_percentage,
+          code: coupon.coupon_code,
+          image: images.horizontal,
+          expiresAt: coupon.expires_campaign_at,
+          expired: isExpired,
+        })}
+      />
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Inicio", path: "/" },
+          { name: "Cuponera", path: "/cuponera" },
+          { name: coupon.title, path: `/cupon/${coupon.id}` },
+        ])}
+      />
       <EcoHeader />
 
       <main className="eco-section--s">

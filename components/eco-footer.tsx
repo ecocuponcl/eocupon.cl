@@ -17,6 +17,7 @@ export function EcoFooter() {
           <nav className="eco-footer__links" aria-label="Pie de página">
             <Link href="/precios">Precios</Link>
             <Link href="/cuponera">Cuponera</Link>
+            <Link href="/contacto">Contacto</Link>
             <Link href="/condiciones">Términos</Link>
             <Link href="/privacidad">Privacidad</Link>
             <Link href="/auth/login">Iniciar sesión</Link>

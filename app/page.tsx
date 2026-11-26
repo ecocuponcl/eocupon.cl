@@ -1,16 +1,20 @@
-import type { Metadata } from "next"
 import Link from "next/link"
 import { EcoPage } from "@/components/eco-page"
 import { EcoHeader } from "@/components/eco-header"
 import { EcoFooter } from "@/components/eco-footer"
 import { ReelPlayer } from "@/components/reel-player"
+import { JsonLd } from "@/components/json-ld"
+import { faqJsonLd, pageMetadata, softwareApplicationJsonLd } from "@/lib/seo"
 
-export const metadata: Metadata = {
-  title: "Cupones de descuento para tu negocio",
+// La plantilla `%s · EcoCupon` del layout no se aplica a la portada, así que el
+// título lleva la marca escrito a mano.
+export const metadata = pageMetadata({
+  title: "Cupones de descuento para tu negocio | EcoCupon",
   description:
     "Crea cupones de descuento para tu comercio, compártelos por WhatsApp y publícalos en la cuponera de EcoCupon. Gratis para empezar.",
-  alternates: { canonical: "/" },
-}
+  path: "/",
+  absoluteTitle: true,
+})
 
 const steps = [
   {
@@ -110,6 +114,8 @@ const faq = [
 export default function LandingPage() {
   return (
     <EcoPage>
+      <JsonLd data={softwareApplicationJsonLd()} />
+      <JsonLd data={faqJsonLd(faq)} />
       <EcoHeader />
 
       <main>

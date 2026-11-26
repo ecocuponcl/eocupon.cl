@@ -1,15 +1,15 @@
 import Link from "next/link"
-import type { Metadata } from "next"
 import { EcoPage } from "@/components/eco-page"
 import { EcoHeader } from "@/components/eco-header"
 import { EcoFooter } from "@/components/eco-footer"
+import { pageMetadata } from "@/lib/seo"
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Condiciones del Servicio",
   description:
     "Términos y condiciones de uso de EcoCupon.cl, conforme a la legislación chilena.",
-  alternates: { canonical: "/condiciones" },
-}
+  path: "/condiciones",
+})
 
 export default function CondicionesPage() {
   return (

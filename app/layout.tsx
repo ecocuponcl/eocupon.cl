@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { SITE_URL } from '@/lib/site-url'
+import { DEFAULT_OG_IMAGE, organizationJsonLd, websiteJsonLd } from '@/lib/seo'
+import { JsonLd } from '@/components/json-ld'
 import './globals.css'
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist-sans" });
@@ -16,11 +18,17 @@ export const metadata: Metadata = {
   },
   description: 'Crea cupones con descuento, código y QR, compártelos por WhatsApp y mide cuánta gente los vio.',
   generator: 'ecocupon.cl',
+  // Sin `url` acá: si vive en el layout, todas las páginas heredan la portada
+  // como su propia URL. Cada página lo declara vía `pageMetadata`.
   openGraph: {
     type: 'website',
     locale: 'es_CL',
     siteName: 'EcoCupon',
-    url: SITE_URL,
+    images: [DEFAULT_OG_IMAGE],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    images: [DEFAULT_OG_IMAGE.url],
   },
   icons: {
     icon: [
@@ -47,8 +55,10 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="es" className={`bg-background ${geist.variable} ${geistMono.variable}`}>
+    <html lang="es-CL" className={`bg-background ${geist.variable} ${geistMono.variable}`}>
       <body className="font-sans antialiased min-h-screen">
+        <JsonLd data={organizationJsonLd()} />
+        <JsonLd data={websiteJsonLd()} />
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
