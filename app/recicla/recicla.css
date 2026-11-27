@@ -258,3 +258,5 @@ footer p, footer li { color: var(--ink-soft); }
 .foot-bottom { border-top-color: var(--rule); }
 .foot-bottom span { color: var(--muted); }
 .foot-bottom a { color: var(--green-deep); }
+
+.lede-sub{font-size:var(--s1);color:var(--muted);max-width:48ch}

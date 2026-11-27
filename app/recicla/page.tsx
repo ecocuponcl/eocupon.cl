@@ -35,9 +35,8 @@ export default function ReciclaPage() {
             <div className="hero-copy">
               <span className="eyebrow">Programa piloto · 2026</span>
               <h1>Cada kilo reciclado se convierte en un cupón que usa el comercio de tu comuna.</h1>
-              <p className="lede">
-                EcoCupon Recicla es el programa de incentivos que municipios, marcas y empresas financian. Recicla-Ya recibe y verifica los materiales; EcoCupon administra participantes, cupones y canjes; tú ves el resultado en un panel.
-              </p>
+              <p className="lede">EcoCupon Recicla es el programa de incentivos que municipios, marcas y empresas financian.</p>
+              <p className="lede lede-sub">Recicla-Ya recibe y verifica los materiales. EcoCupon administra participantes, cupones y canjes. Tú ves el resultado en un panel.</p>
               <div className="hero-ctas">
                 <a className="btn btn--primary" href="#piloto">Quiero el piloto en mi comuna</a>
                 <a className="btn btn--ghost" href={WA_TEXT} target="_blank" rel="noopener">Hablar por WhatsApp</a>
@@ -263,7 +262,7 @@ export default function ReciclaPage() {
         </div>
         <div className="wrap foot-bottom">
           <span>© 2026 EcoCupon Recicla · Programa piloto</span>
-          <a href="https://www.ecocupon.cl" target="_blank" rel="noopener">¿Solo buscas cupones? Usa el producto actual en ecocupon.cl →</a>
+          <a href="/cupones">¿Solo buscas cupones? Ve al producto de cupones →</a>
         </div>
       </footer>
 
