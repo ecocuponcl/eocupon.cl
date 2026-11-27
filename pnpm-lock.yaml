@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@gsap/react':
+        specifier: ^2.1.2
+        version: 2.1.2(gsap@https://codeload.github.com/SmarterCL/GSAP/tar.gz/5e6c35ff8eedea12d4f229129def635277d8b0f2)(react@19.3.1)
       '@radix-ui/react-accordion':
         specifier: 1.2.12
         version: 1.2.12(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
@@ -113,6 +116,9 @@ importers:
       embla-carousel-react:
         specifier: 8.6.0
         version: 8.6.0(react@19.3.1)
+      gsap:
+        specifier: github:SmarterCL/GSAP
+        version: https://codeload.github.com/SmarterCL/GSAP/tar.gz/5e6c35ff8eedea12d4f229129def635277d8b0f2
       input-otp:
         specifier: 1.4.2
         version: 1.4.2(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
@@ -332,6 +338,13 @@ packages:
 
   '@floating-ui/utils@0.2.10':
     resolution: {integrity: sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==}
+
+  '@gsap/react@2.1.2':
+    resolution: {integrity: sha512-JqliybO1837UcgH2hVOM4VO+38APk3ECNrsuSM4MuXp+rbf+/2IG2K1YJiqfTcXQHH7XlA0m3ykniFYstfq0Iw==}
+    version: 2.1.2
+    peerDependencies:
+      gsap: ^3.12.5
+      react: '>=17'
 
   '@humanfs/core@0.19.2':
     resolution: {integrity: sha512-UhXNm+CFMWcbChXywFwkmhqjs3PRCmcSa/hfBgLIb7oQ5HNb1wS0icWsGtSAUNgefHeI+eBrA8I1fxmbHsGdvA==}
@@ -2272,6 +2285,10 @@ packages:
   graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
 
+  gsap@https://codeload.github.com/SmarterCL/GSAP/tar.gz/5e6c35ff8eedea12d4f229129def635277d8b0f2:
+    resolution: {gitHosted: true, integrity: sha512-bz+iyCJhbs3W6BxBWgYJZtQI9fMhNC4Zhu6hvrvGffkgVSyf5pTMptICqdfX6r/fa476cD26iG240zZa9JlImQ==, tarball: https://codeload.github.com/SmarterCL/GSAP/tar.gz/5e6c35ff8eedea12d4f229129def635277d8b0f2}
+    version: 3.15.1
+
   has-bigints@1.1.0:
     resolution: {integrity: sha512-R3pbpkcIqv2Pm3dUwgjclDRVmWpTJW2DcMzcIhEXEx1oh/CEMObMm3KLmRJOdvhM7o4uQBnwr8pzRK2sJWIqfg==}
     engines: {node: '>= 0.4'}
@@ -3438,6 +3455,11 @@ snapshots:
       react-dom: 19.3.1(react@19.3.1)
 
   '@floating-ui/utils@0.2.10': {}
+
+  '@gsap/react@2.1.2(gsap@https://codeload.github.com/SmarterCL/GSAP/tar.gz/5e6c35ff8eedea12d4f229129def635277d8b0f2)(react@19.3.1)':
+    dependencies:
+      gsap: https://codeload.github.com/SmarterCL/GSAP/tar.gz/5e6c35ff8eedea12d4f229129def635277d8b0f2
+      react: 19.3.1
 
   '@humanfs/core@0.19.2':
     dependencies:
@@ -5449,6 +5471,8 @@ snapshots:
   gopd@1.2.0: {}
 
   graceful-fs@4.2.11: {}
+
+  gsap@https://codeload.github.com/SmarterCL/GSAP/tar.gz/5e6c35ff8eedea12d4f229129def635277d8b0f2: {}
 
   has-bigints@1.1.0: {}
 

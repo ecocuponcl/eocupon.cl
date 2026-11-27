@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import "./recicla.css"
 import { LeadForm } from "./lead-form"
+import { ReciclaMotion } from "@/components/recicla-motion"
 
 export const metadata: Metadata = {
   title: { absolute: "EcoCupon Recicla" },
@@ -30,6 +31,8 @@ export default function ReciclaPage() {
       </header>
 
       <main id="top">
+        <ReciclaMotion />
+
         <section className="hero">
           <div className="wrap hero-grid">
             <div className="hero-copy">
@@ -73,9 +76,9 @@ export default function ReciclaPage() {
 
         <section className="stats" aria-label="Contexto del reciclaje en Chile">
           <div className="wrap">
-            <div className="stat"><b>26%</b><span>declara reciclar con frecuencia en Chile</span></div>
-            <div className="stat"><b>{"<"}2%</b><span>de los residuos se recicla</span></div>
-            <div className="stat"><b>8,2 M t</b><span>de basura se generan al año</span></div>
+            <div className="stat"><b data-count-to="26" data-count-suffix="%">26%</b><span>declara reciclar con frecuencia en Chile</span></div>
+            <div className="stat"><b data-count-to="2" data-count-prefix="<" data-count-suffix="%">{"<"}2%</b><span>de los residuos se recicla</span></div>
+            <div className="stat"><b data-count-to="8.2" data-count-decimals="1" data-count-suffix=" M t">8,2 M t</b><span>de basura se generan al año</span></div>
           </div>
           <div className="wrap"><p className="src">Contexto, no resultados del programa. Fuente: Barómetro del Reciclaje ReSimple–CADEM 2025; SINIA 2022.</p></div>
         </section>
@@ -154,9 +157,9 @@ export default function ReciclaPage() {
             <div className="panel" aria-label="Ejemplo de panel del operador">
               <div className="panel-top"><span className="t">Programa · comuna piloto</span><span className="badge">Ejemplo</span></div>
               <div className="metrics">
-                <div className="metric"><b>128</b><span>canjes del mes</span></div>
-                <div className="metric"><b>1,2 t</b><span>kilos verificados</span></div>
-                <div className="metric"><b>24</b><span>comercios activos</span></div>
+                <div className="metric"><b data-count-to="128">128</b><span>canjes del mes</span></div>
+                <div className="metric"><b data-count-to="1.2" data-count-decimals="1" data-count-suffix=" t">1,2 t</b><span>kilos verificados</span></div>
+                <div className="metric"><b data-count-to="24">24</b><span>comercios activos</span></div>
               </div>
               <div className="bars" aria-hidden="true">
                 {[38, 52, 44, 66, 58, 74, 62, 86, 70, 94, 80, 100].map((h, i) => (
