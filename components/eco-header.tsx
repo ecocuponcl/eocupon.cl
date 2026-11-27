@@ -14,6 +14,9 @@ export function EcoHeader() {
         </Link>
 
         <nav className="eco-nav__actions" aria-label="Cuenta">
+          <Link href="/recicla" className="eco-btn eco-btn--sm eco-btn--quiet">
+            Recicla
+          </Link>
           <Link href="/auth/login" className="eco-btn eco-btn--sm eco-btn--quiet">
             Iniciar sesión
           </Link>
