@@ -1,10 +1,10 @@
 "use client"
 
-import { useEffect, useState, type FormEvent } from "react"
+import { useState, type FormEvent } from "react"
 
 type Result =
   | { kind: "idle" }
-  | { kind: "ok" }
+  | { kind: "ok"; emailSent: boolean }
   | { kind: "err"; message: string; waHref: string }
 
 const PHONE = "56979540471"
@@ -13,11 +13,6 @@ export function LeadForm() {
   const [rol, setRol] = useState("municipio")
   const [enviando, setEnviando] = useState(false)
   const [result, setResult] = useState<Result>({ kind: "idle" })
-
-  useEffect(() => {
-    const q = new URLSearchParams(window.location.search).get("rol")
-    if (q && ["municipio", "marca", "empresa", "comercio"].includes(q)) setRol(q)
-  }, [])
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -51,9 +46,9 @@ export function LeadForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       })
-      const data = (await res.json().catch(() => null)) as { ok?: boolean } | null
+      const data = (await res.json().catch(() => null)) as { ok?: boolean; emailSent?: boolean } | null
       if (res.ok && data?.ok) {
-        setResult({ kind: "ok" })
+        setResult({ kind: "ok", emailSent: Boolean(data.emailSent) })
       } else {
         setResult({ kind: "err", message: `No pudimos registrar tu solicitud (código ${res.status}).`, waHref: waLink(payload) })
       }
@@ -149,7 +144,11 @@ export function LeadForm() {
 
       {result.kind === "ok" && (
         <div className="form-result show ok" role="status" aria-live="polite">
-          <p>Recibimos tu solicitud. Te contactaremos al email o WhatsApp que dejaste.</p>
+          <p>
+            {result.emailSent
+              ? "Recibimos tu solicitud y te enviamos un correo de confirmación. Te contactaremos en 48 horas hábiles."
+              : "Recibimos tu solicitud. Te contactaremos al email o WhatsApp que dejaste."}
+          </p>
           <a className="btn btn--ghost btn--sm" href={waSimple()} target="_blank" rel="noopener">Adelantar por WhatsApp</a>
         </div>
       )}

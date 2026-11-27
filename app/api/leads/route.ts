@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
+import { leadConfirmationEmail } from "@/lib/email/lead-confirmation"
+import { sendEmail } from "@/lib/email/send"
 
 /**
  * Registro de interesados del programa EcoCupon Recicla.
@@ -72,5 +74,15 @@ export async function POST(req: NextRequest) {
     console.error("[leads] insert fallo:", error.message)
     return NextResponse.json({ ok: false, error: "No se pudo registrar la solicitud" }, { status: 500 })
   }
-  return NextResponse.json({ ok: true })
+
+  // Correo de confirmación (no bloquea el registro si falla o no está configurado).
+  let emailSent = false
+  try {
+    const mail = leadConfirmationEmail({ nombre, organizacion, comuna, rol, tipoPrograma: tipo })
+    emailSent = await sendEmail({ to: email, ...mail })
+  } catch (e) {
+    console.error("[leads] email error:", e)
+  }
+
+  return NextResponse.json({ ok: true, emailSent })
 }
