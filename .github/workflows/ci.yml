@@ -62,10 +62,28 @@ jobs:
       - name: Instalar dependencias
         run: pnpm install --frozen-lockfile
 
+      # Si no hay secretos de staging, la suite no puede correr: se omite en vez
+      # de fallar (varios tests necesitan Supabase real). Configura los secretos
+      # STAGING_* para activarla.
+      - name: Comprobar secretos de staging
+        id: staging
+        env:
+          STAGING_URL: ${{ secrets.STAGING_NEXT_PUBLIC_SUPABASE_URL }}
+          STAGING_KEY: ${{ secrets.STAGING_NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+        run: |
+          if [ -n "$STAGING_URL" ] && [ -n "$STAGING_KEY" ]; then
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Sin secretos STAGING_*; se omite la suite E2E."
+          fi
+
       - name: Instalar Playwright Chromium
+        if: steps.staging.outputs.ok == 'true'
         run: npx playwright install chromium --with-deps
 
       - name: Build (staging)
+        if: steps.staging.outputs.ok == 'true'
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.STAGING_NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.STAGING_NEXT_PUBLIC_SUPABASE_ANON_KEY }}
@@ -73,6 +91,7 @@ jobs:
         run: pnpm build
 
       - name: Ejecutar suite E2E (sin credenciales)
+        if: steps.staging.outputs.ok == 'true'
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.STAGING_NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.STAGING_NEXT_PUBLIC_SUPABASE_ANON_KEY }}
@@ -109,7 +128,7 @@ jobs:
           kill $SERVER_PID || true
 
       - name: Subir reporte de Playwright
-        if: failure()
+        if: failure() && steps.staging.outputs.ok == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
