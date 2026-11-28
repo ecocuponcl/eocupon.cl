@@ -14,6 +14,8 @@ const apuntaAServidorExterno = Boolean(process.env.PLAYWRIGHT_BASE_URL)
 
 export default defineConfig({
   testDir: "./e2e",
+  // Corta la corrida si la configuración apunta a producción: los e2e escriben.
+  globalSetup: "./e2e/global-setup.ts",
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
