@@ -22,7 +22,9 @@ function leerEnvLocal(): string {
 export default async function globalSetup() {
   if (process.env.E2E_ALLOW_PROD === "1") return
 
-  const destino = [process.env.NEXT_PUBLIC_SUPABASE_URL ?? "", leerEnvLocal()].join("\n")
+  // El servidor de pruebas hereda el entorno del proceso, y en Next la variable
+  // de entorno gana sobre `.env.local`; el guard mira lo mismo que verá la app.
+  const destino = process.env.NEXT_PUBLIC_SUPABASE_URL ?? leerEnvLocal()
 
   if (destino.includes(PRODUCCION)) {
     throw new Error(

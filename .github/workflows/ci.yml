@@ -134,3 +134,99 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 7
+
+  e2e-pagos:
+    runs-on: ubuntu-latest
+    # E2E de suscripciones contra Flow Sandbox y Supabase staging. Sin esos
+    # secretos el job no ejecuta pruebas: avisa y termina en verde.
+    # Secretos necesarios:
+    #   STAGING_NEXT_PUBLIC_SUPABASE_URL
+    #   STAGING_NEXT_PUBLIC_SUPABASE_ANON_KEY
+    #   STAGING_SUPABASE_SERVICE_ROLE_KEY
+    #   STAGING_E2E_USER_EMAIL / STAGING_E2E_USER_PASSWORD
+    #   FLOW_E2E_API_KEY / FLOW_E2E_SECRET_KEY  (llaves de Sandbox)
+    needs: verify
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Instalar dependencias
+        run: pnpm install --frozen-lockfile
+
+      - name: Detectar entorno de staging y Flow Sandbox
+        id: entorno
+        env:
+          URL_STAGING: ${{ secrets.STAGING_NEXT_PUBLIC_SUPABASE_URL }}
+          ANON_STAGING: ${{ secrets.STAGING_NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SR_STAGING: ${{ secrets.STAGING_SUPABASE_SERVICE_ROLE_KEY }}
+          FLOW_KEY: ${{ secrets.FLOW_E2E_API_KEY }}
+          FLOW_SECRET: ${{ secrets.FLOW_E2E_SECRET_KEY }}
+          E2E_USER: ${{ secrets.STAGING_E2E_USER_EMAIL }}
+        run: |
+          if [ -z "$URL_STAGING" ] || [ -z "$ANON_STAGING" ] || [ -z "$SR_STAGING" ] \
+             || [ -z "$FLOW_KEY" ] || [ -z "$FLOW_SECRET" ] || [ -z "$E2E_USER" ]; then
+            echo "listo=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Suite de pagos omitida: faltan secretos de staging o de Flow Sandbox."
+          else
+            echo "listo=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Instalar Playwright Chromium
+        if: steps.entorno.outputs.listo == 'true'
+        run: npx playwright install chromium --with-deps
+
+      - name: Build con staging
+        if: steps.entorno.outputs.listo == 'true'
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.STAGING_NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.STAGING_NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          NEXT_PUBLIC_SITE_URL: http://localhost:3000
+        run: pnpm build
+
+      - name: Ejecutar E2E de pagos
+        if: steps.entorno.outputs.listo == 'true'
+        env:
+          E2E_STAGING: "1"
+          E2E_USER_EMAIL: ${{ secrets.STAGING_E2E_USER_EMAIL }}
+          E2E_USER_PASSWORD: ${{ secrets.STAGING_E2E_USER_PASSWORD }}
+          E2E_SUPABASE_URL: ${{ secrets.STAGING_NEXT_PUBLIC_SUPABASE_URL }}
+          E2E_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.STAGING_SUPABASE_SERVICE_ROLE_KEY }}
+          FLOW_E2E_API_KEY: ${{ secrets.FLOW_E2E_API_KEY }}
+          FLOW_E2E_SECRET_KEY: ${{ secrets.FLOW_E2E_SECRET_KEY }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.STAGING_NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.STAGING_NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.STAGING_SUPABASE_SERVICE_ROLE_KEY }}
+          NEXT_PUBLIC_SITE_URL: http://localhost:3000
+          FLOW_ENV: sandbox
+          FLOW_API_KEY: ${{ secrets.FLOW_E2E_API_KEY }}
+          FLOW_SECRET_KEY: ${{ secrets.FLOW_E2E_SECRET_KEY }}
+          PLAYWRIGHT_BASE_URL: http://localhost:3000
+        run: |
+          pnpm start > /tmp/app.log 2>&1 &
+          SERVER_PID=$!
+          for i in $(seq 1 60); do
+            curl -sf http://localhost:3000/ > /dev/null && break
+            sleep 2
+          done
+          curl -sf http://localhost:3000/ > /dev/null || (echo "El servidor no levantó" && exit 1)
+
+          npx playwright test e2e/pago-suscripcion.spec.ts --reporter=list
+          EXIT=$?
+          kill $SERVER_PID || true
+          exit $EXIT
+
+      - name: Subir reporte de Playwright
+        if: failure() && steps.entorno.outputs.listo == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-pagos
+          path: playwright-report/
+          retention-days: 7
