@@ -110,8 +110,10 @@ export async function POST(request: Request) {
     }
 
     if (!profile) {
+      // El correo es dato personal: en el log queda enmascarado.
+      const [usuario, dominio] = email.split("@")
       console.warn("[flow] cobro sin perfil de suscripción", {
-        email,
+        email: dominio ? `${usuario.slice(0, 2)}***@${dominio}` : "***",
         subscriptionId: notifiedSubscription,
         flowOrder: payment.flowOrder,
       })

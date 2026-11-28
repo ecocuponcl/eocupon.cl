@@ -60,6 +60,13 @@ function sufijoDe(type: string): string {
   return type.split(".").pop() ?? ""
 }
 
+/** El correo es dato personal: en los logs queda solo lo necesario para depurar. */
+function maskEmail(value: string): string {
+  const [usuario, dominio] = value.split("@")
+  if (!dominio) return "***"
+  return `${usuario.slice(0, 2)}***@${dominio}`
+}
+
 function verifySignature(rawBody: string, header: string | null, secret: string): boolean {
   if (!header) return false
   const expected = `sha256=${createHmac("sha256", secret).update(rawBody).digest("hex")}`
@@ -147,12 +154,12 @@ async function handleEvent(event: EOEvent) {
       .eq("email", email)
 
     if (error) throw new Error(`program_leads: ${error.message}`)
-    console.info(`[eo-webhook] ${event.type} aplicado a lead ${email}`)
+    console.info(`[eo-webhook] ${event.type} aplicado a lead ${maskEmail(email)}`)
     return
   }
 
   if (INFORMATIVOS.has(sufijo)) {
-    console.info(`[eo-webhook] ${event.type} — ${email ?? event.contact_id}`)
+    console.info(`[eo-webhook] ${event.type} — ${email ? maskEmail(email) : event.contact_id}`)
     return
   }
 
