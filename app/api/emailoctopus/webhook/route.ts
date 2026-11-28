@@ -22,7 +22,9 @@ import { createClient } from "@supabase/supabase-js"
 
 type EOContactEvent = {
   id: string
-  type: "contact.created" | "contact.updated" | "contact.deleted"
+  // El nombre exacto del evento no está documentado de forma pública: se
+  // clasifica por sufijo en lugar de fijar la familia `contact.*` o `email.*`.
+  type: string
   list_id: string
   contact_id: string
   contact_email_address: string
@@ -34,12 +36,7 @@ type EOContactEvent = {
 
 type EOEmailEvent = {
   id: string
-  type:
-    | "contact.clicked"
-    | "contact.opened"
-    | "contact.bounced"
-    | "contact.complained"
-    | "contact.unsubscribed"
+  type: string
   list_id: string
   contact_id: string
   contact_email_address: string
@@ -52,6 +49,16 @@ type EOEmailEvent = {
 }
 
 type EOEvent = EOContactEvent | EOEmailEvent
+
+/** Sufijos que sacan al contacto de circulación y deben quedar en la base. */
+const ACCIONES = new Set(["unsubscribed", "complained", "bounced", "deleted"])
+
+/** Sufijos que solo se registran en el log. */
+const INFORMATIVOS = new Set(["created", "updated", "clicked", "opened"])
+
+function sufijoDe(type: string): string {
+  return type.split(".").pop() ?? ""
+}
 
 function verifySignature(rawBody: string, header: string | null, secret: string): boolean {
   if (!header) return false
@@ -122,33 +129,32 @@ export async function POST(req: NextRequest) {
 
 async function handleEvent(event: EOEvent) {
   const email = event.contact_email_address?.toLowerCase()
+  const sufijo = sufijoDe(event.type)
 
-  switch (event.type) {
-    case "contact.unsubscribed":
-    case "contact.complained":
-    case "contact.bounced":
-    case "contact.deleted": {
-      // Marcar el lead como no contactable en program_leads.
-      if (!email) break
-      const db = adminClient()
-      if (!db) throw new Error("Supabase de leads sin configurar")
-      const { error } = await db
-        .from("program_leads")
-        .update({ eo_status: event.type })
-        .eq("email", email)
-      if (error) throw new Error(`program_leads: ${error.message}`)
-      console.info(`[eo-webhook] ${event.type} aplicado a lead ${email}`)
-      break
+  if (ACCIONES.has(sufijo)) {
+    if (!email) {
+      console.warn(`[eo-webhook] ${event.type} sin email`)
+      return
     }
 
-    case "contact.created":
-    case "contact.updated":
-    case "contact.clicked":
-    case "contact.opened":
-      console.info(`[eo-webhook] ${event.type} — ${email ?? event.contact_id}`)
-      break
+    const db = adminClient()
+    if (!db) throw new Error("Supabase de leads sin configurar")
 
-    default:
-      console.warn("[eo-webhook] evento no reconocido:", (event as { type: string }).type)
+    // Se guarda el tipo real: distingue si el aviso fue de contacto o de correo.
+    const { error } = await db
+      .from("program_leads")
+      .update({ eo_status: event.type })
+      .eq("email", email)
+
+    if (error) throw new Error(`program_leads: ${error.message}`)
+    console.info(`[eo-webhook] ${event.type} aplicado a lead ${email}`)
+    return
   }
+
+  if (INFORMATIVOS.has(sufijo)) {
+    console.info(`[eo-webhook] ${event.type} — ${email ?? event.contact_id}`)
+    return
+  }
+
+  console.warn("[eo-webhook] evento no reconocido:", event.type)
 }
