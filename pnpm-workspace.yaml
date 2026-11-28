@@ -5,3 +5,12 @@
 # Turbopack por lockfiles múltiples en el directorio padre.
 allowBuilds:
   sharp: true
+
+# Correcciones de seguridad en dependencias transitivas (pnpm auditan
+# lodash por recharts y herramientas de build de Next por source-map-js,
+# browserslist y baseline-browser-mapping).
+overrides:
+  lodash: ^4.17.24
+  browserslist: ^4.28.7
+  source-map-js: ^1.2.2
+  baseline-browser-mapping: ^2.11.0
