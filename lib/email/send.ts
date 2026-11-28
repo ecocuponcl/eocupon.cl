@@ -23,6 +23,8 @@ export async function sendEmail(args: {
   try {
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
+      // Sin timeout, un cuelgue de Resend retiene la función hasta el límite de Vercel.
+      signal: AbortSignal.timeout(15_000),
       headers: {
         Authorization: `Bearer ${key}`,
         "Content-Type": "application/json",
