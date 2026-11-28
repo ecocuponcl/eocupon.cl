@@ -57,6 +57,12 @@ export default async function CuentaPage({
           No quedó registrada la tarjeta. Inténtalo de nuevo.
         </div>
       ) : null}
+      {estado === "pendiente" ? (
+        <div className="rounded-lg bg-muted p-3 text-sm" role="status">
+          Quedó pendiente confirmar el cobro con Flow. El acceso se activa cuando Flow confirme el
+          pago; si tu tarjeta fue rechazada, escríbenos por WhatsApp.
+        </div>
+      ) : null}
       {estado === "error" ? (
         <div className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive" role="alert">
           No pudimos completar el cobro. Si te cobraron, escríbenos por WhatsApp.
@@ -81,13 +87,15 @@ export default async function CuentaPage({
               : "Con Pro: 50 cupones al mes y el logo de tu negocio en el cupón."}
           </p>
 
-          <div>
-            <h2 className="mb-2 text-sm font-medium">Suscribirme a Pro</h2>
-            <FlowSubscribe
-              prices={{ mensual: FLOW_PLANS.mensual.amount, anual: FLOW_PLANS.anual.amount }}
-              disabled={!profile?.rut}
-            />
-          </div>
+          {paidActive ? null : (
+            <div>
+              <h2 className="mb-2 text-sm font-medium">Suscribirme a Pro</h2>
+              <FlowSubscribe
+                prices={{ mensual: FLOW_PLANS.mensual.amount, anual: FLOW_PLANS.anual.amount }}
+                disabled={!profile?.rut}
+              />
+            </div>
+          )}
         </CardContent>
       </Card>
 

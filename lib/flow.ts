@@ -5,9 +5,10 @@ import { SITE_URL } from "@/lib/site-url"
 /**
  * Cliente mínimo del API de Flow.
  *
- * Cada llamada va firmada: los parámetros se ordenan por nombre, se unen como
- * `clave=valor&...` y ese texto se firma con HMAC-SHA256 usando la secret key.
- * La firma viaja como `s` y la secret key nunca sale del servidor.
+ * Cada llamada va firmada: los parámetros se ordenan por nombre y se concatenan
+ * como `clavevalor` **sin separadores** (así lo define Flow, no es un descuido),
+ * y ese texto se firma con HMAC-SHA256 usando la secret key. La firma viaja como
+ * `s` y la secret key nunca sale del servidor.
  */
 
 const FLOW_API =
@@ -28,8 +29,8 @@ export class FlowError extends Error {
 function sign(params: Record<string, string>, secret: string): string {
   const payload = Object.keys(params)
     .sort()
-    .map((key) => `${key}=${params[key]}`)
-    .join("&")
+    .map((key) => `${key}${params[key]}`)
+    .join("")
   return createHmac("sha256", secret).update(payload).digest("hex")
 }
 
@@ -50,7 +51,7 @@ export async function flowCall<T>(
   body.s = sign(body, secret)
 
   const url = new URL(`${FLOW_API}/${service}`)
-  const init: RequestInit = { cache: "no-store" }
+  const init: RequestInit = { cache: "no-store", signal: AbortSignal.timeout(15_000) }
 
   if (method === "GET") {
     for (const [key, value] of Object.entries(body)) url.searchParams.set(key, value)
@@ -69,6 +70,61 @@ export async function flowCall<T>(
   }
 
   return json as T
+}
+
+const FLOW_TIME_ZONE = "America/Santiago"
+
+/** Desfase de Chile respecto de UTC en un instante dado (cambia con el verano). */
+function chileOffset(instant: number): number {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: FLOW_TIME_ZONE,
+    hour12: false,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  }).formatToParts(new Date(instant))
+
+  const field = (type: string) => Number(parts.find((part) => part.type === type)?.value)
+  const asUtc = Date.UTC(
+    field("year"),
+    field("month") - 1,
+    field("day"),
+    field("hour") % 24,
+    field("minute"),
+    field("second"),
+  )
+
+  return asUtc - instant
+}
+
+/**
+ * Flow entrega las fechas como `yyyy-mm-dd hh:mm:ss` en hora de Chile y sin zona.
+ * Interpretarlas tal cual depende del reloj del servidor (en Vercel corre en UTC y
+ * quedaban 3 horas antes), así que se convierten explícitamente desde Chile.
+ */
+export function flowDate(value: string): Date | null {
+  // La documentación de Flow escribe el formato como `yyyy-mm-dd hh:mm.ss`, pero
+  // la API responde con dos puntos: se aceptan ambos separadores de segundos.
+  const match = /^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})[:.](\d{2})$/.exec(value.trim())
+  if (!match) return null
+
+  const wall = Date.UTC(
+    Number(match[1]),
+    Number(match[2]) - 1,
+    Number(match[3]),
+    Number(match[4]),
+    Number(match[5]),
+    Number(match[6]),
+  )
+
+  // Dos pasadas: el desfase de Chile cambia con el horario de verano.
+  let instant = wall - chileOffset(wall)
+  instant = wall - chileOffset(instant)
+
+  return new Date(instant)
 }
 
 /** Precios y planes. El monto se puede mover por entorno sin tocar código. */
@@ -115,6 +171,8 @@ export interface FlowSubscription {
   period_end?: string
   next_invoice_date?: string
   subscription_end?: string
+  cancel_at?: string | null
+  invoices?: { id: number; status: number; amount?: string | number }[]
 }
 
 export interface FlowPaymentStatus {
